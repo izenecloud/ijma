@@ -36,7 +36,7 @@ project(JMA)
 
 add_definitions("-Wall")
 
-#include_directories(../include)
+include_directories(../include)
 #include_directories(./include)
 include_directories(./libmecab)
 #include_directories(./corpus)
@@ -56,7 +56,7 @@ ENDIF (UNIX)
 
 set(LIBS_JMA jma)
 
-#add_subdirectory(src)
+add_subdirectory(src)
 add_subdirectory(libmecab)
 #add_subdirectory(corpus)
 #add_subdirectory(test)

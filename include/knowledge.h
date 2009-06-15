@@ -104,7 +104,7 @@ protected:
     std::string systemDictPath_;
 
     /** the file names of user dictionaries */
-    std::vector<string> userDictNames_;
+    std::vector<std::string> userDictNames_;
 
 private:
     /** character encode type */
