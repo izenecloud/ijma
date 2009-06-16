@@ -39,6 +39,7 @@ IF (UNIX)
 ELSE (WIN32)
     MESSAGE(STATUS "libmecab in WIN32")
     add_definitions(-DHAVE_WINDOWS_H)
+    add_definitions(-DDLL_EXPORT)
 ENDIF (UNIX)
 
 # output definitions

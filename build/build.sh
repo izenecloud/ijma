@@ -16,7 +16,7 @@ then
     # remove all lib files
     rm -fr $CURRENT_PATH/../lib/lib*
 
-    # remove all test files
+    # remove all executable files
     rm -fr $CURRENT_PATH/../bin/test_* $CURRENT_PATH/../bin/mecab* $CURRENT_PATH/../bin/demo_*
 elif [ "$1" = "" ] || [ "$1" = "debug" ] || [ "$1" = "release" ] || [ "$1" = "profile" ]
 then
