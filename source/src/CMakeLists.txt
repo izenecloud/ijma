@@ -4,6 +4,7 @@ set(objs_jma
 ./knowledge
 ./sentence
 ./jma_factory
+./jma_knowledge
 )
 
 add_library(jma ${objs_jma})

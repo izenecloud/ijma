@@ -37,7 +37,7 @@ project(JMA)
 add_definitions("-Wall")
 
 include_directories(../include)
-#include_directories(./include)
+include_directories(./include)
 include_directories(./libmecab)
 #include_directories(./corpus)
 
