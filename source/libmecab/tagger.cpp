@@ -80,6 +80,7 @@ class TaggerImpl: public Tagger {
   scoped_ptr<NBestGenerator> nbest_;
   const char*                begin_;
   whatlog                    what_;
+  long                       score; //invoke after invoking nextNode
 
  public:
   bool                  open(Param *);
@@ -98,6 +99,10 @@ class TaggerImpl: public Tagger {
   bool                  parseNBestInit(const char*);
   bool                  parseNBestInit(const char*, size_t);
   const Node*           nextNode();
+  /**
+   * Invoke after invoking nextNode();
+   */
+  long                  nextScore();
   const char*           next();
   const char*           next(char*, size_t);
   const char           *formatNode(const Node *);
@@ -277,7 +282,12 @@ const Node* TaggerImpl::nextNode() {
   if (!nbest_.get()) nbest_.reset(new NBestGenerator);
   const Node *n = nbest_->next();
   CHECK_RETURN(n, static_cast<const Node*>(0)) << "no more results";
+  score = n ? nbest_.nextScore() : 0;
   return n;
+}
+
+long TaggerImpl::nextScore(){
+	return score;
 }
 
 const char* TaggerImpl::next() {

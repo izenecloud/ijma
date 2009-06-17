@@ -34,6 +34,7 @@ Node* NBestGenerator::next() {
         n->next->node->prev = n->node;
         // TODO: rewrite costs;
       }
+      score = top->fx;
       return rnode;
     }
 
@@ -46,6 +47,13 @@ Node* NBestGenerator::next() {
       agenda_.push(n);
     }
   }
+  score = 0;
   return 0;
 }
+
+long NBestGenerator::nextScore(){
+	return score;
+}
+
+
 }

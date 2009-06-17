@@ -225,6 +225,10 @@ class Tagger {
   virtual const char* parseNBest(size_t N, const char *str) = 0;
   virtual bool  parseNBestInit(const char *str)             = 0;
   virtual const Node* nextNode()                            = 0;
+  /**
+   * Invoke after invoking nextNode() or next()
+   */
+  virtual long nextScore()                                  = 0;
   virtual const char* next()                                = 0;
   virtual const char* formatNode(const Node *node)          = 0;
 

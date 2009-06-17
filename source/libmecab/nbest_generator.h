@@ -32,12 +32,17 @@ class NBestGenerator {
   std::priority_queue<QueueElement *, std::vector<QueueElement *>,
                       QueueElementComp> agenda_;
   FreeList <QueueElement> freelist_;
-
+  long score;
  public:
   explicit NBestGenerator(): freelist_(512) {}
   virtual ~NBestGenerator() {}
   bool  set(Node *);
   Node* next();
+
+  /**
+   * Invoked after invoking next()
+   */
+  long nextScore();
 };
 }
 
