@@ -282,7 +282,7 @@ const Node* TaggerImpl::nextNode() {
   if (!nbest_.get()) nbest_.reset(new NBestGenerator);
   const Node *n = nbest_->next();
   CHECK_RETURN(n, static_cast<const Node*>(0)) << "no more results";
-  score = n ? nbest_.nextScore() : 0;
+  score = n ? nbest_->nextScore() : 0;
   return n;
 }
 
@@ -292,6 +292,7 @@ long TaggerImpl::nextScore(){
 
 const char* TaggerImpl::next() {
   const Node *n = nextNode();
+
   if (!n) return 0;
   ostrs_.clear();
   CHECK_0(writer_.write(&ostrs_,
