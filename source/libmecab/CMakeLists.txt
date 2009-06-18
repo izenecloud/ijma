@@ -25,7 +25,7 @@ writer
 )
 
 # preprocessor definitions
-add_definitions(-DHAVE_DIRENT_H -DHAVE_FCNTL_H -DHAVE_GETENV -DHAVE_MMAP -DHAVE_STRING_H -DHAVE_SYS_MMAN_H -DHAVE_SYS_STAT_H -DHAVE_SYS_TYPES_H -DHAVE_UNISTD_H)
+add_definitions(-DHAVE_FCNTL_H -DHAVE_GETENV -DHAVE_MMAP -DHAVE_STRING_H -DHAVE_SYS_MMAN_H -DHAVE_SYS_STAT_H -DHAVE_SYS_TYPES_H -DHAVE_UNISTD_H)
 add_definitions(-DDIC_VERSION=102)
 add_definitions(-DICONV_CONST=)
 add_definitions(-DMECAB_DEFAULT_RC="/usr/local/etc/mecabrc")
@@ -36,6 +36,7 @@ IF (UNIX)
     MESSAGE(STATUS "libmecab in UNIX")
     add_definitions(-DHAVE_PTHREAD_H)
     add_definitions(-DHAVE_ICONV)
+    add_definitions(-DHAVE_DIRENT_H )
 ELSE (WIN32)
     MESSAGE(STATUS "libmecab in WIN32")
     add_definitions(-DHAVE_WINDOWS_H)
