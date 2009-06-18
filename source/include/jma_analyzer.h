@@ -32,7 +32,7 @@ public:
     JMA_Analyzer();
 
     /**
-     * Destructor.
+     * Destructor. Delete the knowledge in this function.
      */
     ~JMA_Analyzer();
 
