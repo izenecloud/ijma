@@ -12,10 +12,14 @@
 
 #include "mecab.h" // MeCab::Tagger
 
-//#include <iostream>
+#include <iostream>
 //#include <sstream>
 //#include <string>
 #include <cassert>
+
+#ifndef JMA_DEBUG_PRINT
+#define JMA_DEBUG_PRINT 1
+#endif
 
 using namespace std;
 
@@ -34,13 +38,61 @@ JMA_Knowledge::~JMA_Knowledge()
 
 int JMA_Knowledge::loadDict()
 {
-    // the lines below (from CMA code) is commented out,
-    // this function needs to be implemented in JMA.
-    //userDict_ = new Dictionary;
-    //bool r = userDict_->load(fileName);
-    bool r = 0;
+    const size_t userDictNum = userDictNames_.size();
 
-    return r ? 1 : 0;
+#if JMA_DEBUG_PRINT
+    cout << "loading dictionary:" << endl;
+    cout << "system dictionary path: " << systemDictPath_ << endl;
+    if(userDictNum != 0)
+    {
+        cout << "user dictionary: ";
+        for(size_t i=0; i<userDictNum; ++i)
+        {
+            cout << userDictNames_[i] << " ";
+        }
+        cout << endl;
+    }
+#endif
+
+    string param("-d ");
+    param += systemDictPath_;
+
+    if(userDictNum != 0)
+    {
+        vector<char*> compileParam;
+        compileParam.push_back("JMA_Knowledge");
+        compileParam.push_back("-d");
+        compileParam.push_back(const_cast<char*>(systemDictPath_.c_str()));
+        compileParam.push_back("-u");
+        compileParam.push_back("tmp.dic");
+        for(size_t i=0; i<userDictNum; ++i)
+        {
+            compileParam.push_back(const_cast<char*>(userDictNames_[i].c_str()));
+        }
+
+        int r = mecab_dict_index(compileParam.size(), &compileParam[0]);
+        if(r != 0)
+        {
+            cerr << "fail in compiling user ditionary" << endl;
+            return 0;
+        }
+
+        param += " -u ";
+        param += "tmp.dic";
+    }
+
+#if JMA_DEBUG_PRINT
+    cout << "parameter to create MeCab::Tagger: " << param << endl;
+#endif
+
+    if(tagger_)
+    {
+        delete tagger_;
+    }
+
+    tagger_ = MeCab::createTagger(param.c_str());
+
+    return tagger_ ? 1 : 0;
 }
 
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
