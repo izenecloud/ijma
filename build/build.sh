@@ -36,7 +36,7 @@ then
 
     cd $BUILD_PATH
     # generate Makefiles using GCC
-    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE $CURRENT_PATH/../source
+    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $CURRENT_PATH/../source
     # generate MSVC project
     #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE $CURRENT_PATH/../source
     make all

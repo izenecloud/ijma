@@ -64,6 +64,9 @@ ENDIF (UNIX)
 
 set(LIBS_JMA jma)
 
+# set compile flag for whether to print debug information
+add_definitions(-DJMA_DEBUG_PRINT=${CMAKE_JMA_DEBUG_PRINT})
+
 add_subdirectory(src)
 add_subdirectory(libmecab)
 #add_subdirectory(corpus)

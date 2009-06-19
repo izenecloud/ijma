@@ -6,8 +6,8 @@
  * \date Jun 17, 2009
  */
 
-#ifndef JMA_JMA_KNOWLEDGE_H
-#define JMA_JMA_KNOWLEDGE_H
+#ifndef JMA_KNOWLEDGE_IMPL_H
+#define JMA_KNOWLEDGE_IMPL_H
 
 #include "knowledge.h"
 
@@ -74,10 +74,26 @@ public:
     MeCab::Tagger* getTagger() const;
 
 private:
+    /**
+     * Remove the tagger and temporary dictionary file if exists.
+     */
+    void clear();
+
+    /**
+     * Create a unique temporary file and output its file name.
+     * \param tempName the string to save the temporary file name
+     * \return true for success and \e tempName is set as the temporary file name. false for fail and \e tempName is not modified.
+     */
+    static bool createTempFile(std::string& tempName);
+
+private:
     /** tagger for analysis */
     MeCab::Tagger* tagger_;
+
+    /** temporary file name for binary user dictionary */
+    std::string tempUserDic_;
 };
 
 } // namespace jma
 
-#endif // JMA_JMA_KNOWLEDGE_H
+#endif // JMA_KNOWLEDGE_IMPL_H
