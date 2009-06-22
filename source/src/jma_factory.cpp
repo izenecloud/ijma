@@ -7,7 +7,8 @@
  */
 
 #include "jma_factory.h"
-//#include "cma_crf_factory.h"
+#include "jma_analyzer.h"
+#include "jma_knowledge.h"
 
 namespace jma
 {
@@ -18,12 +19,24 @@ JMA_Factory* JMA_Factory::instance()
 {
     if(instance_ == 0)
     {
-        // the line below (from CMA code) is commented out,
-        // this function need to be implemented in JMA.
-        //instance_ = new CMA_CRF_Factory;
+        instance_ = new JMA_Factory;
     }
 
     return instance_;
+}
+
+Analyzer* JMA_Factory::createAnalyzer()
+{
+    return new JMA_Analyzer;
+}
+
+Knowledge* JMA_Factory::createKnowledge()
+{
+    return new JMA_Knowledge;
+}
+
+JMA_Factory::JMA_Factory()
+{
 }
 
 JMA_Factory::~JMA_Factory()
