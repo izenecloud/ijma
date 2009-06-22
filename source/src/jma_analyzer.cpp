@@ -42,6 +42,27 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
+	vector<const MeCab::Node*> nodes;
+	vector<double> scores;
+	analyzerSentence(sentence.getString(), nodes, &scores, N);
+	size_t retSize = nodes.size();
+	for (size_t i = 0; i < retSize; ++i) {
+		MorphemeList list;
+		const MeCab::Node* bosNode = nodes[i];
+		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+			string seg(node->surface, node->length);
+			//if(knowledge_->isStopWord(seg))
+			//	continue;
+			Morpheme morp;
+			morp.lexicon_ = seg; //TODO change the encoding
+			//morp.posCode_ = POSTable::instance()->getCodeFromStr(poses[j]);
+			morp.posCode_ = 1; //TODO no pos code here
+			list.push_back(morp);
+		}
+		sentence.addList(list, scores[i]);
+	}
+
+
 	return 1;
 }
 
@@ -56,7 +77,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 		const MeCab::Node* bosNode = nodes[0];
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 			strBuf_.append(node->surface, node->length).append(posDelimiter_).
-				append(node->feature, node->feature).append(wordDelimiter_);
+				append(node->feature, getPOSOffset(node->feature) ).append(wordDelimiter_);
 		}
 
 	} else {
@@ -85,37 +106,33 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
             out << endl;
             continue;
         }
-        vector<pair<vector<string>, double> > segment;
-        vector<vector<string> > pos;
-        analysis(line.data(), N, pos, segment, printPOS);
+
+        vector<const MeCab::Node*> nodes;
+        analyzerSentence(line.c_str(), nodes, 0, 1);
 
         if (printPOS) {
-            vector<string>& best = segment[0].first;
-            vector<string>& bestPOS = pos[0];
-            size_t maxIndex = best.size() - 1;
-            for (size_t i = 0; i < maxIndex; ++i) {
-                out << best[i] << posDelimiter_ << bestPOS[i] << wordDelimiter_;
-            }
+        	const MeCab::Node* bosNode = nodes[0];
+			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+				out.write(node->surface, node->length) << posDelimiter_;
+				out.write(node->feature, getPOSOffset(node->feature) ) << wordDelimiter_;
+			}
 
             if (remains)
-                out << best[maxIndex] << posDelimiter_ << bestPOS[maxIndex] << endl;
+                out << endl;
             else {
-                out << best[maxIndex] << posDelimiter_ << bestPOS[maxIndex];
                 break;
             }
         } else {
-            vector<string>& best = segment[0].first;
-            size_t maxIndex = best.size() - 1;
-            for (size_t i = 0; i < maxIndex; ++i) {
-                out << best[i] << wordDelimiter_;
-            }
+        	const MeCab::Node* bosNode = nodes[0];
+			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+				out.write(node->surface, node->length) << wordDelimiter_;
+			}
 
-            if (remains)
-                out << best[maxIndex] << endl;
-            else {
-                out << best[maxIndex];
-                break;
-            }
+			if (remains)
+				out << endl;
+			else {
+				break;
+			}
         }
     }
 
