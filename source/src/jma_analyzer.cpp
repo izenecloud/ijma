@@ -26,7 +26,6 @@ JMA_Analyzer::JMA_Analyzer()
 
 JMA_Analyzer::~JMA_Analyzer()
 {
-	delete knowledge_;
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
