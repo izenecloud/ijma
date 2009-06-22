@@ -103,11 +103,14 @@ int JMA_Knowledge::loadDict()
         compileParam.push_back("-u");
         compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
 
-        // set encoding to compile user dictionary (need to be revised to support encoding setting)
+        // set the encoding type,
+        // the encoding type of user dictionary both in text type and binary type are the same, which is set by Knowledge::setEncodeType().
+        // if it is not set by Knowledge::setEncodeType() before, it would be "euc-jp" defaultly.
+        EncodeType userEncode = getEncodeType();
         compileParam.push_back("-f");
-        compileParam.push_back("euc-jp");
+        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[userEncode]));
         compileParam.push_back("-t");
-        compileParam.push_back("euc-jp");
+        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[userEncode]));
 
         // append source files of user dictionary
         for(size_t i=0; i<userDictNum; ++i)
@@ -190,25 +193,10 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     compileParam.push_back(const_cast<char*>(binDirPath));
 
     // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file,
-    // if it is not predefined in "dicrc", it would be "euc-jp" in Linux, and "sjis" in Win32 platform defaultly.
-    // below is to set the destination encoding type
-    char* toEncode = 0;
-    switch(getEncodeType())
-    {
-    case Knowledge::ENCODE_TYPE_EUCJP:
-        toEncode = "euc-jp";
-        break;
-
-    case Knowledge::ENCODE_TYPE_SJIS:
-        toEncode = "sjis";
-        break;
-
-    default:
-        cerr << "unkown encoding type to compile system ditionary: " << getEncodeType() << endl;
-        break;
-    }
+    // if the source encoding type is not predefined in "dicrc", it would be "euc-jp" defaultly.
+    // below is to set the destination encoding type, which is "euc-jp" defaultly.
     compileParam.push_back("-t");
-    compileParam.push_back(toEncode);
+    compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
 #if JMA_DEBUG_PRINT
     cout << "parameter of mecab_dict_index() to compile system dictionary: ";

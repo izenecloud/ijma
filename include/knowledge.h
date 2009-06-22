@@ -106,6 +106,9 @@ protected:
     /** the file names of user dictionaries */
     std::vector<std::string> userDictNames_;
 
+    /** the string of each encoding type */
+    static const char* ENCODE_TYPE_STR_[ENCODE_TYPE_NUM];
+
 private:
     /** character encode type */
     EncodeType encodeType_;

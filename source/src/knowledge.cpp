@@ -13,6 +13,8 @@
 namespace jma
 {
 
+const char* Knowledge::ENCODE_TYPE_STR_[] = {"euc-jp", "shift-jis"};
+
 Knowledge::Knowledge()
     : encodeType_(ENCODE_TYPE_EUCJP)
 {
