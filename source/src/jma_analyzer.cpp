@@ -14,15 +14,13 @@
 
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
-#include "mecab.h"
 
-using namespace std;
 
 namespace jma
 {
 
 JMA_Analyzer::JMA_Analyzer()
-    : knowledge_(0), tagger_(0)
+    : knowledge_(0), tagger_(0), retFullPOS_(false)
 {
 }
 
@@ -49,12 +47,80 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 const char* JMA_Analyzer::runWithString(const char* inStr)
 {
-    return 0;
+	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
+	vector<const MeCab::Node*> nodes;
+	analyzerSentence(inStr, nodes, 0, 1);
+
+	strBuf_.clear();
+	if (printPOS) {
+		const MeCab::Node* bosNode = nodes[0];
+		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+			strBuf_.append(node->surface, node->length).append(posDelimiter_).
+				append(node->feature, node->feature).append(wordDelimiter_);
+		}
+
+	} else {
+		const MeCab::Node* bosNode = nodes[0];
+		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+			strBuf_.append(node->surface, node->length).append(wordDelimiter_);
+		}
+	}
+
+	return strBuf_.c_str();
+
 }
 
 int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 {
+	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 
+	ifstream in(inFileName);
+    ofstream out(outFileName);
+    string line;
+    bool remains = !in.eof();
+    while (remains) {
+        getline(in, line);
+        remains = !in.eof();
+        if (!line.length()) {
+            out << endl;
+            continue;
+        }
+        vector<pair<vector<string>, double> > segment;
+        vector<vector<string> > pos;
+        analysis(line.data(), N, pos, segment, printPOS);
+
+        if (printPOS) {
+            vector<string>& best = segment[0].first;
+            vector<string>& bestPOS = pos[0];
+            size_t maxIndex = best.size() - 1;
+            for (size_t i = 0; i < maxIndex; ++i) {
+                out << best[i] << posDelimiter_ << bestPOS[i] << wordDelimiter_;
+            }
+
+            if (remains)
+                out << best[maxIndex] << posDelimiter_ << bestPOS[maxIndex] << endl;
+            else {
+                out << best[maxIndex] << posDelimiter_ << bestPOS[maxIndex];
+                break;
+            }
+        } else {
+            vector<string>& best = segment[0].first;
+            size_t maxIndex = best.size() - 1;
+            for (size_t i = 0; i < maxIndex; ++i) {
+                out << best[i] << wordDelimiter_;
+            }
+
+            if (remains)
+                out << best[maxIndex] << endl;
+            else {
+                out << best[maxIndex];
+                break;
+            }
+        }
+    }
+
+    in.close();
+    out.close();
     return 1;
 }
 
@@ -139,6 +205,41 @@ void JMA_Analyzer::analyzerSentence(const char *str,
 	for( int j=0; j<i; ++j ){
 		scores->push_back(lgScore[j] * 1.0 / lgTotalScore);
 	}
+}
+
+int JMA_Analyzer::getPOSOffset(const char* feature){
+	if(retFullPOS_){
+		// count for the index of the fourth offset
+		int offset = 0;
+		int commaCount = 0;
+		for(; feature[offset]; ++offset){
+			if(feature[offset] == ','){
+				++commaCount;
+				if(commaCount > 3)
+					break;
+			}
+		}
+
+		return offset;
+	}
+
+	 //count for the index of the comma that after non-star pos sections
+	int offset = 0;
+	int commaCount = 0;
+	for(; feature[offset]; ++offset){
+		if(feature[offset] == ','){
+			++commaCount;
+			if(commaCount > 3)
+				break;
+		}
+		else if(feature[offset] == '*'){
+			//if offset is 0, contains nothing
+			return offset ? offset - 1 : 0 ;
+		}
+
+	}
+
+	return offset;
 }
 
 } // namespace jma

@@ -1,6 +1,6 @@
 /** \file analyzer.h
  * Definition of class Analyzer.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 12, 2009
@@ -23,13 +23,13 @@ class Sentence;
 /**
  * Analyzer executes the Japanese morphological analysis.
  * Typically, the usage is like below:
- * 
+ *
  * \code
  * // create instances
  * JMA_Factory* factory = JMA_Factory::instance();
  * Analyzer* analyzer = factory->createAnalyzer();
  * Knowledge* knowledge = factory->createKnowledge();
- * 
+ *
  * // load configuration file
  * knowledge->loadConfig("...");
  *
@@ -38,23 +38,23 @@ class Sentence;
  * knowledge->addUserDict("...");
  * knowledge->loadDict();
  * knowledge->loadStopWordDict("...");
- * 
+ *
  * // set knowledge
  * analyzer->setKnowledge(knowledge);
- * 
+ *
  * // analyze a sentence
  * Sentence s;
  * s.setString("...");
  * analyzer->runWithSentence(s);
  * ...
- * 
+ *
  * // analyze a paragraph
  * const char* result = analyzer->runWithString("...");
  * ...
- * 
+ *
  * // analyze a file
  * analyzer->runWithStream("...", "...");
- * 
+ *
  * // split paragraphs into sentences
  * string line;
  * vector<Sentence> sentVec;
@@ -152,25 +152,25 @@ public:
 
     /**
      * Set the delimiter between word and POS tag in the output result of \e runWithString() and \e runWithStream(), which delimiter is "/" defaultly so that the result would be "word/pos  word/pos  ...".
-     * \param delimiter the delimiter between word and POS tag in the output result 
+     * \param delimiter the delimiter between word and POS tag in the output result
      */
     void setPOSDelimiter(const char* delimiter);
 
     /**
      * Get the delimiter between word and POS tag in the output result of \e runWithString() and \e runWithStream(), which delimiter is "/" defaultly so that the result would be "word/pos  word/pos  ...".
-     * \return the delimiter between word and POS tag in the output result 
+     * \return the delimiter between word and POS tag in the output result
      */
     const char* getPOSDelimiter() const;
 
     /**
      * Set the delimiter between the pairs (word and POS tag) in the output result of \e runWithString() and \e runWithStream(), which delimiter is "  " (double-space) defaultly so that the result would be "word/pos  word/pos  ...".
-     * \param delimiter the delimiter between the pairs (word and POS tag) in the output result 
+     * \param delimiter the delimiter between the pairs (word and POS tag) in the output result
      */
     void setWordDelimiter(const char* delimiter);
 
     /**
      * Get the delimiter between the pairs (word and POS tag) in the output result of \e runWithString() and \e runWithStream(), which delimiter is "  " (double-space) defaultly so that the result would be "word/pos  word/pos  ...".
-     * \return the delimiter between the pairs (word and POS tag) in the output result 
+     * \return the delimiter between the pairs (word and POS tag) in the output result
      */
     const char* getWordDelimiter() const;
 
@@ -178,6 +178,7 @@ private:
     /** option values */
     std::vector<double> options_;
 
+protected:
     /** the delimiter between word and POS tag in the output result */
     const char* posDelimiter_;
 

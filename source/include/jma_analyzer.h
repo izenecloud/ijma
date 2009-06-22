@@ -13,6 +13,8 @@
 #include "sentence.h"
 #include "mecab.h"
 
+#include <string>
+
 using namespace std;
 
 namespace jma
@@ -77,12 +79,40 @@ public:
     virtual void splitSentence(const char* paragraph, std::vector<Sentence>& sentences);
 
 private:
+
+	/**
+	 * The Function to take the actual Sentence Segmentation and POS tagging
+	 */
 	void analyzerSentence(const char *str, vector<const MeCab::Node*>& nodes,
 			vector<double>* scores, int N);
 
+	/**
+	 * If the feature is aa,bb,*,*,v1,v2,* (the POS locates the first four sections which
+	 * was separated by comma).<br>
+	 * If Length is true, return 10 (the index of the fourth comma, include the * sections),<br>
+	 * else, return 6 (the index of the second comma, exclude the * sections).
+	 */
+	inline int getPOSOffset(const char* feature);
+
 private:
+	/**
+	 * hold the JMA_Knowledge Object
+	 */
 	JMA_Knowledge* knowledge_;
+
+	/**
+	 * The Tagger from the Mecab (returned by the JMA_Knowledge)
+	 */
 	MeCab::Tagger* tagger_;
+
+	/**
+	 * If true, the POS would aa,bb,*,* (* indicates N/A). <br>
+	 * Else, return aa,bb (N/A subcategories would be ignored)
+	 */
+	bool retFullPOS_;
+
+	string strBuf_;
+
 };
 
 } // namespace jma
