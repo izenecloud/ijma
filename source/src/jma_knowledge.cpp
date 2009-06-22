@@ -23,7 +23,7 @@
 #endif
 #endif
 
-//#define JMA_DEBUG_PRINT 1
+#define JMA_DEBUG_PRINT 1
 
 using namespace std;
 
@@ -173,18 +173,61 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 {
     assert(txtDirPath && binDirPath);
 
-    // the lines below (from CMA code) is commented out,
-    // this function needs to be implemented in JMA.
-    //SystemDictionary dict;
-    //if(dict.loadText(txtFileName) == false)
-    //{
-        //return 0;
-    //}
+#if JMA_DEBUG_PRINT
+    cout << "JMA_Knowledge::encodeSystemDict()" << endl;
+    cout << "path of source system dictionary: " << txtDirPath << endl;
+    cout << "path of binary system dictionary: " << binDirPath << endl;
+#endif
 
-    //if(dict.saveBinary(binFileName) == false)
-    //{
-        //return 0;
-    //}
+    // if the destination directory is not exist, create it (TO BE DONE)
+
+    // construct parameter to compile system dictionary
+    vector<char*> compileParam;
+    compileParam.push_back("JMA_Knowledge");
+    compileParam.push_back("-d");
+    compileParam.push_back(const_cast<char*>(txtDirPath));
+    compileParam.push_back("-o");
+    compileParam.push_back(const_cast<char*>(binDirPath));
+
+    // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file,
+    // if it is not predefined in "dicrc", it would be "euc-jp" in Linux, and "sjis" in Win32 platform defaultly.
+    // below is to set the destination encoding type
+    char* toEncode = 0;
+    switch(getEncodeType())
+    {
+    case Knowledge::ENCODE_TYPE_EUCJP:
+        toEncode = "euc-jp";
+        break;
+
+    case Knowledge::ENCODE_TYPE_SJIS:
+        toEncode = "sjis";
+        break;
+
+    default:
+        cerr << "unkown encoding type to compile system ditionary: " << getEncodeType() << endl;
+        break;
+    }
+    compileParam.push_back("-t");
+    compileParam.push_back(toEncode);
+
+#if JMA_DEBUG_PRINT
+    cout << "parameter of mecab_dict_index() to compile system dictionary: ";
+    for(size_t i=0; i<compileParam.size(); ++i)
+    {
+        cout << compileParam[i] << " ";
+    }
+    cout << endl;
+#endif
+
+    // compile system dictionary files into binary type
+    int compileResult = mecab_dict_index(compileParam.size(), &compileParam[0]);
+    if(compileResult != 0)
+    {
+        cerr << "fail to compile system ditionary" << endl;
+        return 0;
+    }
+
+    // copy dicrc, rewrite.def, left-id.def, right-id.def to the destination directory (TO BE DONE)
 
     return 1;
 }

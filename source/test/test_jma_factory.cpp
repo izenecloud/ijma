@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <cstdlib>
 
 using namespace std;
 using namespace jma;

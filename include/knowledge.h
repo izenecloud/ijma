@@ -81,9 +81,9 @@ public:
      */
     enum EncodeType
     {
-	ENCODE_TYPE_EUCJP, ///< EUC-JP character type
-	ENCODE_TYPE_SJIS, ///< SHIFT-JIS character type
-	ENCODE_TYPE_NUM ///< the count of character types
+        ENCODE_TYPE_EUCJP, ///< EUC-JP character type
+        ENCODE_TYPE_SJIS, ///< SHIFT-JIS character type
+        ENCODE_TYPE_NUM ///< the count of character types
     };
 
     /**
