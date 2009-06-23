@@ -13,14 +13,14 @@
 #include "mecab.h" // MeCab::Tagger
 
 #include <iostream>
-//#include <sstream>
-//#include <string>
+#include <fstream> // ifstream, ofstream
+#include <cstdlib> // mkstemp
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
-#ifdef HAVE_WINDOWS_H
-#include <windows.h>
-#endif
+#include <windows.h> // GetTempPath, GetTempFileName, FindFirstFile, FindClose
+#else
+#include <dirent.h> // opendir, closedir
 #endif
 
 #define JMA_DEBUG_PRINT 1
@@ -103,14 +103,11 @@ int JMA_Knowledge::loadDict()
         compileParam.push_back("-u");
         compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
 
-        // set the encoding type,
-        // the encoding type of user dictionary both in text type and binary type are the same, which is set by Knowledge::setEncodeType().
-        // if it is not set by Knowledge::setEncodeType() before, it would be "euc-jp" defaultly.
-        EncodeType userEncode = getEncodeType();
-        compileParam.push_back("-f");
-        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[userEncode]));
+        // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
+        // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
+        // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
         compileParam.push_back("-t");
-        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[userEncode]));
+        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
         // append source files of user dictionary
         for(size_t i=0; i<userDictNum; ++i)
@@ -182,7 +179,17 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     cout << "path of binary system dictionary: " << binDirPath << endl;
 #endif
 
-    // if the destination directory is not exist, create it (TO BE DONE)
+    // check if the directory paths exist
+    if(isDirExist(txtDirPath) == false)
+    {
+        cerr << "directory path not exist to compile system dictionary: " << txtDirPath << endl;
+        return 0;
+    }
+    if(isDirExist(binDirPath) == false)
+    {
+        cerr << "directory path not exist to compile system dictionary: " << binDirPath << endl;
+        return 0;
+    }
 
     // construct parameter to compile system dictionary
     vector<char*> compileParam;
@@ -192,9 +199,9 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     compileParam.push_back("-o");
     compileParam.push_back(const_cast<char*>(binDirPath));
 
-    // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file,
-    // if the source encoding type is not predefined in "dicrc", it would be "euc-jp" defaultly.
-    // below is to set the destination encoding type, which is "euc-jp" defaultly.
+    // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file under source directory path,
+    // if the source encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
+    // below is to set the destination encoding type, which is "EUC-JP" defaultly.
     compileParam.push_back("-t");
     compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
@@ -215,7 +222,20 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
         return 0;
     }
 
-    // copy dicrc, rewrite.def, left-id.def, right-id.def to the destination directory (TO BE DONE)
+    // copy configure and definition files to the destination directory
+    const char* configFiles[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
+    size_t configNum = sizeof(configFiles) / sizeof(configFiles[0]);
+    string src, dest;
+    for(size_t i=0; i<configNum; ++i)
+    {
+        src = createFilePath(txtDirPath, configFiles[i]);
+        dest = createFilePath(binDirPath, configFiles[i]);
+
+        if(copyFile(src.c_str(), dest.c_str()) == false)
+        {
+            return 0;
+        }
+    }
 
     return 1;
 }
@@ -267,6 +287,94 @@ bool JMA_Knowledge::createTempFile(std::string& tempName)
 #endif
 
     return true;
+}
+
+bool JMA_Knowledge::isDirExist(const char* dirPath)
+{
+    if(dirPath == 0)
+    {
+        return false;
+    }
+
+    bool result = false;
+
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    WIN32_FIND_DATA wfd;
+    HANDLE hFind;
+    hFind = FindFirstFile(dirPath, &wfd);
+    if(hFind != INVALID_HANDLE_VALUE)
+    {
+        result = true;
+    }
+    FindClose(hFind);
+#else
+    DIR *dir = opendir(dirPath);
+    if(dir)
+    {
+        result = true;
+    }
+    closedir(dir);
+#endif
+
+    return result;
+}
+
+bool JMA_Knowledge::copyFile(const char* src, const char* dest)
+{
+    assert(src && dest);
+
+    // open files
+    ifstream from(src);
+    if(! from)
+    {
+        cerr << "cannot open source file: " << src << endl;
+        return false;
+    }
+
+    ofstream to(dest);
+    if(! to)
+    {
+        cerr << "cannot open destinatioin file: " << dest << endl;
+        return false;
+    }
+
+    // copy characters
+    char ch;
+    while(from.get(ch))
+    {
+        to.put(ch);
+    }
+
+    // check file state
+    if(!from.eof() || !to)
+    {
+        cerr << "invalid file state after copy from " << src << " to " << dest << endl;
+        return false;
+    }
+
+    return true;
+}
+
+std::string JMA_Knowledge::createFilePath(const char* dir, const char* file)
+{
+    assert(file && "the file name is assumed as non empty");
+
+    string result = dir;
+
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    if(result.size() && result[result.size()-1] != '\\')
+    {
+        result += '\\';
+    }
+#else
+    if(result.size() && result[result.size()-1] != '/')
+    {
+        result += '/';
+    }
+#endif
+
+    result += file;
+    return result;
 }
 
 } // namespace jma

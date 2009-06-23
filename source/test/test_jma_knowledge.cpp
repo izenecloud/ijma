@@ -30,11 +30,18 @@ int main()
     JMA_Knowledge* knowledge = new JMA_Knowledge;
 
     // set system dictionary directory
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    knowledge->setSystemDict("../../db/ipadic/bin");
+#else
     knowledge->setSystemDict("../db/ipadic/bin");
+#endif
 
     // add user dictionary files
-    knowledge->addUserDict("../db/userdic/1.csv");
-    //knowledge->addUserDict("../db/userdic/2.csv");
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    knowledge->addUserDict("../../db/userdic/eucjp.csv");
+#else
+    knowledge->addUserDict("../db/userdic/eucjp.csv");
+#endif
 
     // load dictioanry files
     int result = knowledge->loadDict();

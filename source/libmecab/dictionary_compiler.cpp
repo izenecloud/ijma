@@ -35,7 +35,11 @@ class DictionaryComplier {
         "make charset of binary dictionary ENC (default "
         MECAB_DEFAULT_CHARSET ")"  },
       { "charset",   't',  MECAB_DEFAULT_CHARSET, "ENC", "alias of -c"  },
-      { "dictionary-charset",  'f',  MECAB_DEFAULT_CHARSET,
+// MODIFY START - JUN
+// to enable the "dictionary-charset" entry in "dicrc" file, set the default value to empty below.
+      //{ "dictionary-charset",  'f',  MECAB_DEFAULT_CHARSET,
+      { "dictionary-charset",  'f',  0,
+// MODIFY END - JUN
         "ENC", "assume charset of input CSVs as ENC (default "
         MECAB_DEFAULT_CHARSET ")"  },
       { "wakati",    'w',  0,   0,   "build wakati-gaki only dictionary", },
@@ -70,6 +74,15 @@ class DictionaryComplier {
 
     CHECK_DIE(param.load(DCONF(DICRC)))
         << "no such file or directory: " << DCONF(DICRC);
+
+// ADD START - JUN
+// if the "dictionary-charset" entry is not defined in "dicrc" file or command option,
+// it would be reset to "MECAB_DEFAULT_CHARSET" before dictionary compiling.
+    if(param.get<std::string>("dictionary-charset").empty())
+    {
+        param.set<std::string>("dictionary-charset", MECAB_DEFAULT_CHARSET);
+    }
+// ADD END - JUN
 
     std::vector<std::string> dic;
     if (userdic.empty())
