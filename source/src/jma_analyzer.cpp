@@ -36,6 +36,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     assert(knowledge_);
     tagger_ = knowledge_->getTagger();
     assert(tagger_);
+    tagger_->set_lattice_level(1);
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -206,20 +207,24 @@ void JMA_Analyzer::analyzerSentence(const char *str,
 
 	//TODO check return value of parseNBestInit here
 	tagger_->parseNBestInit(str);
+
+	vector<const MeCab::Node*> rvnodes; //nodes in reverse order
+
 	int i = 0;
 	for ( ; i < N; ++i) {
 		const MeCab::Node* ret = tagger_->nextNode();
 		if(!ret)
 			break;
-		nodes.push_back(ret);
+		rvnodes.push_back(ret);
 		long score = tagger_->nextScore();
 		lgTotalScore += score;
 		lgScore.push_back(score);
 	}
 
 	//update the N-best score
-	for( int j=0; j<i; ++j ){
+	for( int j = i - 1 ; j >= 0 ; --j ){
 		scores->push_back(lgScore[j] * 1.0 / lgTotalScore);
+		nodes.push_back(rvnodes[j]);
 	}
 }
 
