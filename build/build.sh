@@ -17,7 +17,7 @@ then
     rm -fr $CURRENT_PATH/../lib/lib*
 
     # remove all executable files
-    rm -fr $CURRENT_PATH/../bin/test_* $CURRENT_PATH/../bin/mecab* $CURRENT_PATH/../bin/demo_*
+    rm -fr $CURRENT_PATH/../bin/test_* $CURRENT_PATH/../bin/mecab* $CURRENT_PATH/../bin/demo_* $CURRENT_PATH/../bin/jma_*
 elif [ "$1" = "" ] || [ "$1" = "debug" ] || [ "$1" = "release" ] || [ "$1" = "profile" ]
 then
     if [ "$1" != "" ]
