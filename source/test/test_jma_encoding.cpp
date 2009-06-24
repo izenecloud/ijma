@@ -8,7 +8,7 @@
  * Test character encoding "SHIFT-JIS".
  * $./test_jma_encoding --encode sjis
  * \endcode
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 24, 2009
@@ -21,6 +21,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
+#include <string.h>
 
 using namespace std;
 using namespace jma;

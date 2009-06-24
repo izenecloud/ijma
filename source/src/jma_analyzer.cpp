@@ -51,8 +51,8 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 		const MeCab::Node* bosNode = nodes[i];
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 			string seg(node->surface, node->length);
-			//if(knowledge_->isStopWord(seg))
-			//	continue;
+			if(knowledge_->isStopWord(seg))
+				continue;
 			Morpheme morp;
 			morp.lexicon_ = seg; //TODO change the encoding
 			//morp.posCode_ = POSTable::instance()->getCodeFromStr(poses[j]);
