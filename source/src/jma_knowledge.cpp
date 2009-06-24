@@ -14,8 +14,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
-#include <cstdlib> // mkstemp, free
-#include <cstring> // strlen, strndup
+#include <cstdlib> // mkstemp
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -305,18 +304,14 @@ bool JMA_Knowledge::isDirExist(const char* dirPath)
 
     // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\),
     // so the trailing backslash is removed if it exists
-    size_t len = strlen(dirPath);
-    if(len > 0 && dirPath[len-1] == '\\')
+	string dirStr(dirPath);
+    size_t len = dirStr.size();
+    if(len > 0 && (dirPath[len-1] == '\\'  || dirPath[len-1] == '/' ))
     {
-        char* newPath = strndup(dirPath, len-1);
-        hFind = FindFirstFile(newPath, &wfd);
-        free(newPath);
+		dirStr.erase(len-1, 1);
     }
-    else
-    {
-        hFind = FindFirstFile(dirPath, &wfd);
-    }
-
+    
+    hFind = FindFirstFile(dirStr.c_str(), &wfd);
     if(hFind != INVALID_HANDLE_VALUE)
     {
         result = true;
