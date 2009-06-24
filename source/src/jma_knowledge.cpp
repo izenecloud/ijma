@@ -302,8 +302,8 @@ bool JMA_Knowledge::isDirExist(const char* dirPath)
     WIN32_FIND_DATA wfd;
     HANDLE hFind;
 
-    // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\),
-    // so the trailing backslash is removed if it exists
+    // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\) or slash (/),
+    // so the trailing backslash or slash is removed if it exists
 	string dirStr(dirPath);
     size_t len = dirStr.size();
     if(len > 0 && (dirPath[len-1] == '\\'  || dirPath[len-1] == '/' ))
