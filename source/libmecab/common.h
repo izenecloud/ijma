@@ -66,7 +66,11 @@
 
 #ifndef MECAB_DEFAULT_CHARSET
 #if defined(_WIN32) && !defined(__CYGWIN__)
-#define MECAB_DEFAULT_CHARSET "SHIFT-JIS"
+// MODIFY START - JUN
+// to unify the default encoding under both Linux and Win32, change the char set in Win32 to "EUC-JP" below.
+//#define MECAB_DEFAULT_CHARSET "SHIFT-JIS"
+#define MECAB_DEFAULT_CHARSET "EUC-JP"
+// MODIFY END - JUN
 #else
 #define MECAB_DEFAULT_CHARSET "EUC-JP"
 #endif

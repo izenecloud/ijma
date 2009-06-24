@@ -31,15 +31,20 @@ public:
      * Create an instance of \e Analyzer.
      * \return the pointer to instance
      */
-    virtual Analyzer* createAnalyzer() = 0;
+    virtual Analyzer* createAnalyzer();
 
     /**
      * Create an instance of \e Knowledge.
      * \return the pointer to instance
      */
-    virtual Knowledge* createKnowledge() = 0;
+    virtual Knowledge* createKnowledge();
 
 protected:
+    /**
+     * Constructor.
+     */
+    JMA_Factory();
+
     /**
      * Destructor.
      */
