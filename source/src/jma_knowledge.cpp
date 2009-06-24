@@ -14,7 +14,8 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
-#include <cstdlib> // mkstemp
+#include <cstdlib> // mkstemp, free
+#include <cstring> // strlen, strndup
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -301,7 +302,21 @@ bool JMA_Knowledge::isDirExist(const char* dirPath)
 #if defined(_WIN32) && !defined(__CYGWIN__)
     WIN32_FIND_DATA wfd;
     HANDLE hFind;
-    hFind = FindFirstFile(dirPath, &wfd);
+
+    // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\),
+    // so the trailing backslash is removed if it exists
+    size_t len = strlen(dirPath);
+    if(len > 0 && dirPath[len-1] == '\\')
+    {
+        char* newPath = strndup(dirPath, len-1);
+        hFind = FindFirstFile(newPath, &wfd);
+        free(newPath);
+    }
+    else
+    {
+        hFind = FindFirstFile(dirPath, &wfd);
+    }
+
     if(hFind != INVALID_HANDLE_VALUE)
     {
         result = true;

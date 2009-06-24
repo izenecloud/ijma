@@ -37,18 +37,16 @@ int main()
     Analyzer* analyzer = factory->createAnalyzer();
     Knowledge* knowledge = factory->createKnowledge();
 
-    // set encoding of destination files
-    //knowledge->setEncodeType(Knowledge::ENCODE_TYPE_SJIS);
-
-    // set system dictionary directory
+    // set dictionary files
+    const char* sysdict;
 #if defined(_WIN32) && !defined(__CYGWIN__)
-    knowledge->setSystemDict("../../db/ipadic/bin");
+    sysdict = "../../db/ipadic/bin_eucjp";
 #else
-    knowledge->setSystemDict("../db/ipadic/bin");
-    knowledge->addUserDict("../db/userdic/eucjp.csv");
+    sysdict = "../db/ipadic/bin_eucjp";
 #endif
 
     // load dictioanry files
+    knowledge->setSystemDict(sysdict);
     int result = knowledge->loadDict();
     if(result == 0)
     {

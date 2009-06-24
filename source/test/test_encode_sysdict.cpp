@@ -2,13 +2,10 @@
  * Test for encoding the system dictionary from text type to binary type.
  * Below is the usage examples:
  * \code
- * To encode the system dictionary files from text type directory "../db/ipadic/src" to binary type directory "../db/ipadic/bin".
- * $ ./test_encode_sysdict ../db/ipadic/src ../db/ipadic/bin
- *
  * The encoding type of those CSV files in source directory is predefined by the "dictionary-charset" entry of "dicrc" file.
  * While the encoding type of binary files in destination directory could be set to "eucjp" or "sjis" like below, which is "eucjp" defaultly.
- * $ ./test_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin
- * $ ./test_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin
+ * $ ./test_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin_eucjp
+ * $ ./test_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin_sjis
  * \endcode
  * 
  * \author Jun Jiang
