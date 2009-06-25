@@ -14,18 +14,20 @@
 
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
+#include "tokenizer.h"
 
 
 namespace jma
 {
 
 JMA_Analyzer::JMA_Analyzer()
-    : knowledge_(0), tagger_(0), retFullPOS_(false)
+    : knowledge_(0), tagger_(0), ctype_(0), retFullPOS_(false)
 {
 }
 
 JMA_Analyzer::~JMA_Analyzer()
 {
+	delete ctype_;
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
@@ -37,6 +39,10 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     tagger_ = knowledge_->getTagger();
     assert(tagger_);
     tagger_->set_lattice_level(1);
+
+    //set the JMA_CType
+    delete ctype_;
+    ctype_ = JMA_CType::instance(knowledge_->getEncodeType());
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -143,12 +149,12 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
 void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& sentences)
 {
-    /*if(! paragraph)
+    if(! paragraph)
         return;
 
     Sentence result;
     string sentenceStr;
-    Tokenizer tokenizer(*ctype_);
+    CTypeTokenizer tokenizer(ctype_);
     tokenizer.assign(paragraph);
     for(const char* p=tokenizer.next(); p; p=tokenizer.next())
     {
@@ -161,7 +167,7 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
 
             sentenceStr.clear();
         }
-        // white-space characters are also used as sentence separator,
+        /*// white-space characters are also used as sentence separator,
         // but they are ignored in the sentence result
         else if(ctype_->isSpace(p))
         {
@@ -172,7 +178,7 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
 
                 sentenceStr.clear();
             }
-        }
+        }*/
         else
         {
             sentenceStr += p;
@@ -186,7 +192,7 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
         sentences.push_back(result);
 
         sentenceStr.clear();
-    }*/
+    }
 }
 
 void JMA_Analyzer::analyzerSentence(const char *str,

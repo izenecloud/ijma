@@ -21,6 +21,7 @@ namespace jma
 {
 
 class JMA_Knowledge;
+class JMA_CType;
 
 /**
  * JMA_Analyzer executes the Japanese morphological analysis based on conditional random field.
@@ -104,6 +105,11 @@ private:
 	 * The Tagger from the Mecab (returned by the JMA_Knowledge)
 	 */
 	MeCab::Tagger* tagger_;
+
+	/**
+	 * The type of the encoding
+	 */
+	JMA_CType *ctype_;
 
 	/**
 	 * If true, the POS would aa,bb,*,* (* indicates N/A). <br>

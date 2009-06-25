@@ -6,6 +6,10 @@ set(objs_jma
 ./jma_factory
 ./jma_knowledge
 ./jma_analyzer
+./jma_ctype
+./jma_ctype_eucjp
+./jma_ctype_sjis
+./tokenizer
 )
 
 add_library(jma ${objs_jma})
