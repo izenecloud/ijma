@@ -237,6 +237,15 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
         }
     }
 
+    // if pos-id.def exists, copy it to the destination directory
+    const char* posFile = "pos-id.def";
+    src = createFilePath(txtDirPath, posFile);
+    dest = createFilePath(binDirPath, posFile);
+    if(copyFile(src.c_str(), dest.c_str()) == false)
+    {
+        cout << posFile << " is not found in " << txtDirPath << ", default POS index would be 1." << endl;
+    }
+
     return 1;
 }
 

@@ -27,9 +27,12 @@ struct Morpheme
     /** the index code of part-of-speech tag */
     int posCode_;
 
+    /** the POS string value */
+    std::string posStr_;
+
     /**
      * Constructor.
-     * The lexicon string value is initialized with empty string,
+     * The lexicon string value and POS string value are initialized with empty string,
      * and the index code of part-of-speech tag is initialized with -1, meaning that no part-of-speech tag is available.
      */
     Morpheme();
@@ -123,7 +126,7 @@ public:
      * Get the POS string of morpheme \e nIdx in candidate result \e nPos.
      * \param nPos candidate result index
      * \param nIdx morpheme index
-     * \return POS string, null pointer for non POS available
+     * \return POS string
      */
     const char* getStrPOS(int nPos, int nIdx) const;
 

@@ -53,12 +53,7 @@ int Sentence::getPOS(int nPos, int nIdx) const
 
 const char* Sentence::getStrPOS(int nPos, int nIdx) const
 {
-    int posIdx = getPOS(nPos, nIdx);
-
-    // the line below (from CMA code) is commented out and null pointer is returned instead,
-    // this function need to be implemented in JMA.
-    //return POSTable::instance()->getStrFromCode(posIdx);
-    return 0;
+    return candidates_[nPos][nIdx].posStr_.c_str();
 }
 
 double Sentence::getScore(int nPos) const
