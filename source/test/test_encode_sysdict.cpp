@@ -7,7 +7,7 @@
  * $ ./jma_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin_eucjp
  * $ ./jma_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin_sjis
  * \endcode
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 22, 2009
@@ -19,6 +19,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
+#include <string.h>
 
 using namespace std;
 using namespace jma;
@@ -110,6 +111,6 @@ int main(int argc, char* argv[])
         cout << "failed";
     }
     cout << " in encoding from " << srcDir << " to " << destDir << endl;
-    
+
     return 0;
 }

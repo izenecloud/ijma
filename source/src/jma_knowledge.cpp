@@ -1,6 +1,6 @@
 /** \file jma_knowledge.cpp
  * Implementation of class JMA_Knowledge.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 17, 2009
@@ -149,13 +149,18 @@ int JMA_Knowledge::loadDict()
 
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
 {
-    // the lines below (from CMA code) is commented out,
-    // this function needs to be implemented in JMA.
-    //stopWordDict_ = new Dictionary;
-    //bool r = stopWordDict_->load(fileName);
-    bool r = 0;
-
-    return r ? 1 : 0;
+	ifstream in(fileName);
+	assert(in);
+	string line;
+	while(!in.eof())
+	{
+		getline(in, line);
+		if(line.length() <= 0)
+			continue;
+		stopWords_.insert(line);
+	}
+	in.close();
+	return 1;
 }
 
 int JMA_Knowledge::loadConfig(const char* fileName)
@@ -254,6 +259,11 @@ MeCab::Tagger* JMA_Knowledge::getTagger() const
     return tagger_;
 }
 
+bool JMA_Knowledge::isStopWord(const string& word)
+{
+	return stopWords_.find(word) != stopWords_.end();
+}
+
 bool JMA_Knowledge::createTempFile(std::string& tempName)
 {
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -271,7 +281,7 @@ bool JMA_Knowledge::createTempFile(std::string& tempName)
     // file name for temporary file
     char fileName[MAX_PATH];
 
-    // create a unique temporary file 
+    // create a unique temporary file
     UINT nameResult = GetTempFileName(dirName, "jma", 0, fileName);
     if(nameResult == 0)
     {
@@ -284,7 +294,7 @@ bool JMA_Knowledge::createTempFile(std::string& tempName)
     // file name for temporary file
     char fileName[] = "/tmp/jmaXXXXXX";
 
-    // create a unique temporary file 
+    // create a unique temporary file
     int tempFd = mkstemp(fileName);
     if(tempFd == -1)
     {

@@ -1,6 +1,6 @@
 /** \file jma_knowledge.h
  * Definition of class JMA_Knowledge.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 17, 2009
@@ -12,6 +12,10 @@
 #include "knowledge.h"
 
 #include <string>
+#include <set>
+
+using std::string;
+using std::set;
 
 namespace MeCab
 {
@@ -76,6 +80,14 @@ public:
      */
     MeCab::Tagger* getTagger() const;
 
+    /**
+	 * Whether the specific word is stop word
+	 *
+	 * \param word the word to be checked
+	 * \return whether the word is in the stop word list
+	 */
+	bool isStopWord(const string& word);
+
 private:
     /**
      * Remove the tagger and temporary dictionary file if exists.
@@ -119,6 +131,9 @@ private:
 
     /** temporary file name for binary user dictionary */
     std::string tempUserDic_;
+
+    /** stop words set */
+    set<string> stopWords_;
 };
 
 } // namespace jma
