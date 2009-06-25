@@ -4,8 +4,8 @@
  * \code
  * The encoding type of those CSV files in source directory is predefined by the "dictionary-charset" entry of "dicrc" file.
  * While the encoding type of binary files in destination directory could be set to "eucjp" or "sjis" like below, which is "eucjp" defaultly.
- * $ ./test_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin_eucjp
- * $ ./test_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin_sjis
+ * $ ./jma_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin_eucjp
+ * $ ./jma_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin_sjis
  * \endcode
  * 
  * \author Jun Jiang

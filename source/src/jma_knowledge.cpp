@@ -304,11 +304,11 @@ bool JMA_Knowledge::isDirExist(const char* dirPath)
 
     // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\) or slash (/),
     // so the trailing backslash or slash is removed if it exists
-	string dirStr(dirPath);
+    string dirStr(dirPath);
     size_t len = dirStr.size();
     if(len > 0 && (dirPath[len-1] == '\\'  || dirPath[len-1] == '/' ))
     {
-		dirStr.erase(len-1, 1);
+        dirStr.erase(len-1, 1);
     }
     
     hFind = FindFirstFile(dirStr.c_str(), &wfd);
