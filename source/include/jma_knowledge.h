@@ -10,6 +10,8 @@
 #define JMA_KNOWLEDGE_IMPL_H
 
 #include "knowledge.h"
+#include "generic_array.h"
+#include "jma_ctype.h"
 
 #include <string>
 #include <set>
@@ -31,6 +33,8 @@ namespace jma
 class JMA_Knowledge : public Knowledge
 {
 public:
+	typedef GenericArray<unsigned int> SepArray;
+
     /**
      * Constructor.
      */
@@ -95,6 +99,40 @@ public:
      */
     bool isOutputFullPOS() const;
 
+    /**
+     * Check whether is a seperator of sentence.
+     * \param p pointer to the character string
+     * \return true for separator, false for non separator.
+     */
+    bool isSentenceSeparator(const char* p);
+
+    /**
+     * Add the sentence separator, the duplicated one would be ignored (return false)
+     * \param val the sentence separator to be add
+     * \return true if the val not exists in the current sentence separators and add successfully
+     */
+    bool addSentenceSeparator(unsigned int val);
+
+    /**
+     * Invoked when the encode type is changed (except for the initialization)
+     * \param type the new EncodeType
+     */
+    virtual void onEncodeTypeChange(EncodeType type);
+
+    /**
+     * Get the current JMA_CType
+     * \param the current JMA_CType
+     */
+    JMA_CType* getCType();
+
+    /**
+	 * Load the sentence separator configuration file, which is in text format.
+	 * This file each separator character(only one character) per line.
+	 * \param fileName the file name
+	 * \return 0 for fail, 1 for success
+	 */
+	virtual int loadSentenceSeparatorConfig(const char* fileName);
+
 private:
     /**
      * Remove the tagger and temporary dictionary file if exists.
@@ -132,6 +170,14 @@ private:
      */
     static std::string createFilePath(const char* dir, const char* file);
 
+
+	/**
+	 * Get the number of bytes the character val occupies.
+	 * \param val the character to be checked
+	 * \return the number of bytes the character val occupies
+	 */
+	unsigned int getOccupiedBytes(unsigned int val);
+
 private:
     /** tagger for analysis */
     MeCab::Tagger* tagger_;
@@ -144,6 +190,15 @@ private:
 
     /** whether POS result is in the format of full category */
     bool isOutputFullPOS_;
+
+    /** The Character Type */
+    JMA_CType* ctype_;
+
+    /**
+	 * Separator Arrays, index 0 is reserved, and index 1 ~ 4 represents
+	 * character with 1 ~ 4 bytes separately.
+	 */
+	SepArray seps_[5];
 };
 
 } // namespace jma

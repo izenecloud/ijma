@@ -107,11 +107,6 @@ private:
 	MeCab::Tagger* tagger_;
 
 	/**
-	 * The type of the encoding
-	 */
-	JMA_CType *ctype_;
-
-	/**
 	 * If true, the POS would aa,bb,*,* (* indicates N/A). <br>
 	 * Else, return aa,bb (N/A subcategories would be ignored)
 	 */
