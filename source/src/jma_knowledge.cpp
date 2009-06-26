@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
-#include <cstdlib> // mkstemp
+#include <cstdlib> // mkstemp, atoi
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -27,11 +27,16 @@
 
 using namespace std;
 
+namespace
+{
+const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
+}
+
 namespace jma
 {
 
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0)
+    : tagger_(0), isOutputFullPOS_(false)
 {
 }
 
@@ -138,7 +143,7 @@ int JMA_Knowledge::loadDict()
     }
 
 #if JMA_DEBUG_PRINT
-    cout << "parameter of MeCab::createTagger() to create MeCab::Tagger: " << taggerParam << endl;
+    cout << "parameter of MeCab::createTagger() to create MeCab::Tagger: " << taggerParam << endl << endl;
 #endif
 
     // create tagger by loading dictioanry files
@@ -150,7 +155,10 @@ int JMA_Knowledge::loadDict()
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
 {
 	ifstream in(fileName);
-	assert(in);
+    if(!in) {
+        return 0;
+    }
+
 	string line;
 	while(!in.eof())
 	{
@@ -165,13 +173,91 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
 
 int JMA_Knowledge::loadConfig(const char* fileName)
 {
-    // the lines below (from CMA code) is commented out,
-    // this function needs to be implemented in JMA.
-    //POSTable* posTable = POSTable::instance();
-    //bool r = posTable->loadConfig(fileName);
-    bool r = 0;
+    // open file
+    assert(fileName);
+    ifstream from(fileName);
+    if(!from) {
+        return 0;
+    }
 
-    return r ? 1 : 0;
+#if JMA_DEBUG_PRINT
+    cout << "load configuration: " << fileName << endl;
+    cout << "tag\t\tvalue\t\tflag" << endl;
+#endif
+
+    // read file, which consists of lines in the format "tag = value"
+    string line, tag, value;
+    string::size_type i, j, k;
+    const char* whitespaces = " \t";
+
+    while(getline(from, line))
+    {
+        // remove carriage return character
+        line = line.substr(0, line.find('\r'));
+
+        // ignore the comment start with '#'
+        if(!line.empty() && line[0] != '#')
+        {
+            // set k as the position of '='
+            i = line.find_first_not_of(whitespaces);
+            if(i == string::npos)
+            {
+                break;
+            }
+
+            k = line.find_first_of('=', i);
+            if(k == string::npos || k == 0)
+            {
+                break;
+            }
+
+            // set tag
+            j = line.find_last_not_of(whitespaces, k-1);
+            if(j == string::npos)
+            {
+                break;
+            }
+            tag = line.substr(i, j-i+1);
+
+            // set value
+            i = line.find_first_not_of(whitespaces, k+1);
+            if(i == string::npos)
+            {
+                break;
+            }
+
+            j = line.find_last_not_of(whitespaces);
+            if(j == string::npos)
+            {
+                value = line.substr(i);
+            }
+            else
+            {
+                value = line.substr(i, j-i+1);
+            }
+
+            if(tag == CONFIG_TAG_OUTPUT_FULL_POS)
+            {
+                if(atoi(value.c_str()) == 0)
+                {
+                    isOutputFullPOS_ = false;
+                }
+                else
+                {
+                    isOutputFullPOS_ = true;
+                }
+            }
+#if JMA_DEBUG_PRINT
+            cout << tag << "\t" << value << "\t" << isOutputFullPOS_ << endl;
+#endif
+        }
+    }
+
+#if JMA_DEBUG_PRINT
+    cout << endl;
+#endif
+
+    return 1;
 }
 
 int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath)
@@ -259,9 +345,14 @@ MeCab::Tagger* JMA_Knowledge::getTagger() const
     return tagger_;
 }
 
-bool JMA_Knowledge::isStopWord(const string& word)
+bool JMA_Knowledge::isStopWord(const string& word) const
 {
 	return stopWords_.find(word) != stopWords_.end();
+}
+
+bool JMA_Knowledge::isOutputFullPOS() const
+{
+    return isOutputFullPOS_;
 }
 
 bool JMA_Knowledge::createTempFile(std::string& tempName)
