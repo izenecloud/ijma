@@ -43,6 +43,9 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     //set the JMA_CType
     delete ctype_;
     ctype_ = JMA_CType::instance(knowledge_->getEncodeType());
+
+    // set POS output format
+    retFullPOS_ = knowledge_->isOutputFullPOS();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)

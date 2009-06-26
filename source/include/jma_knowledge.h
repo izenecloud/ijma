@@ -86,7 +86,14 @@ public:
 	 * \param word the word to be checked
 	 * \return whether the word is in the stop word list
 	 */
-	bool isStopWord(const string& word);
+	bool isStopWord(const string& word) const;
+
+    /**
+     * Whether POS result is in the format of full category.
+     * \return true for full category format, which might includes asterisk symbol, such like "名詞,数,*,*";
+     *         false for effective category format, which excludes asterisk symbol, such like "名詞,数";
+     */
+    bool isOutputFullPOS() const;
 
 private:
     /**
@@ -134,6 +141,9 @@ private:
 
     /** stop words set */
     set<string> stopWords_;
+
+    /** whether POS result is in the format of full category */
+    bool isOutputFullPOS_;
 };
 
 } // namespace jma
