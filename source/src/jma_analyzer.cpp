@@ -59,11 +59,11 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			string seg(node->surface, node->length);
 			if(knowledge_->isStopWord(seg))
 				continue;
-			Morpheme morp;
-			morp.lexicon_ = seg; //TODO change the encoding
-			//morp.posCode_ = POSTable::instance()->getCodeFromStr(poses[j]);
-			morp.posCode_ = 1; //TODO no pos code here
-			list.push_back(morp);
+			list.push_back(Morpheme());
+			Morpheme& morp = list.back();
+			morp.lexicon_ = seg;
+			morp.posCode_ = (int)node->posid;
+			morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
 		}
 		sentence.addList(list, scores[i]);
 	}

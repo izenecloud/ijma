@@ -1,6 +1,6 @@
 /** \file sentence.h
  * Definition of class Sentence.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 12, 2009
@@ -36,6 +36,14 @@ struct Morpheme
      * and the index code of part-of-speech tag is initialized with -1, meaning that no part-of-speech tag is available.
      */
     Morpheme();
+
+    /**
+	 * Constructor.
+	 * \param lexicon the lexicon string value
+	 * \param posCode the index code of part-of-speech tag
+	 * \param posStr the POS string value
+	 */
+	Morpheme(std::string& lexicon, int posCode, std::string& posStr);
 };
 
 /** A list of morphemes. */
@@ -80,6 +88,18 @@ typedef std::vector<Morpheme> MorphemeList;
 class Sentence
 {
 public:
+
+	/**
+	 * Default Constructor
+	 */
+	Sentence();
+
+	/**
+	 * Constructor with initial sentence string
+	 */
+	Sentence(const char* pString);
+
+
     /**
      * Set the raw sentence string.
      * \param pString value of the raw string

@@ -1,6 +1,6 @@
 /** \file sentence.cpp
  * Implementation of class Sentence.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 12, 2009
@@ -17,6 +17,21 @@ namespace jma
 Morpheme::Morpheme()
     : posCode_(-1)
 {
+}
+
+Morpheme::Morpheme(std::string& lexicon, int posCode, std::string& posStr)
+	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr)
+{
+
+}
+
+Sentence::Sentence()
+{
+}
+
+Sentence::Sentence(const char* pString)
+{
+	raw_ = pString;
 }
 
 void Sentence::setString(const char* pString)
@@ -36,7 +51,7 @@ int Sentence::getListSize(void) const
     return candidates_.size();
 }
 
-int Sentence::getCount(int nPos) const 
+int Sentence::getCount(int nPos) const
 {
     return candidates_[nPos].size();
 }
