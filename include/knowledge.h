@@ -1,6 +1,6 @@
 /** \file knowledge.h
  * Definition of class Knowledge.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 12, 2009
@@ -69,6 +69,14 @@ public:
     virtual int loadConfig(const char* fileName) = 0;
 
     /**
+	 * Load the sentence separator configuration file, which is in text format.
+	 * This file each separator character(only one character) per line.
+	 * \param fileName the file name
+	 * \return 0 for fail, 1 for success
+	 */
+	virtual int loadSentenceSeparatorConfig(const char* fileName) = 0;
+
+    /**
      * Encode the system dictionary files from text to binary format.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files
@@ -98,6 +106,12 @@ public:
      * \return the encode type
      */
     EncodeType getEncodeType() const;
+
+    /**
+     * Invoked when the encode type is changed (except for the initialization)
+     * \param type the new EncodeType
+     */
+    virtual void onEncodeTypeChange(EncodeType type) = 0;
 
 protected:
     /** the directory path of system dictionary files */

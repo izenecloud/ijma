@@ -23,7 +23,9 @@
 #include <dirent.h> // opendir, closedir
 #endif
 
-#define JMA_DEBUG_PRINT 1
+#ifndef JMA_DEBUG_PRINT
+	#define JMA_DEBUG_PRINT 1
+#endif
 
 using namespace std;
 
@@ -36,8 +38,9 @@ namespace jma
 {
 
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0), isOutputFullPOS_(false)
+    : tagger_(0), isOutputFullPOS_(false), ctype_(0)
 {
+	onEncodeTypeChange( getEncodeType() );
 }
 
 JMA_Knowledge::~JMA_Knowledge()
@@ -102,16 +105,16 @@ int JMA_Knowledge::loadDict()
 
         // construct parameter to compile user dictionary
         vector<char*> compileParam;
-        compileParam.push_back("JMA_Knowledge");
-        compileParam.push_back("-d");
+        compileParam.push_back((char*)"JMA_Knowledge");
+        compileParam.push_back((char*)"-d");
         compileParam.push_back(const_cast<char*>(systemDictPath_.c_str()));
-        compileParam.push_back("-u");
+        compileParam.push_back((char*)"-u");
         compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
 
         // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
         // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
         // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
-        compileParam.push_back("-t");
+        compileParam.push_back((char*)"-t");
         compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
         // append source files of user dictionary
@@ -155,7 +158,8 @@ int JMA_Knowledge::loadDict()
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
 {
 	ifstream in(fileName);
-    if(!in) {
+    if(!in)
+    {
         return 0;
     }
 
@@ -284,16 +288,16 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
     // construct parameter to compile system dictionary
     vector<char*> compileParam;
-    compileParam.push_back("JMA_Knowledge");
-    compileParam.push_back("-d");
+    compileParam.push_back((char*)"JMA_Knowledge");
+    compileParam.push_back((char*)"-d");
     compileParam.push_back(const_cast<char*>(txtDirPath));
-    compileParam.push_back("-o");
+    compileParam.push_back((char*)"-o");
     compileParam.push_back(const_cast<char*>(binDirPath));
 
     // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file under source directory path,
     // if the source encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
     // below is to set the destination encoding type, which is "EUC-JP" defaultly.
-    compileParam.push_back("-t");
+    compileParam.push_back((char*)"-t");
     compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
 #if JMA_DEBUG_PRINT
@@ -420,7 +424,7 @@ bool JMA_Knowledge::isDirExist(const char* dirPath)
     {
         dirStr.erase(len-1, 1);
     }
-    
+
     hFind = FindFirstFile(dirStr.c_str(), &wfd);
     if(hFind != INVALID_HANDLE_VALUE)
     {
@@ -495,6 +499,98 @@ std::string JMA_Knowledge::createFilePath(const char* dir, const char* file)
 
     result += file;
     return result;
+}
+
+JMA_CType* JMA_Knowledge::getCType()
+{
+	return ctype_;
+}
+
+void JMA_Knowledge::onEncodeTypeChange(EncodeType type)
+{
+	delete ctype_;
+	ctype_ = JMA_CType::instance(type);
+}
+
+bool JMA_Knowledge::isSentenceSeparator(const char* p)
+{
+	unsigned int bytes = ctype_->getByteCount(p);
+
+	const unsigned char* uc = (const unsigned char*)p;
+
+	switch(bytes)
+	{
+		case 1:
+			return seps_[1].contains( uc[0] );
+		case 2:
+			return seps_[2].contains( uc[0] << 8 | uc[1]);
+		case 3:
+			return seps_[3].contains( uc[0] << 16 | uc[1] << 8 | uc[2] );
+		case 4:
+			return seps_[4].contains( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
+		default:
+			assert(false && "Cannot handle Character's length > 4");
+	}
+
+	return false;
+}
+
+bool JMA_Knowledge::addSentenceSeparator(unsigned int val)
+{
+	return seps_[getOccupiedBytes(val)].insert(val);
+}
+
+unsigned int JMA_Knowledge::getOccupiedBytes(unsigned int val)
+{
+	unsigned int ret = 1;
+	while( val & 0xffffff00 )
+	{
+		val >>= 4;
+		++ ret;
+	}
+	assert( ret > 0 && ret < 4 );
+	return ret;
+}
+
+int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
+{
+	ifstream in(fileName);
+    if(!in)
+    {
+        return 0;
+    }
+
+	string line;
+	while(!in.eof())
+	{
+		getline(in, line);
+		if(line.length() <= 0)
+			continue;
+		unsigned int bytes = ctype_->getByteCount( line.c_str() );
+
+		const unsigned char* uc = (const unsigned char*)line.c_str();
+
+		switch(bytes)
+		{
+			case 1:
+				seps_[1].insert( uc[0] );
+				break;
+			case 2:
+				seps_[2].insert( uc[0] << 8 | uc[1]);
+				break;
+			case 3:
+				seps_[3].insert( uc[0] << 16 | uc[1] << 8 | uc[2] );
+				break;
+			case 4:
+				seps_[4].insert( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
+				break;
+			default:
+				assert(false && "Cannot handle Character's length > 4");
+				break;
+		}
+	}
+	in.close();
+	return 1;
 }
 
 } // namespace jma

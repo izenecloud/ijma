@@ -1,6 +1,6 @@
 /** \file knowledge.cpp
  * Implementation of class Knowledge.
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 12, 2009
@@ -26,7 +26,11 @@ Knowledge::~Knowledge()
 
 void Knowledge::setEncodeType(EncodeType type)
 {
-    encodeType_ = type;
+    if( encodeType_ != type )
+    {
+		encodeType_ = type;
+		onEncodeTypeChange( type );
+    }
 }
 
 Knowledge::EncodeType Knowledge::getEncodeType() const

@@ -21,13 +21,12 @@ namespace jma
 {
 
 JMA_Analyzer::JMA_Analyzer()
-    : knowledge_(0), tagger_(0), ctype_(0), retFullPOS_(false)
+    : knowledge_(0), tagger_(0), retFullPOS_(false)
 {
 }
 
 JMA_Analyzer::~JMA_Analyzer()
 {
-	delete ctype_;
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
@@ -39,10 +38,6 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     tagger_ = knowledge_->getTagger();
     assert(tagger_);
     tagger_->set_lattice_level(1);
-
-    //set the JMA_CType
-    delete ctype_;
-    ctype_ = JMA_CType::instance(knowledge_->getEncodeType());
 
     // set POS output format
     retFullPOS_ = knowledge_->isOutputFullPOS();
@@ -157,11 +152,11 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
 
     Sentence result;
     string sentenceStr;
-    CTypeTokenizer tokenizer(ctype_);
+    CTypeTokenizer tokenizer( knowledge_->getCType() );
     tokenizer.assign(paragraph);
     for(const char* p=tokenizer.next(); p; p=tokenizer.next())
     {
-        if(ctype_->isSentenceSeparator(p))
+        if( knowledge_->isSentenceSeparator(p) )
         {
             sentenceStr += p;
 
