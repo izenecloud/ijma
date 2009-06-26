@@ -7,6 +7,7 @@
 
 #include "jma_ctype.h"
 #include "jma_ctype_eucjp.h"
+#include "jma_ctype_sjis.h"
 
 #include <cassert>
 
@@ -23,10 +24,10 @@ JMA_CType* JMA_CType::instance(Knowledge::EncodeType type)
 	    return JMA_CType_EUCJP::instance();
 
 	case Knowledge::ENCODE_TYPE_SJIS:
-	    return 0;
+	    return JMA_CType_SJIS::instance();
 
 	default:
-	    assert(false && "unkown character encode type");
+	    assert(false && "Unknown character encode type");
 	    return 0;
     }
 }
@@ -42,7 +43,7 @@ Knowledge::EncodeType JMA_CType::getEncType(string encType)
         return Knowledge::ENCODE_TYPE_SJIS;
     }
 
-    assert(false && "unkown character encode type");
+    assert(false && "Unknown character encode type");
     return Knowledge::ENCODE_TYPE_NUM;
 }
 
@@ -67,7 +68,42 @@ size_t JMA_CType::length(const char* p) const
 
 bool JMA_CType::isSentenceSeparator(const char* p)
 {
+	unsigned int bytes = getByteCount(p);
+
+	const unsigned char* uc = (const unsigned char*)p;
+
+	switch(bytes)
+	{
+		case 1:
+			return seps_[1].contains( uc[0] );
+		case 2:
+			return seps_[2].contains( uc[0] << 8 | uc[1]);
+		case 3:
+			return seps_[3].contains( uc[0] << 16 | uc[1] << 8 | uc[2] );
+		case 4:
+			return seps_[4].contains( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
+		default:
+			assert(false && "Cannot handle Character's length > 4");
+	}
+
 	return false;
 }
 
-} // namespace cma
+bool JMA_CType::addSentenceSeparator(unsigned int val)
+{
+	return seps_[getOccupiedBytes(val)].insert(val);
+}
+
+unsigned int JMA_CType::getOccupiedBytes(unsigned int val)
+{
+	unsigned int ret = 1;
+	while( val & 0xffffff00 )
+	{
+		val >>= 4;
+		++ ret;
+	}
+	assert( ret > 0 && ret < 4 );
+	return ret;
+}
+
+} // namespace jma
