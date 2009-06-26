@@ -30,11 +30,10 @@ int main()
     JMA_Knowledge* knowledge = new JMA_Knowledge;
 
     // set system dictionary directory
-    knowledge->setSystemDict("../db/ipadic/bin");
+    knowledge->setSystemDict("../db/ipadic/bin_eucjp");
 
     // add user dictionary files
-    knowledge->addUserDict("../db/userdic/1.csv");
-    //knowledge->addUserDict("../db/userdic/2.csv");
+    knowledge->addUserDict("../db/userdic/eucjp.csv");
 
     // load dictioanry files
     int result = knowledge->loadDict();
@@ -78,7 +77,8 @@ int main()
 			cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
 			for(int j=0; j<s.getCount(i); ++j)
 			{
-				cout<< s.getLexicon(i, j) /*<< "/" << s.getStrPOS(i, j)*/ << " ";
+				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << " ";
+				//cout<< s.getLexicon(i, j) << "/" << s.getPOS(i, j) << " ";
 			}
 			cout<<endl;
 		}
