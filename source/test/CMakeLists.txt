@@ -5,6 +5,7 @@ add_executable(test_jma_analyzer test_jma_analyzer.cpp)
 add_executable(test_jma_factory test_jma_factory.cpp)
 add_executable(test_jma_encoding test_jma_encoding.cpp)
 add_executable(jma_encode_sysdict test_encode_sysdict.cpp)
+add_executable(jma_gen_posid_def test_gen_posid_def.cpp)
 
 target_link_libraries(test_jma_knowledge ${LIBS_JMA} ${LIBS_MECAB})
 target_link_libraries(test_jma_analyzer ${LIBS_JMA} ${LIBS_MECAB})
