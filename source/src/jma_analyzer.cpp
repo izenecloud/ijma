@@ -21,7 +21,7 @@ namespace jma
 {
 
 JMA_Analyzer::JMA_Analyzer()
-    : knowledge_(0), tagger_(0), retFullPOS_(false)
+    : knowledge_(0), tagger_(0)
 {
 }
 
@@ -39,8 +39,6 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     assert(tagger_);
     tagger_->set_lattice_level(1);
 
-    // set POS output format
-    retFullPOS_ = knowledge_->isOutputFullPOS();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -233,35 +231,39 @@ void JMA_Analyzer::analyzerSentence(const char *str,
 }
 
 int JMA_Analyzer::getPOSOffset(const char* feature){
-	if(retFullPOS_){
+	if( knowledge_->isOutputFullPOS() )
+	{
 		// count for the index of the fourth offset
 		int offset = 0;
 		int commaCount = 0;
-		for(; feature[offset]; ++offset){
-			if(feature[offset] == ','){
+		for( ; feature[offset]; ++offset )
+		{
+			if(feature[offset] == ',')
+			{
 				++commaCount;
 				if(commaCount > 3)
 					break;
 			}
 		}
-
 		return offset;
 	}
 
 	 //count for the index of the comma that after non-star pos sections
 	int offset = 0;
 	int commaCount = 0;
-	for(; feature[offset]; ++offset){
-		if(feature[offset] == ','){
+	for( ; feature[offset]; ++offset )
+	{
+		if(feature[offset] == ',')
+		{
 			++commaCount;
 			if(commaCount > 3)
 				break;
 		}
-		else if(feature[offset] == '*'){
+		else if(feature[offset] == '*')
+		{
 			//if offset is 0, contains nothing
 			return offset ? offset - 1 : 0 ;
 		}
-
 	}
 
 	return offset;

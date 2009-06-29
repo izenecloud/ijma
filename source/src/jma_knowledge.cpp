@@ -515,7 +515,6 @@ void JMA_Knowledge::onEncodeTypeChange(EncodeType type)
 bool JMA_Knowledge::isSentenceSeparator(const char* p)
 {
 	unsigned int bytes = ctype_->getByteCount(p);
-
 	const unsigned char* uc = (const unsigned char*)p;
 
 	switch(bytes)
@@ -563,8 +562,9 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 	string line;
 	while(!in.eof())
 	{
-		getline(in, line);
-		if(line.length() <= 0)
+		 getline(in, line);
+		//ignore the empty line and comment line(start with '#')
+		if( line.empty() || line[0] == '#' )
 			continue;
 		unsigned int bytes = ctype_->getByteCount( line.c_str() );
 
@@ -585,7 +585,7 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 				seps_[4].insert( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
 				break;
 			default:
-				assert(false && "Cannot handle Character's length > 4");
+				assert(false && "Cannot handle 'Character's length > 4'");
 				break;
 		}
 	}

@@ -5,7 +5,7 @@
  * Test to create and use JMA_Knowledge.
  * $./test_jma_knowledge
  * \endcode
- * 
+ *
  * \author Jun Jiang
  * \version 0.1
  * \date Jun 18, 2009
@@ -54,7 +54,7 @@ int main()
     MeCab::Tagger* tagger = knowledge->getTagger();
     assert(tagger && "MeCab::Tagger is accessible after dictionary is loaded");
 
-    // just for test: get dictionary info 
+    // just for test: get dictionary info
     cout << endl << "dictionary infos:" << endl;
     for (const MeCab::DictionaryInfo *d = tagger->dictionary_info(); d; d = d->next) {
         cout << "filename:\t" << d->filename << endl;
@@ -67,7 +67,18 @@ int main()
         cout << endl;
     }
 
+    cout<<"\nTest the Sentence Separator "<<endl;
+    knowledge->loadSentenceSeparatorConfig("../db/config/sen-eucjp.config");
+    assert( knowledge->isSentenceSeparator(".") );
+    assert( knowledge->isSentenceSeparator("!") );
+    assert( !knowledge->isSentenceSeparator("=") );
+    assert( knowledge->isSentenceSeparator("¡£") );
+    assert( !knowledge->isSentenceSeparator("¡¢") );
+    assert( !knowledge->isSentenceSeparator("¤Î") );
+
+
     delete knowledge;
 
+    cout<<"All tests are done!"<<endl;
     return 0;
 }

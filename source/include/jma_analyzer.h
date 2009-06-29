@@ -106,12 +106,6 @@ private:
 	 */
 	MeCab::Tagger* tagger_;
 
-	/**
-	 * If true, the POS would aa,bb,*,* (* indicates N/A). <br>
-	 * Else, return aa,bb (N/A subcategories would be ignored)
-	 */
-	bool retFullPOS_;
-
 	string strBuf_;
 
 };
