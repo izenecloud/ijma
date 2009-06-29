@@ -61,7 +61,13 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			morp.posCode_ = (int)node->posid;
 			morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
 		}
-		sentence.addList(list, scores[i]);
+		if( retSize > 1 )
+			sentence.addList(list, scores[i]);
+		else
+		{
+			sentence.addList(list, 1.0); //no score gained here
+			break;
+		}
 	}
 
 

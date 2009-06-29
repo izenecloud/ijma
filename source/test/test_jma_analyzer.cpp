@@ -49,7 +49,7 @@ int main()
 
     JMA_Analyzer* analyzer = new JMA_Analyzer;
     analyzer->setKnowledge(knowledge);
-    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 3);
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 1);
     analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 1);
 
     /*
