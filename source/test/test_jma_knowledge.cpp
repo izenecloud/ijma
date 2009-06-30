@@ -68,7 +68,13 @@ int main()
     }
 
     cout<<"\nTest the Sentence Separator "<<endl;
-    knowledge->loadSentenceSeparatorConfig("../db/config/sen-eucjp.config");
+    const char* senConfig;
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    senConfig = "../../db/config/sen-eucjp.config";
+#else
+    senConfig = "../db/config/sen-eucjp.config";
+#endif
+    knowledge->loadSentenceSeparatorConfig(senConfig);
     assert( knowledge->isSentenceSeparator(".") );
     assert( knowledge->isSentenceSeparator("!") );
     assert( !knowledge->isSentenceSeparator("=") );
