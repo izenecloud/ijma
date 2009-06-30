@@ -158,6 +158,13 @@ public:
     double getScore(int nPos) const;
 
     /**
+     * Set the score of candidate result \e nPos.
+     * \param nPos candidate result index
+     * \param nScore the score value
+     */
+    void setScore(int nPos, double nScore);
+
+    /**
      * Get the index of the candidate result, which has the highest score.
      * \return candidate result index, -1 is returned if there is no candidate result.
      */

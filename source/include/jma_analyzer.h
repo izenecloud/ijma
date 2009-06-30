@@ -82,12 +82,6 @@ public:
 private:
 
 	/**
-	 * The Function to take the actual Sentence Segmentation and POS tagging
-	 */
-	void analyzerSentence(const char *str, vector<const MeCab::Node*>& nodes,
-			vector<double>* scores, int N);
-
-	/**
 	 * If the feature is aa,bb,*,*,v1,v2,* (the POS locates the first four sections which
 	 * was separated by comma).<br>
 	 * If Length is true, return 10 (the index of the fourth comma, include the * sections),<br>

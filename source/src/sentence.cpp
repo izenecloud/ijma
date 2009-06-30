@@ -76,6 +76,11 @@ double Sentence::getScore(int nPos) const
     return scores_[nPos];
 }
 
+void Sentence::setScore(int nPos, double nScore)
+{
+	scores_[nPos] = nScore;
+}
+
 int Sentence::getOneBestIndex(void) const
 {
     if(scores_.empty())

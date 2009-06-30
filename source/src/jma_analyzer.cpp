@@ -45,14 +45,14 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
-	vector<const MeCab::Node*> nodes;
-	vector<double> scores;
-	analyzerSentence(sentence.getString(), nodes, &scores, N);
-	size_t retSize = nodes.size();
-	for (size_t i = 0; i < retSize; ++i) {
+
+	//one best
+	if(N <= 1)
+	{
+		const MeCab::Node* bosNode = tagger_->parseToNode( sentence.getString() );
 		MorphemeList list;
-		const MeCab::Node* bosNode = nodes[i];
-		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
+		{
 			string seg(node->surface, node->length);
 			if(knowledge_->isStopWord(seg))
 				continue;
@@ -65,15 +65,46 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
 			}
 		}
-		if( retSize > 1 )
-			sentence.addList(list, scores[i]);
-		else
+		sentence.addList(list, 1.0);
+	}
+	else
+	{
+		long lgTotalScore = 0; // total of score with long type
+
+		//TODO check return value of parseNBestInit here
+		tagger_->parseNBestInit( sentence.getString() );
+
+		int i = 0;
+		for ( ; i < N; ++i )
 		{
-			sentence.addList(list, 1.0); //no score gained here
-			break;
+			const MeCab::Node* bosNode = tagger_->nextNode();
+			if( !bosNode )
+				break;
+			MorphemeList list;
+			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
+			{
+				string seg(node->surface, node->length);
+				if(knowledge_->isStopWord(seg))
+					continue;
+				list.push_back(Morpheme());
+				Morpheme& morp = list.back();
+				morp.lexicon_ = seg;
+				if(printPOS)
+				{
+					morp.posCode_ = (int)node->posid;
+					morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
+				}
+			}
+			long score = tagger_->nextScore();
+			lgTotalScore += score;
+			sentence.addList( list, score );
+		}
+
+		for ( int j = 0; j < i; ++j )
+		{
+			sentence.setScore(j, sentence.getScore(j) / lgTotalScore );
 		}
 	}
-
 
 	return 1;
 }
@@ -81,19 +112,17 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 const char* JMA_Analyzer::runWithString(const char* inStr)
 {
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
-	vector<const MeCab::Node*> nodes;
-	analyzerSentence(inStr, nodes, 0, 1);
+
+	const MeCab::Node* bosNode = tagger_->parseToNode( inStr );
 
 	strBuf_.clear();
 	if (printPOS) {
-		const MeCab::Node* bosNode = nodes[0];
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 			strBuf_.append(node->surface, node->length).append(posDelimiter_).
 				append(node->feature, getPOSOffset(node->feature) ).append(wordDelimiter_);
 		}
 
 	} else {
-		const MeCab::Node* bosNode = nodes[0];
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 			strBuf_.append(node->surface, node->length).append(wordDelimiter_);
 		}
@@ -119,11 +148,9 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
             continue;
         }
 
-        vector<const MeCab::Node*> nodes;
-        analyzerSentence(line.c_str(), nodes, 0, 1);
+        const MeCab::Node* bosNode = tagger_->parseToNode( line.c_str() );
 
         if (printPOS) {
-        	const MeCab::Node* bosNode = nodes[0];
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 				out.write(node->surface, node->length) << posDelimiter_;
 				out.write(node->feature, getPOSOffset(node->feature) ) << wordDelimiter_;
@@ -131,20 +158,18 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
             if (remains)
                 out << endl;
-            else {
+            else
                 break;
-            }
+
         } else {
-        	const MeCab::Node* bosNode = nodes[0];
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 				out.write(node->surface, node->length) << wordDelimiter_;
 			}
 
 			if (remains)
 				out << endl;
-			else {
+			else
 				break;
-			}
         }
     }
 
@@ -201,44 +226,6 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
     }
 }
 
-void JMA_Analyzer::analyzerSentence(const char *str,
-		vector<const MeCab::Node*>& nodes, vector<double>* scores, int N){
-	//one best
-	if(N <= 1){
-		const MeCab::Node* ret = tagger_->parseToNode(str);
-		nodes.push_back(ret);
-		//don't update scores vector here
-		return;
-	}
-
-	assert(scores);
-
-	//N-best
-	vector<long> lgScore; //score with long type
-	long lgTotalScore = 0; // total of score with long type
-
-	//TODO check return value of parseNBestInit here
-	tagger_->parseNBestInit(str);
-
-	vector<const MeCab::Node*> rvnodes; //nodes in reverse order
-
-	int i = 0;
-	for ( ; i < N; ++i) {
-		const MeCab::Node* ret = tagger_->nextNode();
-		if(!ret)
-			break;
-		rvnodes.push_back(ret);
-		long score = tagger_->nextScore();
-		lgTotalScore += score;
-		lgScore.push_back(score);
-	}
-
-	//update the N-best score
-	for( int j = i - 1 ; j >= 0 ; --j ){
-		scores->push_back(lgScore[j] * 1.0 / lgTotalScore);
-		nodes.push_back(rvnodes[j]);
-	}
-}
 
 int JMA_Analyzer::getPOSOffset(const char* feature){
 	if( knowledge_->isOutputFullPOS() )
