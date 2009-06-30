@@ -19,9 +19,9 @@
 #include <set>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <cassert>
 #include <cstdlib>
-#include <string.h>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <windows.h> // FindFirstFile, FindClose
@@ -158,12 +158,12 @@ bool extractPOS(const vector<string>& dics, set<string>& posSet, size_t posColum
     // start column of POS in "*.csv" file
     size_t posStart = 4;
 
-    for(size_t i=0; i<dics.size(); ++i)
+    for(size_t index=0; index<dics.size(); ++index)
     {
-        ifstream from(dics[i].c_str());
+        ifstream from(dics[index].c_str());
         if(! from)
         {
-            cerr << "failed to open file " << dics[i] << endl;
+            cerr << "failed to open file " << dics[index] << endl;
             return false;
         }
 

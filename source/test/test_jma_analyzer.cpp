@@ -29,13 +29,20 @@ int main()
     // create knowledge
     JMA_Knowledge* knowledge = new JMA_Knowledge;
 
-    // set system dictionary directory
-    knowledge->setSystemDict("../db/ipadic/bin_eucjp");
-
-    // add user dictionary files
-    knowledge->addUserDict("../db/userdic/eucjp.csv");
+    // set dictionary files
+    const char* sysdict;
+    const char* userdict;
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    sysdict = "../../db/ipadic/bin_eucjp";
+    userdict = "../../db/userdic/eucjp.csv";
+#else
+    sysdict = "../db/ipadic/bin_eucjp";
+    userdict = "../db/userdic/eucjp.csv";
+#endif
 
     // load dictioanry files
+    knowledge->setSystemDict(sysdict);
+    knowledge->addUserDict(userdict);
     int result = knowledge->loadDict();
     if(result == 0)
     {

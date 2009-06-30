@@ -31,14 +31,24 @@ using namespace std;
 
 namespace
 {
+/** Tag string in JMA config file for whether output POS result in full category */
 const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
+
+/** Default value of POS category number */
+const int POS_CAT_NUM_DEFAULT = 4;
+
+/** Dictionary configure and definition files */
+const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
+
+/** POS index definition file name */
+const char* POS_ID_DEF_FILE = "pos-id.def";
 }
 
 namespace jma
 {
 
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0), isOutputFullPOS_(false), ctype_(0)
+    : tagger_(0), isOutputFullPOS_(false), posCatNum_(POS_CAT_NUM_DEFAULT), ctype_(0)
 {
 	onEncodeTypeChange( getEncodeType() );
 }
@@ -151,6 +161,38 @@ int JMA_Knowledge::loadDict()
 
     // create tagger by loading dictioanry files
     tagger_ = MeCab::createTagger(taggerParam.c_str());
+
+    // get POS category number from "pos-id.def"
+    string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
+    ifstream posFile(posFileName.c_str());
+    // if no "pos-id.def" exists, the default value of POS category number would be used.
+    if(posFile)
+    {
+        // read in a non-emtpy line
+        string line;
+        while(getline(posFile, line) && line.empty()) ;
+
+        // the format of the line is assumed such like "その他,間投,*,* 0"
+        if(! line.empty())
+        {
+            // remove characters starting from space
+            line.erase(line.find(' '));
+
+            // count the number of separator ','
+            int count = 0;
+            for(size_t i=0; i<line.size(); ++i)
+            {
+                if(line[i] == ',')
+                {
+                    ++count;
+                }
+            }
+            posCatNum_ = count + 1;
+        }
+#if JMA_DEBUG_PRINT
+        cout << posCatNum_ << " POS categories in " << posFileName << endl;
+#endif
+    }
 
     return tagger_ ? 1 : 0;
 }
@@ -318,13 +360,12 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     }
 
     // copy configure and definition files to the destination directory
-    const char* configFiles[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
-    size_t configNum = sizeof(configFiles) / sizeof(configFiles[0]);
+    size_t configNum = sizeof(DICT_CONFIG_FILES) / sizeof(DICT_CONFIG_FILES[0]);
     string src, dest;
     for(size_t i=0; i<configNum; ++i)
     {
-        src = createFilePath(txtDirPath, configFiles[i]);
-        dest = createFilePath(binDirPath, configFiles[i]);
+        src = createFilePath(txtDirPath, DICT_CONFIG_FILES[i]);
+        dest = createFilePath(binDirPath, DICT_CONFIG_FILES[i]);
 
         if(copyFile(src.c_str(), dest.c_str()) == false)
         {
@@ -333,12 +374,11 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     }
 
     // if pos-id.def exists, copy it to the destination directory
-    const char* posFile = "pos-id.def";
-    src = createFilePath(txtDirPath, posFile);
-    dest = createFilePath(binDirPath, posFile);
+    src = createFilePath(txtDirPath, POS_ID_DEF_FILE);
+    dest = createFilePath(binDirPath, POS_ID_DEF_FILE);
     if(copyFile(src.c_str(), dest.c_str()) == false)
     {
-        cout << posFile << " is not found in " << txtDirPath << ", default POS index would be 1." << endl;
+        cout << POS_ID_DEF_FILE << " is not found in " << txtDirPath << ", default POS index would be 1." << endl;
     }
 
     return 1;
@@ -357,6 +397,11 @@ bool JMA_Knowledge::isStopWord(const string& word) const
 bool JMA_Knowledge::isOutputFullPOS() const
 {
     return isOutputFullPOS_;
+}
+
+int JMA_Knowledge::getPOSCatNum() const
+{
+    return posCatNum_;
 }
 
 bool JMA_Knowledge::createTempFile(std::string& tempName)
