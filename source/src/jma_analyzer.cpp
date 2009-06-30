@@ -38,7 +38,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     tagger_ = knowledge_->getTagger();
     assert(tagger_);
     tagger_->set_lattice_level(1);
-
+    maxPosCateOffset_ = knowledge_->getPOSCatNum() - 1;
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -69,11 +69,12 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	}
 	else
 	{
-		long lgTotalScore = 0; // total of score with long type
+		double totalScore = 0;
 
 		//TODO check return value of parseNBestInit here
 		tagger_->parseNBestInit( sentence.getString() );
 
+		long base = 0;
 		int i = 0;
 		for ( ; i < N; ++i )
 		{
@@ -96,13 +97,17 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				}
 			}
 			long score = tagger_->nextScore();
-			lgTotalScore += score;
-			sentence.addList( list, score );
+			if( i == 0 )
+				base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
+
+			double dScore = 1.0 / (score - base );
+			totalScore += dScore;
+			sentence.addList( list, dScore );
 		}
 
 		for ( int j = 0; j < i; ++j )
 		{
-			sentence.setScore(j, sentence.getScore(j) / lgTotalScore );
+			sentence.setScore(j, sentence.getScore(j) / totalScore );
 		}
 	}
 
@@ -238,7 +243,7 @@ int JMA_Analyzer::getPOSOffset(const char* feature){
 			if(feature[offset] == ',')
 			{
 				++commaCount;
-				if(commaCount > 3)
+				if( commaCount > maxPosCateOffset_ )
 					break;
 			}
 		}
@@ -253,7 +258,7 @@ int JMA_Analyzer::getPOSOffset(const char* feature){
 		if(feature[offset] == ',')
 		{
 			++commaCount;
-			if(commaCount > 3)
+			if( commaCount > maxPosCateOffset_ )
 				break;
 		}
 		else if(feature[offset] == '*')

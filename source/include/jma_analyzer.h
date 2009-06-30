@@ -15,6 +15,9 @@
 
 #include <string>
 
+/** Base N-Best Score */
+#define BASE_NBEST_SCORE 200
+
 using namespace std;
 
 namespace jma
@@ -102,6 +105,10 @@ private:
 
 	string strBuf_;
 
+	/**
+	 * The max index(begin with 0) of the POS Category Levels
+	 */
+	int maxPosCateOffset_;
 };
 
 } // namespace jma
