@@ -43,6 +43,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
+	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
 	vector<const MeCab::Node*> nodes;
 	vector<double> scores;
@@ -58,8 +59,11 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			list.push_back(Morpheme());
 			Morpheme& morp = list.back();
 			morp.lexicon_ = seg;
-			morp.posCode_ = (int)node->posid;
-			morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
+			if(printPOS)
+			{
+				morp.posCode_ = (int)node->posid;
+				morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
+			}
 		}
 		if( retSize > 1 )
 			sentence.addList(list, scores[i]);
