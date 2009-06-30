@@ -100,6 +100,13 @@ public:
     bool isOutputFullPOS() const;
 
     /**
+     * Get POS category number.
+     * For example, if dictionary file contains POS like "名詞,固有名詞,人名,名", the POS category number would be 4.
+     * \return POS category number.
+     */
+    int getPOSCatNum() const;
+
+    /**
      * Check whether is a seperator of sentence.
      * \param p pointer to the character string
      * \return true for separator, false for non separator.
@@ -190,6 +197,9 @@ private:
 
     /** whether POS result is in the format of full category */
     bool isOutputFullPOS_;
+
+    /** POS category number, which value is got from "pos-id.def" in the directory of system dictionary in binary type */
+    int posCatNum_;
 
     /** The Character Type */
     JMA_CType* ctype_;
