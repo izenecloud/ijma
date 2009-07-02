@@ -29,6 +29,7 @@ int main()
     // create knowledge
     JMA_Knowledge* knowledge = new JMA_Knowledge;
 
+    cout<<"\n#Test the System and User Dictionaries. "<<endl;
     // set dictionary files
     const char* sysdict;
     const char* userdict;
@@ -67,7 +68,7 @@ int main()
         cout << endl;
     }
 
-    cout<<"\nTest the Sentence Separator "<<endl;
+    cout<<"\n#Test the Sentence Separator "<<endl;
     const char* senConfig;
 #if defined(_WIN32) && !defined(__CYGWIN__)
     senConfig = "../../db/config/sen-eucjp.config";
@@ -83,8 +84,24 @@ int main()
     assert( !knowledge->isSentenceSeparator("の") );
 
 
+    cout<<"\n#Test the Stop Words Dictionary "<<endl;
+    const char* stopWordDic;
+#if defined(_WIN32) && !defined(__CYGWIN__)
+    stopWordDic = "../../db/stopworddic/test-eucjp.txt";
+#else
+    stopWordDic = "../db/stopworddic/test-eucjp.txt";
+#endif
+    knowledge->loadStopWordDict(stopWordDic);
+    assert( knowledge->isStopWord("教師") );
+    assert( !knowledge->isStopWord("胸元") );
+    assert( knowledge->isStopWord("年生") );
+    assert( !knowledge->isStopWord("年1生") );
+    assert( knowledge->isStopWord("し") );
+    assert( knowledge->isStopWord("は") );
+    assert( !knowledge->isStopWord("はし") );
+
     delete knowledge;
 
-    cout<<"All tests are done!"<<endl;
+    cout<<"\n#All tests are done!"<<endl;
     return 0;
 }
