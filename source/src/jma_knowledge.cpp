@@ -202,6 +202,7 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
 	ifstream in(fileName);
     if(!in)
     {
+        cerr << "cannot open file: " << fileName << endl;
         return 0;
     }
 
@@ -223,6 +224,7 @@ int JMA_Knowledge::loadConfig(const char* fileName)
     assert(fileName);
     ifstream from(fileName);
     if(!from) {
+        cerr << "cannot open file: " << fileName << endl;
         return 0;
     }
 
@@ -601,6 +603,7 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 	ifstream in(fileName);
     if(!in)
     {
+        cerr << "cannot open file: " << fileName << endl;
         return 0;
     }
 
