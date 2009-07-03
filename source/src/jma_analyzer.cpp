@@ -71,8 +71,12 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	{
 		double totalScore = 0;
 
-		//TODO check return value of parseNBestInit here
-		tagger_->parseNBestInit( sentence.getString() );
+
+		if( !tagger_->parseNBestInit( sentence.getString() ) )
+		{
+			cerr << "[Error] Cannot parseNBestInit on the " << sentence.getString() << endl;
+			return 0;
+		}
 
 		long base = 0;
 		int i = 0;
@@ -139,9 +143,17 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 
 int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 {
+	assert(inFileName);
+	assert(outFileName);
+
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 
 	ifstream in(inFileName);
+	if(!in)
+	{
+		cerr<<"[Error] The input file "<<inFileName<<" not exists!"<<endl;
+		return 0;
+	}
     ofstream out(outFileName);
     string line;
     bool remains = !in.eof();
@@ -149,7 +161,8 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
         getline(in, line);
         remains = !in.eof();
         if (!line.length()) {
-            out << endl;
+            if( remains )
+				out << endl;
             continue;
         }
 
