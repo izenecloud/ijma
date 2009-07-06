@@ -151,6 +151,13 @@ public:
     const char* getStrPOS(int nPos, int nIdx) const;
 
     /**
+     * Get the MorphemeList of candidate result \e nPos.
+     * \param nPos candidate result index
+     * \return the MorphemeList
+     */
+    const MorphemeList* getMorphemeList(int nPos) const;
+
+    /**
      * Get the score of candidate result \e nPos.
      * \param nPos candidate result index
      * \return the score value

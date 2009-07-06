@@ -71,6 +71,11 @@ const char* Sentence::getStrPOS(int nPos, int nIdx) const
     return candidates_[nPos][nIdx].posStr_.c_str();
 }
 
+const MorphemeList* Sentence::getMorphemeList(int nPos) const
+{
+	return &candidates_[nPos];
+}
+
 double Sentence::getScore(int nPos) const
 {
     return scores_[nPos];

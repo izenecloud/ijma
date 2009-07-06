@@ -20,6 +20,48 @@
 namespace jma
 {
 
+/**
+ * Whether the two MorphemeLists is the same
+ * \param list1 the MorphemeList 1
+ * \param list2 the MorphemeList 2
+ */
+inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* list2, bool printPOS )
+{
+	// if one is zero pointer, return null
+	if( !list1 || !list2 )
+	{
+		return false;
+	}
+
+	if( list1->size() != list2->size() )
+		return false;
+	//compare one by one
+	size_t N = list1->size();
+	if( printPOS )
+	{
+		for( size_t i = 0; i < N; ++i )
+		{
+			const Morpheme& m1 = (*list1)[i];
+			const Morpheme& m2 = (*list2)[i];
+			if( m1.lexicon_ != m2.lexicon_ || m1.posCode_ != m2.posCode_
+					|| m1.posStr_ != m2.posStr_ )
+			{
+				return false;
+			}
+		}
+	}
+	else
+	{
+		for( size_t i = 0; i < N; ++i )
+		{
+			if( (*list1)[i].lexicon_ != (*list2)[i].lexicon_ )
+				return false;
+		}
+	}
+	//all the elements are the same
+	return true;
+}
+
 JMA_Analyzer::JMA_Analyzer()
     : knowledge_(0), tagger_(0)
 {
@@ -67,10 +109,11 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 		}
 		sentence.addList(list, 1.0);
 	}
+	// N-best
 	else
 	{
 		double totalScore = 0;
-
+		const MorphemeList* lastMList = 0;
 
 		if( !tagger_->parseNBestInit( sentence.getString() ) )
 		{
@@ -80,7 +123,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 		long base = 0;
 		int i = 0;
-		for ( ; i < N; ++i )
+		for ( ; i < N;  )
 		{
 			const MeCab::Node* bosNode = tagger_->nextNode();
 			if( !bosNode )
@@ -100,6 +143,11 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 					morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
 				}
 			}
+
+			//ignore the duplicate results
+			if( isSameMorphemeList( lastMList, &list, printPOS ) )
+				continue;
+
 			long score = tagger_->nextScore();
 			if( i == 0 )
 				base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
@@ -107,6 +155,8 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			double dScore = 1.0 / (score - base );
 			totalScore += dScore;
 			sentence.addList( list, dScore );
+			lastMList = sentence.getMorphemeList( sentence.getListSize() - 1 );
+			++i;
 		}
 
 		for ( int j = 0; j < i; ++j )
