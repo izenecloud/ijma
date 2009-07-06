@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
     {
         if(strcmp(argv[1], "--encode") != 0)
         {
-            cerr << "unkown command option " << argv[1] << endl;
+            cerr << "unknown command option " << argv[1] << endl;
             printUsage();
             exit(1);
         }
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            cerr << "unkown encode type " << argv[2] << endl;
+            cerr << "unknown encode type " << argv[2] << endl;
             printUsage();
             exit(1);
         }

@@ -273,6 +273,9 @@ int main(int argc, char* argv[])
     // set knowledge
     analyzer->setKnowledge(knowledge);
 
+    // no POS output
+    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+
     if(optionIndex == 0)
     {
         if(argc > 2)
