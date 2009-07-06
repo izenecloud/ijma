@@ -113,7 +113,6 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	else
 	{
 		double totalScore = 0;
-		const MorphemeList* lastMList = 0;
 
 		if( !tagger_->parseNBestInit( sentence.getString() ) )
 		{
@@ -144,8 +143,18 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				}
 			}
 
+			bool isDupl = false;
+			//check the current result with exits results
+			for( int listOffset = sentence.getListSize() - 1 ; listOffset >= 0; --listOffset )
+			{
+				if( isSameMorphemeList( sentence.getMorphemeList(listOffset), &list, printPOS ) )
+				{
+					isDupl = true;
+					break;
+				}
+			}
 			//ignore the duplicate results
-			if( isSameMorphemeList( lastMList, &list, printPOS ) )
+			if( isDupl )
 				continue;
 
 			long score = tagger_->nextScore();
@@ -155,7 +164,6 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			double dScore = 1.0 / (score - base );
 			totalScore += dScore;
 			sentence.addList( list, dScore );
-			lastMList = sentence.getMorphemeList( sentence.getListSize() - 1 );
 			++i;
 		}
 
