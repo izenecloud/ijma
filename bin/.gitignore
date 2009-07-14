@@ -2,3 +2,4 @@
 !/.gitignore
 !/score.pl
 !/basis_test
+!/train.sh
