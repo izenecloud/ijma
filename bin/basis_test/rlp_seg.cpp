@@ -12,6 +12,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <ctime>
 
 using namespace std;
 
@@ -90,6 +91,10 @@ int main(int argc, const char* argv[])
     << " BT_ROOT LANGUAGE ENV_CONFIG_FILE INPUT_FILE OUTPUT_FILE" << endl;
     return 1;
   }
+
+  // time evaluation
+  clock_t stime = clock();
+  
   const char* btRoot   = argv[1];
   // Get BT language ID (defined in bt_language_names.h)
   // from ISO639 code.
@@ -146,6 +151,11 @@ int main(int argc, const char* argv[])
     return 1;
   }
 
+  // time evaluation
+  clock_t etime = clock();
+  double dif = (double)(etime - stime) / CLOCKS_PER_SEC;
+  cout << "knowledge loading time: " << dif << endl;
+
   //4. Use the context object to processes the input file. Must include
   //   language id unless using RLI processor to determine language.
   ifstream in(inputFile);
@@ -171,6 +181,12 @@ int main(int argc, const char* argv[])
 
       out << endl;
   }
+
+  // time evaluation
+  dif = (double)(clock() - etime) / CLOCKS_PER_SEC;
+  cout << "stream analysis time: " << dif << endl;
+  dif = (double)(clock() - stime) / CLOCKS_PER_SEC;
+  cout << "total time: " << dif << endl;
 
   fprintf(stdout, "\nSee output file: %s\n\n", outputFile);
 
