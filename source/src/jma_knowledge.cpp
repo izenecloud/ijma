@@ -50,7 +50,7 @@ namespace jma
 JMA_Knowledge::JMA_Knowledge()
     : tagger_(0), isOutputFullPOS_(false), posCatNum_(POS_CAT_NUM_DEFAULT), ctype_(0)
 {
-	onEncodeTypeChange( getEncodeType() );
+    onEncodeTypeChange( getEncodeType() );
 }
 
 JMA_Knowledge::~JMA_Knowledge()

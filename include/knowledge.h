@@ -91,6 +91,7 @@ public:
     {
         ENCODE_TYPE_EUCJP, ///< EUC-JP character type
         ENCODE_TYPE_SJIS, ///< SHIFT-JIS character type
+        ENCODE_TYPE_UTF8, ///< UTF-8 character type
         ENCODE_TYPE_NUM ///< the count of character types
     };
 
@@ -112,6 +113,14 @@ public:
      * \param type the new EncodeType
      */
     virtual void onEncodeTypeChange(EncodeType type) = 0;
+
+    /**
+     * Get the encode type from the encode type string
+     *
+     * \param encodeStr encode type string
+     * \return the encoding type, note that \e Knowledge::ENCODE_TYPE_NUM would be returned if the encoding type is unkown.
+     */
+    static EncodeType decodeEncodeType(const char* encodeStr);
 
 protected:
     /** the directory path of system dictionary files */

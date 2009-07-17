@@ -3,9 +3,10 @@
  * Below is the usage examples:
  * \code
  * The encoding type of those CSV files in source directory is predefined by the "dictionary-charset" entry of "dicrc" file.
- * While the encoding type of binary files in destination directory could be set to "eucjp" or "sjis" like below, which is "eucjp" defaultly.
+ * While the encoding type of binary files in destination directory could be set to "eucjp", "sjis" or "utf8" like below, which is "eucjp" defaultly.
  * $ ./jma_encode_sysdict --encode eucjp ../db/ipadic/src ../db/ipadic/bin_eucjp
  * $ ./jma_encode_sysdict --encode sjis ../db/ipadic/src ../db/ipadic/bin_sjis
+ * $ ./jma_encode_sysdict --encode utf8 ../db/ipadic/src ../db/ipadic/bin_utf8
  * \endcode
  *
  * \author Jun Jiang
@@ -29,7 +30,7 @@ using namespace jma;
  */
 void printUsage()
 {
-    cerr << "Usage: ./test_encode_sysdict [--encode [eucjp,sjis]] SOURCE_DIR DEST_DIR" << endl;
+    cerr << "Usage: ./test_encode_sysdict [--encode [eucjp,sjis,utf8]] SOURCE_DIR DEST_DIR" << endl;
     cerr << "       (please ensure that both 'SOURCE_DIR' and 'DEST_DIR' exists.)" << endl;
 }
 
@@ -59,15 +60,8 @@ int main(int argc, char* argv[])
             exit(1);
         }
 
-        if(strcmp(argv[2], "eucjp") == 0)
-        {
-            encode = Knowledge::ENCODE_TYPE_EUCJP;
-        }
-        else if(strcmp(argv[2], "sjis") == 0)
-        {
-            encode = Knowledge::ENCODE_TYPE_SJIS;
-        }
-        else
+        encode = Knowledge::decodeEncodeType(argv[2]);
+        if(encode == Knowledge::ENCODE_TYPE_NUM)
         {
             cerr << "unknown encode type " << argv[2] << endl;
             printUsage();

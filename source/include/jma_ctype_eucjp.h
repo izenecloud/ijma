@@ -29,7 +29,7 @@ public:
      * Get the byte count of the first character pointed by \e p, which
      * character is in a specific encoding.
      * \param p pointer to the character string
-     * \return true for punctuation, false for non punctuation.
+     * \return the count of bytes.
      */
     virtual unsigned int getByteCount(const char* p) const;
 
