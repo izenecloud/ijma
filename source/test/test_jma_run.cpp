@@ -192,7 +192,7 @@ void printUsage()
 {
     cerr << "Usages:\t" << OPTIONS[0] << " N-best [--dict DICT_PATH]" << endl;
     cerr << "  or:\t" << OPTIONS[1] << " [--dict DICT_PATH]" << endl;
-    cerr << "  or:\t" << OPTIONS[2] << " SOURCE DEST [--dict DICT_PATH]" << endl;
+    cerr << "  or:\t" << OPTIONS[2] << " INPUT OUTPUT [--dict DICT_PATH]" << endl;
 }
 
 /**
@@ -217,13 +217,13 @@ int main(int argc, char* argv[])
     // check argument
     if((optionIndex == optionSize)
 	    || (optionIndex == 0 && argc < 3) // command option "--sentence N-best"
-	    || (optionIndex == 2 && argc < 4)) // command option "--stream SOURCE DEST"
+	    || (optionIndex == 2 && argc < 4)) // command option "--stream INPUT OUTPUT"
     {
         printUsage();
         exit(1);
     }
 
-    // time evaluation for command option "--stream SOURCE DEST"
+    // time evaluation for command option "--stream INPUT OUTPUT"
     clock_t stime = 0;
     if(optionIndex == 2)
     {
