@@ -8,12 +8,37 @@
 
 #include "knowledge.h"
 
+#include <string>
 #include <cassert>
+
+using namespace std;
 
 namespace jma
 {
 
-const char* Knowledge::ENCODE_TYPE_STR_[] = {"EUC-JP", "SHIFT-JIS"};
+const char* Knowledge::ENCODE_TYPE_STR_[] = {"EUC-JP", "SHIFT-JIS", "UTF-8"};
+
+namespace
+{
+/**
+ * Get a string in lower alphabets.
+ * \param s the original string
+ * \return the converted string with lower alphabets. For example, "euc-jp" is returned when "EUC-JP" is input.
+ */
+string toLower(const char* s) {
+    string str(s);
+    for(size_t i=0; i<str.size(); ++i)
+    {
+        char c = str[i];
+        if((c >= 'A') && (c <= 'Z'))
+        {
+            c += 'a' - 'A';
+            str[i] = c;
+        }
+    }
+    return str;
+}
+} // namespace
 
 Knowledge::Knowledge()
     : encodeType_(ENCODE_TYPE_EUCJP)
@@ -29,13 +54,33 @@ void Knowledge::setEncodeType(EncodeType type)
     if( encodeType_ != type )
     {
 		encodeType_ = type;
-		onEncodeTypeChange( type );
+        onEncodeTypeChange( type );
     }
 }
 
 Knowledge::EncodeType Knowledge::getEncodeType() const
 {
     return encodeType_;
+}
+
+Knowledge::EncodeType Knowledge::decodeEncodeType(const char* encodeStr)
+{
+    string lower = toLower(encodeStr);
+    if(lower == "euc-jp" || lower == "encjp")
+    {
+        return Knowledge::ENCODE_TYPE_EUCJP;
+    }
+    else if(lower == "shift-jis" || lower == "sjis")
+    {
+        return Knowledge::ENCODE_TYPE_SJIS;
+    }
+    else if(lower == "utf-8" || lower == "utf8")
+    {
+        return Knowledge::ENCODE_TYPE_UTF8;
+    }
+
+    // unknown character encoding type
+    return Knowledge::ENCODE_TYPE_NUM;
 }
 
 void Knowledge::setSystemDict(const char* dirPath)

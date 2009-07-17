@@ -8,6 +8,7 @@
 #include "jma_ctype.h"
 #include "jma_ctype_eucjp.h"
 #include "jma_ctype_sjis.h"
+#include "jma_ctype_utf8.h"
 
 #include <cassert>
 
@@ -26,25 +27,13 @@ JMA_CType* JMA_CType::instance(Knowledge::EncodeType type)
 	case Knowledge::ENCODE_TYPE_SJIS:
 	    return JMA_CType_SJIS::instance();
 
+	case Knowledge::ENCODE_TYPE_UTF8:
+	    return JMA_CType_UTF8::instance();
+
 	default:
 	    assert(false && "Unknown character encode type");
 	    return 0;
     }
-}
-
-Knowledge::EncodeType JMA_CType::getEncType(string encType)
-{
-    if(encType == "EUC-JP" || encType == "enc-jp")
-    {
-        return Knowledge::ENCODE_TYPE_EUCJP;
-    }
-    else if(encType == "SHIFT-JIS" || encType == "shift-jis")
-    {
-        return Knowledge::ENCODE_TYPE_SJIS;
-    }
-
-    assert(false && "Unknown character encode type");
-    return Knowledge::ENCODE_TYPE_NUM;
 }
 
 JMA_CType::~JMA_CType()

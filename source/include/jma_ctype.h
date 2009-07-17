@@ -8,10 +8,6 @@
 #ifndef JMA_CTYPE_H
 #define JMA_CTYPE_H
 
-#include <string>
-
-using std::string;
-
 #include "knowledge.h" // Knowledge::EncodeType
 
 namespace jma
@@ -33,14 +29,6 @@ public:
     static JMA_CType* instance(Knowledge::EncodeType type);
 
     /**
-     * Get the encoding type by the encode type string
-     *
-     * \param encType encode type string
-     * \return assicated Knowledge::EncodeType in the class Knowledge
-     */
-    static Knowledge::EncodeType getEncType(string encType);
-
-    /**
      * Destrucor
      */
     virtual ~JMA_CType();
@@ -49,7 +37,7 @@ public:
      * Get the byte count of the first character pointed by \e p, which
      * character is in a specific encoding.
      * \param p pointer to the character string
-     * \return true for punctuation, false for non punctuation.
+     * \return the count of bytes.
      */
     virtual unsigned int getByteCount(const char* p) const = 0;
 

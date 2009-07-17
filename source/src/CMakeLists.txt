@@ -9,6 +9,7 @@ set(objs_jma
 ./jma_ctype
 ./jma_ctype_eucjp
 ./jma_ctype_sjis
+./jma_ctype_utf8
 ./tokenizer
 )
 
