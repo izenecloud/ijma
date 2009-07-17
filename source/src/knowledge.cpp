@@ -66,7 +66,7 @@ Knowledge::EncodeType Knowledge::getEncodeType() const
 Knowledge::EncodeType Knowledge::decodeEncodeType(const char* encodeStr)
 {
     string lower = toLower(encodeStr);
-    if(lower == "euc-jp" || lower == "encjp")
+    if(lower == "euc-jp" || lower == "eucjp")
     {
         return Knowledge::ENCODE_TYPE_EUCJP;
     }
