@@ -25,7 +25,7 @@ echo Running rlp_sample C++ sample - output in rlp_sample.out
 echo ---------------------------------------
 echo
 #./rlp_sample $BT_ROOT ja "$BT_ROOT/rlp/etc/rlp-global.xml" "$BT_ROOT/rlp/samples/data/ja-text.txt" rlp_sample.out
-`dirname $0`$EXE_NAME $BT_ROOT ja "$BT_ROOT/rlp/etc/rlp-global.xml" $1 $2
+`dirname $0`/$EXE_NAME $BT_ROOT ja "$BT_ROOT/rlp/etc/rlp-global.xml" $1 $2
 
 if [ "$?" -ne "0" ]; then
   echo "Trouble running $EXE_NAME.  Please check your installation and try again."
