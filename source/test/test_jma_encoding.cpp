@@ -1,5 +1,5 @@
 /** \file test_jma_encoding.cpp
- * Test character encoding "EUC-JP" and "SHIFT-JIS" in JMA analysis.
+ * Test character encoding "EUC-JP", "SHIFT-JIS" and "UTF-8" in JMA analysis.
  * Below is the usage examples:
  * \code
  * Test character encoding "EUC-JP".
@@ -7,11 +7,14 @@
  *
  * Test character encoding "SHIFT-JIS".
  * $./test_jma_encoding --encode sjis
+ *
+ * Test character encoding "UTF-8".
+ * $./test_jma_encoding --encode utf8
  * \endcode
  *
  * \author Jun Jiang
  * \version 0.1
- * \date Jun 24, 2009
+ * \date Jul 17, 2009
  */
 
 #include "jma_factory.h"
@@ -31,7 +34,7 @@ using namespace jma;
  */
 void printUsage()
 {
-    cerr << "Usage: ./test_jma_encoding --encode [eucjp,sjis]" << endl;
+    cerr << "Usage: ./test_jma_encoding --encode [eucjp,sjis,utf8]" << endl;
 }
 
 /**
@@ -45,8 +48,6 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    Knowledge::EncodeType encode;
-
     // check command option
     if(strcmp(argv[1], "--encode") != 0)
     {
@@ -55,15 +56,8 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    if(strcmp(argv[2], "eucjp") == 0)
-    {
-        encode = Knowledge::ENCODE_TYPE_EUCJP;
-    }
-    else if(strcmp(argv[2], "sjis") == 0)
-    {
-        encode = Knowledge::ENCODE_TYPE_SJIS;
-    }
-    else
+    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(argv[2]);
+    if(encode == Knowledge::ENCODE_TYPE_NUM)
     {
         cerr << "unknown encode type " << argv[2] << endl;
         printUsage();
@@ -81,8 +75,8 @@ int main(int argc, char* argv[])
     knowledge->setEncodeType(encode);
 
     // set dictionary files
-    const char* sysdict;
-    const char* userdict;
+    const char* sysdict = 0;
+    const char* userdict = 0;
 #if defined(_WIN32) && !defined(__CYGWIN__)
     if(encode == Knowledge::ENCODE_TYPE_EUCJP)
     {
@@ -91,6 +85,10 @@ int main(int argc, char* argv[])
     else if(encode == Knowledge::ENCODE_TYPE_SJIS)
     {
         sysdict = "../../db/ipadic/bin_sjis";
+    }
+    else if(encode == Knowledge::ENCODE_TYPE_UTF8)
+    {
+        sysdict = "../../db/ipadic/bin_utf8";
     }
 
     userdict = "../../db/userdic/eucjp.csv";
@@ -102,6 +100,10 @@ int main(int argc, char* argv[])
     else if(encode == Knowledge::ENCODE_TYPE_SJIS)
     {
         sysdict = "../db/ipadic/bin_sjis";
+    }
+    else if(encode == Knowledge::ENCODE_TYPE_UTF8)
+    {
+        sysdict = "../db/ipadic/bin_utf8";
     }
 
     userdict = "../db/userdic/eucjp.csv";

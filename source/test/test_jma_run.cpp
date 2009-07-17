@@ -1,21 +1,19 @@
 /** \file test_jma_run.cpp
  * Test JMA in Japanese word segmentation and POS tagging analysis.
  * Below is the usage examples:
+ * The "DICT_PATH" in below examples is the dictionary path, which is "../db/ipadic/bin_eucjp" defautly.
  * \code
  * To analyze a sentence from standard input and print 5 n-best results to standard output.
- * $ ./jma_run --sentence 5
+ * $ ./jma_run --sentence 5 [--dict DICT_PATH]
  * 
  * To analyze a paragraph string from standard input and print the one-best result to standard output.
- * $ ./jma_run --string
+ * $ ./jma_run --string [--dict DICT_PATH]
  *
  * To exit the loop in the above examples, please press CTRL-C.
  *
- * To analyze the raw input file "SOURCE", and print the one-best result to "DEST".
- * (the example of "SOURCE" file could be available as "../db/test/asahi_test_raw_eucjp.txt")
- * $ ./jma_run --stream SOURCE DEST
- *
- * To split paragraphs in file "SOURCE", and print each sentence in one line to "DEST".
- * $ ./jma_run --split SOURCE DEST
+ * To analyze the raw input file "INPUT", and print the one-best result to "OUTPUT".
+ * (the example of "INPUT" file could be available as "../db/test/asahi_test_raw_eucjp.txt")
+ * $ ./jma_run --stream INPUT OUTPUT [--dict DICT_PATH]
  * \endcode
  * 
  * \author Jun Jiang
@@ -43,7 +41,10 @@ using namespace jma;
 namespace
 {
     /** command options */
-    const char* options[] = {"--sentence", "--string", "--stream", "--split"};
+    const char* OPTIONS[] = {"--sentence", "--string", "--stream"};
+
+    /** optional command option for dictionary path */
+    const char* OPTION_DICT = "--dict";
 }
 
 /**
@@ -151,48 +152,47 @@ void testWithStream(Analyzer* analyzer, const char* source, const char* dest)
 /**
  * Split paragraphs in file \e source into sentences, and print each sentence in one line to \e dest.
  */
-void testSplitSentence(Analyzer* analyzer, const char* source, const char* dest)
-{
-    cout << "########## test method splitSentence()" << endl;
+//void testSplitSentence(Analyzer* analyzer, const char* source, const char* dest)
+//{
+    //cout << "########## test method splitSentence()" << endl;
 
-    assert(source && dest);
+    //assert(source && dest);
 
-    ifstream from(source);
-    if(! from)
-    {
-        cerr << "error in opening file: " << source << endl;
-        return;
-    }
+    //ifstream from(source);
+    //if(! from)
+    //{
+        //cerr << "error in opening file: " << source << endl;
+        //return;
+    //}
 
-    ofstream to(dest);
-    if(! to)
-    {
-        cerr << "error in opening file: " << dest << endl;
-        return;
-    }
+    //ofstream to(dest);
+    //if(! to)
+    //{
+        //cerr << "error in opening file: " << dest << endl;
+        //return;
+    //}
 
-    string line;
-    vector<Sentence> sentVec;
-    while(getline(from, line))
-    {
-        sentVec.clear();
-        analyzer->splitSentence(line.c_str(), sentVec);
-        for(size_t i=0; i<sentVec.size(); ++i)
-        {
-            to << sentVec[i].getString() << endl;
-        }
-    }
-}
+    //string line;
+    //vector<Sentence> sentVec;
+    //while(getline(from, line))
+    //{
+        //sentVec.clear();
+        //analyzer->splitSentence(line.c_str(), sentVec);
+        //for(size_t i=0; i<sentVec.size(); ++i)
+        //{
+            //to << sentVec[i].getString() << endl;
+        //}
+    //}
+//}
 
 /**
  * Print the test usage.
  */
 void printUsage()
 {
-    cerr << "Usages:\t" << options[0] << " [N-best]" << endl;
-    cerr << "  or:\t" << options[1] << endl;
-    cerr << "  or:\t" << options[2] << " SOURCE DEST" << endl;
-    cerr << "  or:\t" << options[3] << " SOURCE DEST" << endl;
+    cerr << "Usages:\t" << OPTIONS[0] << " N-best [--dict DICT_PATH]" << endl;
+    cerr << "  or:\t" << OPTIONS[1] << " [--dict DICT_PATH]" << endl;
+    cerr << "  or:\t" << OPTIONS[2] << " SOURCE DEST [--dict DICT_PATH]" << endl;
 }
 
 /**
@@ -207,17 +207,17 @@ int main(int argc, char* argv[])
     }
 
     unsigned int optionIndex = 0;
-    unsigned int optionSize = sizeof(options) / sizeof(options[0]);
+    unsigned int optionSize = sizeof(OPTIONS) / sizeof(OPTIONS[0]);
     for(; optionIndex<optionSize; ++optionIndex)
     {
-        if(! strcmp(argv[1], options[optionIndex]))
+        if(! strcmp(argv[1], OPTIONS[optionIndex]))
             break;
     }
 
     // check argument
     if((optionIndex == optionSize)
-	    || (optionIndex == 2 && argc != 4) // command option "--stream SOURCE DEST"
-	    || (optionIndex == 3 && argc != 4)) // command option "--split SOURCE DEST"
+	    || (optionIndex == 0 && argc < 3) // command option "--sentence N-best"
+	    || (optionIndex == 2 && argc < 4)) // command option "--stream SOURCE DEST"
     {
         printUsage();
         exit(1);
@@ -235,20 +235,51 @@ int main(int argc, char* argv[])
     Analyzer* analyzer = factory->createAnalyzer();
     Knowledge* knowledge = factory->createKnowledge();
 
-    // set dictionary files
-    const char* sysdict;
-    //const char* userdict;
+    // set default dictionary file
+    const char* sysdict = 0;
 #if defined(_WIN32) && !defined(__CYGWIN__)
     sysdict = "../../db/ipadic/bin_eucjp";
-    //userdict = "../../db/userdic/eucjp.csv";
 #else
     sysdict = "../db/ipadic/bin_eucjp";
-    //userdict = "../db/userdic/eucjp.csv";
 #endif
+
+    switch(optionIndex)
+    {
+    case 0:
+        // set the number of N-best results,
+        // if this function is not called, one-best analysis is performed defaultly on Analyzer::runWithSentence().
+        analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, atoi(argv[2]));
+
+        // command option: "--sentence N-best --dict DICT_PATH"
+        if(argc == 5 && ! strcmp(argv[3], OPTION_DICT))
+        {
+            sysdict = argv[4];
+        }
+        break;
+
+    case 1:
+        // command option: "--string --dict DICT_PATH"
+        if(argc == 4 && ! strcmp(argv[2], OPTION_DICT))
+        {
+            sysdict = argv[3];
+        }
+        break;
+
+    case 2:
+        // command option: "--stream INPUT OUTPUT --dict DICT_PATH"
+        if(argc == 6 && ! strcmp(argv[4], OPTION_DICT))
+        {
+            sysdict = argv[5];
+        }
+        break;
+
+    default:
+        printUsage();
+        exit(1);
+    }
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
-    //knowledge->addUserDict(userdict);
     int result = knowledge->loadDict();
     if(result == 0)
     {
@@ -256,41 +287,39 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    // load sentence separator config file
-    const char* senConfig;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    senConfig = "../../db/config/sen-eucjp.config";
-#else
-    senConfig = "../db/config/sen-eucjp.config";
-#endif
-    result = knowledge->loadSentenceSeparatorConfig(senConfig);
-    if(result == 0)
-    {
-        cerr << "fail to load config file: " << senConfig << endl;
-        exit(1);
-    }
+    // as Analyzer::splitSentence() is not called,
+    // there's no necessary to load sentence separator config file,
+    // so that below code is commented out.
+    //const char* senConfig;
+//#if defined(_WIN32) && !defined(__CYGWIN__)
+    //senConfig = "../../db/config/sen-eucjp.config";
+//#else
+    //senConfig = "../db/config/sen-eucjp.config";
+//#endif
+    //result = knowledge->loadSentenceSeparatorConfig(senConfig);
+    //if(result == 0)
+    //{
+        //cerr << "fail to load config file: " << senConfig << endl;
+        //exit(1);
+    //}
 
     // set knowledge
     analyzer->setKnowledge(knowledge);
 
     // no POS output
-    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
 
-    if(optionIndex == 0)
+    switch(optionIndex)
     {
-        if(argc > 2)
-        {
-            // (optional) set the number of N-best results,
-            // if this function is not called, one-best analysis is performed defaultly on Analyzer::runWithSentence().
-            analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, atoi(argv[2]));
-        }
+    case 0:
         testWithSentence(analyzer);
-    }
-    else if(optionIndex == 1)
-    {
+        break;
+
+    case 1:
         testWithString(analyzer);
-    }
-    else if(optionIndex == 2)
+        break;
+
+    case 2:
     {
         clock_t etime = clock();
         double dif = (double)(etime - stime) / CLOCKS_PER_SEC;
@@ -303,13 +332,10 @@ int main(int argc, char* argv[])
 
         dif = (double)(clock() - stime) / CLOCKS_PER_SEC;
         cout << "total time: " << dif << endl;
+        break;
     }
-    else if(optionIndex == 3)
-    {
-        testSplitSentence(analyzer, argv[2], argv[3]);
-    }
-    else
-    {
+
+    default:
         printUsage();
         exit(1);
     }
