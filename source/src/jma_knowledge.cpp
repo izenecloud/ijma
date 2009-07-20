@@ -56,6 +56,11 @@ JMA_Knowledge::JMA_Knowledge()
 JMA_Knowledge::~JMA_Knowledge()
 {
     clear();
+
+    if(ctype_)
+    {
+        delete ctype_;
+    }
 }
 
 void JMA_Knowledge::clear()

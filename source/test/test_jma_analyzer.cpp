@@ -52,7 +52,11 @@ int main()
 
     // get tagger
     MeCab::Tagger* tagger = knowledge->getTagger();
-    assert(tagger && "MeCab::Tagger is accessible after dictionary is loaded");
+    if(! tagger)
+    {
+        cerr << "MeCab::Tagger is not accessible after dictionary is loaded" << endl;
+        exit(1);
+    }
 
     JMA_Analyzer* analyzer = new JMA_Analyzer;
     analyzer->setKnowledge(knowledge);
