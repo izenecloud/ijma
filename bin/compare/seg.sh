@@ -34,7 +34,7 @@ then
 	mkdir -p $CHASEN_HOME
 fi
 
-echo "Start Segmentation"
+echo "!!Start Segmentation"
 
 # do the compare
 startPath=${RAW_HOME}
@@ -46,11 +46,12 @@ do
 	if test -f $file
 	then
 		fileName=${file:startLen}
-		echo Segment file ${fileName:1}
+		echo !!Segment file ${fileName:1}
 		
 		# chasen segment
 		destFile="${CHASEN_HOME}${fileName}"
-		${CHASEN_EXE} -F "%m  " -o ${destFile} ${file}
+		echo !!Use Chasen:
+		time `${CHASEN_EXE} -F "%m  " -o ${destFile} ${file}`
 
 		# basis segment
 		tmpUtf8In="${BASIS_HOME}${fileName}.in"
@@ -58,6 +59,7 @@ do
 		tmpUtf8Out="${BASIS_HOME}${fileName}.out"
 
 		iconv -t utf8 -f euc-jp -o ${tmpUtf8In} ${file}
+		echo !!Use Basis:
 		${BASIS_EXE} ${tmpUtf8In} ${tmpUtf8Out}
 		iconv -t euc-jp -f utf8 -o ${destFile} ${tmpUtf8Out}
 		
@@ -69,11 +71,11 @@ do
 			dicName=${JMA_DICS[$i]}
 			destFile="${JMA_HOME}/${dicName}${fileName}"
 			dicDbPath="${JMA_PROJECT_HOME}/db/${dicName}/bin_eucjp"
-			
+			echo !!Use JMA with dictionary $dicName:
 			${JMA_EXE} --stream ${file} ${destFile} --dict ${dicDbPath}
 			let ++i
 		done
 	fi
 done
 
-echo "Segmentation Done."
+echo "!!Segmentation Done."
