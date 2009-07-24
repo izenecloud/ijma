@@ -3,6 +3,5 @@
 !/score.pl
 !/basis_test
 !/train.sh
+!/build_dict.sh
 !/compare
-
-
