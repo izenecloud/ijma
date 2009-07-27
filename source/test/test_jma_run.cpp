@@ -151,42 +151,6 @@ void testWithStream(Analyzer* analyzer, const char* source, const char* dest)
 }
 
 /**
- * Split paragraphs in file \e source into sentences, and print each sentence in one line to \e dest.
- */
-//void testSplitSentence(Analyzer* analyzer, const char* source, const char* dest)
-//{
-    //cout << "########## test method splitSentence()" << endl;
-
-    //assert(source && dest);
-
-    //ifstream from(source);
-    //if(! from)
-    //{
-        //cerr << "error in opening file: " << source << endl;
-        //return;
-    //}
-
-    //ofstream to(dest);
-    //if(! to)
-    //{
-        //cerr << "error in opening file: " << dest << endl;
-        //return;
-    //}
-
-    //string line;
-    //vector<Sentence> sentVec;
-    //while(getline(from, line))
-    //{
-        //sentVec.clear();
-        //analyzer->splitSentence(line.c_str(), sentVec);
-        //for(size_t i=0; i<sentVec.size(); ++i)
-        //{
-            //to << sentVec[i].getString() << endl;
-        //}
-    //}
-//}
-
-/**
  * Print the test usage.
  */
 void printUsage()
@@ -287,22 +251,6 @@ int main(int argc, char* argv[])
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
-
-    // as Analyzer::splitSentence() is not called,
-    // there's no necessary to load sentence separator config file,
-    // so that below code is commented out.
-    //const char* senConfig;
-//#if defined(_WIN32) && !defined(__CYGWIN__)
-    //senConfig = "../../db/config/sen-eucjp.config";
-//#else
-    //senConfig = "../db/config/sen-eucjp.config";
-//#endif
-    //result = knowledge->loadSentenceSeparatorConfig(senConfig);
-    //if(result == 0)
-    //{
-        //cerr << "fail to load config file: " << senConfig << endl;
-        //exit(1);
-    //}
 
     // set knowledge
     analyzer->setKnowledge(knowledge);
