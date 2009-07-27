@@ -145,7 +145,8 @@ void testWithStream(Analyzer* analyzer, const char* source, const char* dest)
     }
     else
     {
-        cout << "fail in runWithStream() from " << source << " to " << dest << endl;
+        cerr << "fail in runWithStream() from " << source << " to " << dest << endl;
+        exit(1);
     }
 }
 
