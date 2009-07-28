@@ -44,4 +44,20 @@ unsigned int JMA_CType_EUCJP::getByteCount(const char* p) const
 	return 2; // encoding in EUC-JP
 }
 
+bool JMA_CType_EUCJP::isSpace(const char* p) const
+{
+    assert(p);
+
+    const unsigned char* uc = (const unsigned char*)p;
+
+    if(uc[0] < 0x80)
+        return isspace(uc[0]); // check by std library
+
+    //full-width space in EUC-JP
+    if(uc[0] == 0xa1 && uc[1] == 0xa1)
+        return true;
+
+    return false;
+}
+
 }

@@ -44,4 +44,20 @@ unsigned int JMA_CType_SJIS::getByteCount(const char* p) const
 	return 2; // encoding in SHIFT-JIS
 }
 
+bool JMA_CType_SJIS::isSpace(const char* p) const
+{
+    assert(p);
+
+    const unsigned char* uc = (const unsigned char*)p;
+
+    if(uc[0] < 0x80)
+        return isspace(uc[0]); // check by std library
+
+    //full-width space in SHIFT-JIS
+    if(uc[0] == 0x81 && uc[1] == 0x40)
+        return true;
+
+    return false;
+}
+
 }

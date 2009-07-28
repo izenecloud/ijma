@@ -154,4 +154,20 @@ unsigned int JMA_CType_UTF8::getByteCount(const char* p) const
     return result;
 }
 
+bool JMA_CType_UTF8::isSpace(const char* p) const
+{
+    assert(p);
+
+    const unsigned char* uc = (const unsigned char*)p;
+
+    if(uc[0] < 0x80)
+        return isspace(uc[0]); // check by std library
+
+    //full-width space in UTF-8
+    if(getByteCount(p) == 3 && uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80)
+        return true;
+
+    return false;
+}
+
 } // namespace jma

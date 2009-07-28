@@ -34,6 +34,14 @@ public:
      */
     virtual unsigned int getByteCount(const char* p) const;
 
+    /**
+     * Check whether is white-space character.
+     * White-space characters are " \t\n\v\f\r", and also space character in specific encoding.
+     * \param p pointer to the character string
+     * \return true for white-space character, false for non white-space character.
+     */
+    virtual bool isSpace(const char* p) const;
+
 private:
     /**
      * Constructor.

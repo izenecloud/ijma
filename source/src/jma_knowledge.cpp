@@ -398,7 +398,7 @@ MeCab::Tagger* JMA_Knowledge::getTagger() const
 
 bool JMA_Knowledge::isStopWord(const string& word) const
 {
-	return stopWords_.find(word) != stopWords_.end();
+	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
 }
 
 bool JMA_Knowledge::isOutputFullPOS() const
