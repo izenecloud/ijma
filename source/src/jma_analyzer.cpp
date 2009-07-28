@@ -77,14 +77,26 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
 
     knowledge_ = dynamic_cast<JMA_Knowledge*>(pKnowledge);
     assert(knowledge_);
+
     tagger_ = knowledge_->getTagger();
-    assert(tagger_);
-    tagger_->set_lattice_level(1);
+    // if runWith*() would be called, tagger_ should not be NULL,
+    // if only splitSentence() would be called, tagger_ could be NULL as no dictionary needs to be loaded.
+    if(tagger_)
+    {
+        tagger_->set_lattice_level(1);
+    }
+
     maxPosCateOffset_ = knowledge_->getPOSCatNum() - 1;
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
+    if(tagger_ == 0)
+    {
+        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        return 0;
+    }
+
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
 
@@ -178,6 +190,12 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 const char* JMA_Analyzer::runWithString(const char* inStr)
 {
+    if(tagger_ == 0)
+    {
+        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        return 0;
+    }
+
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 
 	const MeCab::Node* bosNode = tagger_->parseToNode( inStr );
@@ -204,13 +222,18 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 	}
 
 	return strBuf_.c_str();
-
 }
 
 int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 {
 	assert(inFileName);
 	assert(outFileName);
+
+    if(tagger_ == 0)
+    {
+        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        return 0;
+    }
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 
