@@ -185,12 +185,20 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 	strBuf_.clear();
 	if (printPOS) {
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+			string seg(node->surface, node->length);
+			if(knowledge_->isStopWord(seg))
+				continue;
+
 			strBuf_.append(node->surface, node->length).append(posDelimiter_).
 				append(node->feature, getPOSOffset(node->feature) ).append(wordDelimiter_);
 		}
 
 	} else {
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+			string seg(node->surface, node->length);
+			if(knowledge_->isStopWord(seg))
+				continue;
+
 			strBuf_.append(node->surface, node->length).append(wordDelimiter_);
 		}
 	}
@@ -228,6 +236,10 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
         if (printPOS) {
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+				string seg(node->surface, node->length);
+				if(knowledge_->isStopWord(seg))
+					continue;
+
 				out.write(node->surface, node->length) << posDelimiter_;
 				out.write(node->feature, getPOSOffset(node->feature) ) << wordDelimiter_;
 			}
@@ -239,6 +251,10 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
         } else {
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+				string seg(node->surface, node->length);
+				if(knowledge_->isStopWord(seg))
+					continue;
+
 				out.write(node->surface, node->length) << wordDelimiter_;
 			}
 
