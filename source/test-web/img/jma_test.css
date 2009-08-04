@@ -1,0 +1,275 @@
+body {
+	margin:0px;
+	font-size:14px;
+	font-family:Arial, Helvetica, sans-serif;
+	overflow:visible;
+	
+	margin-left:5%;
+	margin-right:5%;
+}
+
+/** Header */
+
+#header {
+	margin-left:5px;
+	margin-right:5px;
+	margin-bottom:10px;
+	width:100%;
+	height:100px;
+}
+
+.logo {
+	float: left;
+	width: auto;
+	margin: 10px 10px 11px 10px;
+}
+
+.header_right {
+	float: right;
+	width: auto;
+	height: 72px;
+}
+
+.logoText{
+	color: #C3593C;
+	font-size:20px;
+	background: inherit;
+}
+
+
+.top_info {
+	width: auto;
+	margin: 12px 0 5px 0;
+	padding: 0 5px 5px 0;
+	text-align: right;
+	background: #FFF url(dot.gif) repeat-x bottom;
+	color: #444;
+}
+
+.slogan {
+	text-align: right;
+	font-size: 12px;
+	height: 30px; 
+	padding: 0px 10px 0 0;
+}
+
+.slogan p span {
+	color: #20a020;
+	font-weight: bold;
+}
+
+
+
+/** footer */
+
+.footer { 
+	clear: both; 
+	text-align: center;
+	line-height: 20px;
+	color: #808080;
+	padding: 8px 0;
+}
+
+.footer a {
+	color: #C3593C;
+	background: inherit;
+}
+
+/** stat */
+
+#stat {
+	width:100%;
+	margin-left:5px;
+	margin-right:5px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	margin-top:10px;
+	margin-bottom:10px;
+	border-top:#000000 solid 1px;
+	border-bottom:#000000 solid 1px;
+}
+
+#stat table {
+	margin-left:20%;
+	margin-right:20%;
+	width:60%;	
+	vertical-align:middle;
+	/*margin-bottom:20px;
+	margin-top:20px;
+	margin-left:30px;*/
+}
+
+#stat table tr {
+	width:100%;
+}
+
+#stat table tr th{
+	text-align:center;
+	font-weight:bold;
+	width:50%;
+}
+
+#stat table tr td{
+	text-align:center;
+	width:50%;
+}
+
+/** differs */
+
+#differs {
+	position:relative;
+	width:100%;
+}
+
+.compunit {
+	height: auto;
+	width: auto;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	margin-top:20px;
+	margin-bottom:20px;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+.comprow{
+	margin-bottom:5px;
+	margin-left:5px;
+	margin-top: 4px;
+	padding-bottom:4px;
+	padding-top:4px;
+	height:auto;
+	border-bottom:#000000 dashed 2px;
+}
+
+.compinforow{
+	margin-bottom:5px;
+	margin-left:5px;
+	margin-top: 2px;
+	padding-bottom:5px;
+	height:auto;
+}
+
+.unitroottitle{
+	margin-bottom:5px;
+	height:30px;
+	margin-top: 5px;
+	margin-left:5px;
+	width: 200px;
+	font-weight: bold;
+	font-size:16px;
+}
+
+.unittitle {
+	font-weight: bold;	
+	width: 100px;
+	margin-bottom:5px;
+	/*float: left;*/
+}
+
+.unitcontent {
+	margin-left:5px;
+	vertical-align:middle;
+	overflow:visible;
+}
+.unitdiffers {
+	border-top:#000000 dotted 1px;
+	border-bottom:#000000 dashed 2px;
+	margin:5px 5px 5px 5px;
+}
+
+.unitdifferblock {
+	display:inline;
+	height:auto;
+	/*float:left;*/
+	text-align:center;
+	margin-right:3px;
+	margin-top:3px;
+	/*border-style:solid;
+	border-width:thin;*/
+	line-height:40px;
+}
+
+.unitdifferup {
+	display:table-row;
+	clear:right;
+	border-bottom-style:solid;
+	border-bottom-width:thin;
+	line-height:20px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+.unitdifferdown {
+	display:table-row;
+	clear:left;
+	line-height:20px;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+.unitdiffsingle {
+	padding-top:7px;
+	padding-bottom:7px;
+	padding-right:8px;
+	padding-left:8px;
+	display:inherit;	
+	width:100%;
+	vertical-align:middle;
+	font-size:15px;
+	
+	border-right-style:solid;
+	border-right-width:thin;
+	border-right-color:#00FF00;
+}
+
+.unitdiffsmall {
+	display:inline;
+	padding-right:8px;
+	padding-left:8px;
+	border-right-style:solid;
+	border-right-width:thin;
+	border-right-color:#00FF00;
+	color:blue;
+}
+
+.promtInfo {
+	color:purple;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+.buttonsdiv {
+	text-align:center;
+	margin-bottom:5px;
+}
+
+.stathref {
+	text-align:right;
+	float:right;
+	margin-right:10px;
+}
+
+#userInput {
+	display:block;
+	width:95%;
+}
+
+.userInputBtn {
+	margin-top:3px;
+	margin-left:7px;
+	margin-right:7px;
+}
+
+.saveAllPromt {
+	color:#000000;
+	font-size:12px;
+	vertical-align:bottom;
+}
