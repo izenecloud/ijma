@@ -46,7 +46,7 @@ function fireUserEdit(isEdit)
 
 function updateSaveAllPromt()
 {
-	//update the last modifed time
+	//update the last modified time
 	if(lastSaveTime == null)
 		$('.saveAllPromt').html('');
 	else
@@ -108,6 +108,30 @@ function gup( name )
 		return results[1];
 }
 
+function copyUrlToClipboard(s)
+{
+	if( window.clipboardData && clipboardData.setData )
+	{
+		clipboardData.setData("Text", s);
+		alert("Copy to Clipboard Done!")
+	}
+	else
+	{
+		alert("Fail to copy to Clipboard Done!, please copy the url directly");
+	}
+}
+
+function getSurroundedString(str, idx, radius)
+{
+	var begin = idx - radius;
+	if(begin < 0)
+		begin = 0;
+	var end = idx + radius;
+	if(end > str.length)
+		end = str.length;
+	return str.substring(begin, end);
+}
+
 function applyUserInput(ele)
 {
 	if(!confirm("Are you sure to Apply the current Suggestion?"))
@@ -127,7 +151,7 @@ function applyUserInput(ele)
 		
 		if(j == origValue.length)
 		{
-			alert("Invalid User Input(Non-Space) " + userValue[i] + " at index " + i);
+			alert("Invalid User Input(Non-Space) \'" + userValue[i] + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")");
 			return;
 		}
 				
@@ -140,7 +164,7 @@ function applyUserInput(ele)
 			j++;
 			continue;
 		}
-		alert("Invalid User Input(Non-Space) " + userValue[i] + " at index " + i);
+		alert("Invalid User Input(Non-Space) \'" + userValue[i] + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")");
 		return;
 	}
 	
@@ -228,7 +252,6 @@ function applyUserInput(ele)
 	fireUserEdit(true);
 }
 
-/** Click a different checkbox */
 function diffChange(ele)
 {
 	var node = ele;
@@ -239,6 +262,16 @@ function diffChange(ele)
 		node.style.backgroundColor = "";
 		
 	fireUserEdit(true);
+}
+
+function practiseDiffChange(ele)
+{
+	var node = ele;
+	
+	if(node.style.backgroundColor != errorBgColor)
+		node.style.backgroundColor = errorBgColor;
+	else
+		node.style.backgroundColor = "";
 }
 
 function loadXmlStringToComp(xmlStr)
@@ -341,12 +374,12 @@ function loadXmlStringToComp(xmlStr)
 	"</div>" + 
 	
 	"<div class=\"compinforow\">" + 
-		"<span class=\"promtInfo\"><strong>Recommended: </strong>Click the wrong segmented words (those with " +errorBgColor+ " background color) <strong>Below</strong>. Remove the wrong word by click that word one more time.</span>" + 
+		"<span class=\"promtInfo\"><strong>Recommended: </strong>Single click wrong segmented words (wrong words are with " +errorBgColor+ " background color) <strong>Below</strong>. Remove a wrong word by single click that word one more time.</span>" + 
 	"</div>" +	
 	"<div class=\"unitdiffers\">" + unitdiffers + "</div>" + 
 	
 	"<div class=\"compinforow\">" + 
-		"<span class=\"promtInfo\"><strong>No Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with spaces <strong>(Avoid to enter other characters)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
+		"<span class=\"promtInfo\"><strong>Not Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with English spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
 	"</div>" + 
 	"<div class=\"comprow\">" + 
 		"<div class=\"unittitle\">Suggestion: </div>" + 
@@ -360,7 +393,7 @@ function loadXmlStringToComp(xmlStr)
 		"</div>" + 
 	"</div>" +
 	
-	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange()\"/><span class=\"saveAllPromt\"></span><a href=\"#stat\" class=\"stathref\">Statics</a></div>" + 
+	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange()\"/><span class=\"saveAllPromt\"></span><a href=\"#stat\" class=\"stathref\">Statistical Information</a></div>" + 
 "</div>";
 	//+++++++++ end the compunit string
 	
@@ -514,12 +547,15 @@ function initialize()
 	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
 	if(!isFirefox)
 	{
-		alert("It is recommend to use Firefox for best display! ");
-		$('#header').before("<div id=\"warnheader\">It is recommend to use <strong>Firefox</strong> for best display! You are now using \""+navigator.userAgent  + "\".</div>");
-	}
-	else
-	{
-		//$('#header').before("<div id=\"warnheader\">It is recommend to use <strong>Firefox</strong> for best display! You are now using "+navigator.userAgent  + ".</div>");
+		$('#header').before("<div id=\"warnheader\">Only <strong>Firefox</strong> support all the functions! You should: "+
+			"<ol><li>Go to <a href=\"http://www.mozilla.com/firefox/\" target=\"_blank\">www.mozilla.com/firefox/</a> to download firefox and install it.</li>" + 
+			"<li>Open <span style=\"color:blue;\">"+window.location.href +"</span> (<a href=\"#\" onclick=\"copyUrlToClipboard(&quot;"+window.location.href+"&quot)\">Copy to Clipboard</a>) in the firefox.</li></ol></div>");
+		$("#header").remove();
+		$("#stat").remove();
+		$("#differs").remove();
+		alert("You should open this page in Firefox!");
+		
+		return;
 	}
 	
 	docId = gup('id');

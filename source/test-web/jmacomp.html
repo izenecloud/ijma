@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<meta name="author" content="Qingshan Luo (www.iZENEsoft.com)" />
+<meta name="author" content="Jun Jiang, Vernkin Chen (www.iZENEsoft.com)" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Differences Comparison</title>
 <link href="img/jma_test.css" rel="stylesheet" type="text/css"/>
@@ -35,6 +35,40 @@
 	</div>
 </div>
 <div id="stat">
+
+<div class="instructionDiv">
+<h3>Instruction for Manual Check (Please read it carefully in the first time)</h3>
+
+<p>For Each sentence below, there are two approaches to do the manual check.</p>
+
+<p>The first approach is <strong>Recommended</strong> by <strong>single click (no double click)</strong> the wrong segmented word directly. If a word is wrong, its background color is red, like <span style="background:red;">体罰</span> and if it is correct, its background is white, like <span>体罰</span>. If you don't think a wrong word (with red background color) is wrong, just click that word one more time. Here you can practise it by click the word: <span onclick="practiseDiffChange(this)">体罰</span>.</p>
+
+<p>The second approach is <strong>Not Recommended</strong> as it is much easier to make mistakes. This approach is to input <strong>Suggestion (i.e., the correct segmentation)</strong> directly. It include three steps:
+<ol>
+<li>Click &quot;Copy Original Text&quot; button to get the original text;</li>
+<li>Separate the words with spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; </li>
+<li>Click &quot;Apply&quot; button to apply your input.</li>
+</ol>
+</p>
+
+<p>
+At the beginning of <strong>Apply Suggestion(step 3)</strong>, the program would check whether the suggestion contains invalid characters (compared with the original text, only allow to add English space characters). So if you choose this approach, please <strong>Pay Attention</strong> on step 2.
+</p>
+
+<p>
+If input the invalid character, for example, the original text is <strong>教師を足で蹴(け)って</strong>, and user's input is &quot;<strong>教師&nbsp;を足で;蹴(け)って</strong>&quot;. We can see there is a non-space character &quot;<strong>;</strong>&quot; behind &quot;<strong>で</strong>&quot;. The error message would be &quot;<strong>Invalid User Input(Non-Space) ';' at index 6 ( を足で;蹴(け)</strong>&quot;. this message contains that invalid character (<strong>;</strong>), its index (<strong>6</strong>) and the surrounding string (<strong> を足で;蹴(け</strong>)(in the last parenthesis).
+</p>
+
+<p>
+It is <strong>Not Recommended</strong> to use two approaches for a sentence at the same. 
+</p>
+
+<p>
+All the modifications would be saved automatically (the checking interval is 30 seconds); Or you can click the button &quot;<strong>Save Changes</strong>&quot;(at the end of each sentence block) to save all the modifications. &quot;<strong>Save Changes</strong>&quot; button is enable if there are some modifications after be saved last time.
+</p>
+
+</div>
+
 <table border="1" name="stat">
   <tr>
   	<th colspan="2">Statistical Information</th>
@@ -68,12 +102,12 @@
     <td id="basisPrecisionS">97%</td>
   </tr>
   <tr>
-    <th scope="row">iJMA's Precison</th>
+    <th scope="row">iJMA's Precision</th>
     <td id="jmaPrecisionS">85%</td>
   </tr>
 </table>
-
 </div>
+
 
 <div id="differs">
 </div>
