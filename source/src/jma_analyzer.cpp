@@ -243,7 +243,14 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 		cerr<<"[Error] The input file "<<inFileName<<" not exists!"<<endl;
 		return 0;
 	}
+
     ofstream out(outFileName);
+	if(!out)
+	{
+		cerr<<"[Error] The output file "<<outFileName<<" could not be created!"<<endl;
+		return 0;
+	}
+
     string line;
     bool remains = !in.eof();
     while (remains) {
