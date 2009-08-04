@@ -29,6 +29,7 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <string>
 
 #include <ctime>
 
@@ -250,6 +251,18 @@ int main(int argc, char* argv[])
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
+    }
+
+    // set encoding type from the dictionary path
+    string sysdictStr(sysdict);
+    size_t first = sysdictStr.find_last_of('_');
+    size_t last = sysdictStr.find_last_not_of('/');
+    string encodeStr = sysdictStr.substr(first+1, last-first);
+    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
+    if(encode != Knowledge::ENCODE_TYPE_NUM)
+    {
+        cout << "set encoding type: " << encodeStr << endl;
+        knowledge->setEncodeType(encode);
     }
 
     // set knowledge
