@@ -72,7 +72,7 @@ function copyOrig(ele)
 {
 	var rootNode = ele.parentNode.parentNode.parentNode;
 	var userInput = getFirstEleByIdItr(rootNode, "userInput");
-	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML.trim();
+	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
 	if(origValue == userInput.value)
 		return;	
 	if(userInput.value.length > 0)
@@ -114,7 +114,7 @@ function applyUserInput(ele)
 		return;
 	var rootNode = ele.parentNode.parentNode.parentNode;
 	var userInput = getFirstEleByIdItr(rootNode, "userInput");
-	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML.trim();
+	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
 	
 	var userValue = userInput.value;
 	
@@ -510,8 +510,18 @@ function saveAllChange()
 
 function initialize()
 {
-	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0;
-	alert(isFirefox + " $$$$$ " +navigator.userAgent);
+	//check whether is firefox
+	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
+	if(!isFirefox)
+	{
+		alert("It is recommend to use Firefox for best display! ");
+		$('#header').before("<div id=\"warnheader\">It is recommend to use <strong>Firefox</strong> for best display! You are now using \""+navigator.userAgent  + "\".</div>");
+	}
+	else
+	{
+		//$('#header').before("<div id=\"warnheader\">It is recommend to use <strong>Firefox</strong> for best display! You are now using "+navigator.userAgent  + ".</div>");
+	}
+	
 	docId = gup('id');
 	if(docId == null)
 	{
