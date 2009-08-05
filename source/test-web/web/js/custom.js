@@ -1,5 +1,5 @@
 //only debug with client (no server)
-var clientDebugMode = true; 
+var clientDebugMode = false; 
 
 var defaultstring = "<?xml version=\"1.0\" encoding=\"utf-8\"?><jmacomp></jmacomp>";
 
@@ -407,7 +407,7 @@ function loadXmlStringToComp(xmlStr)
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
 	
 	$('#idS').text(getXPathValue(rootNode, 'stat/id'));
-	$('#fileS').text(getXPathValue(rootNode, 'stat/file'));
+	$('#fileS').text(getXPathValue(rootNode, 'stat/name'));
 	var upTotal = parseInt(getXPathValue(rootNode, 'stat/upTotal'));
 	var downTotal = parseInt(getXPathValue(rootNode, 'stat/downTotal'));
 	var sameTotal = parseInt(getXPathValue(rootNode, 'stat/sameTotal'));
@@ -446,7 +446,7 @@ function saveAllChange()
 	
 	var xmlDoc = loadXMLString(defaultstring);
 	var xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
-	
+	var differsXml = createElementAndAppend(xmlDoc, xmlRoot, "differs");
 	var statXml = createElementAndAppend(xmlDoc, xmlRoot, "stat");
 	
 	var upTotal = 0;
@@ -461,7 +461,7 @@ function saveAllChange()
 		var differChild = differsChildren[i];
 		if(differChild.className != "compunit")
 			continue;
-		var sentenceXml = createElementAndAppend(xmlDoc, xmlRoot, "sentence");
+		var sentenceXml = createElementAndAppend(xmlDoc, differsXml, "sentence");
 		var origText = getFirstEleByIdItr(differChild, 'origText').innerHTML;
 		var userInput = getFirstEleByIdItr(differChild, 'lastApplyUserInput').value;
 		createElementTextAndAppend(xmlDoc, sentenceXml, 'origText', origText);
@@ -529,7 +529,7 @@ function saveAllChange()
 	}
 	
 	createElementTextAndAppend(xmlDoc, statXml, 'id', $('#idS').text());
-	createElementTextAndAppend(xmlDoc, statXml, 'file', $('#fileS').text());
+	createElementTextAndAppend(xmlDoc, statXml, 'name', $('#fileS').text());
 	createElementTextAndAppend(xmlDoc, statXml, 'upTotal', upTotal);
 	createElementTextAndAppend(xmlDoc, statXml, 'downTotal', downTotal);
 	createElementTextAndAppend(xmlDoc, statXml, 'sameTotal', sameTotal);	

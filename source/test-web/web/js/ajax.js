@@ -19,7 +19,7 @@ function createRequest() {
 }
 
 function uploadXml(xmlstring){
-	createRequest();
+    createRequest();
 	if(!request)
 		return;
 	var url = "jmaslxml";
@@ -58,7 +58,7 @@ function finishDownloadXml(){
 			if(ret.length > 0 && ret.charAt(0) != '<'){
 				alert("Server Error Message: "+ret);
 			}else{
-				loadXmlStringToComp(ret);
+                loadXmlStringToComp(ret);
 			}
 		}
 	}
