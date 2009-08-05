@@ -100,10 +100,13 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
 
+	string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
+	const char* strPtr =  retStr.data();
+
 	//one best
 	if(N <= 1)
 	{
-		const MeCab::Node* bosNode = tagger_->parseToNode( sentence.getString() );
+		const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 		MorphemeList list;
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
 		{
@@ -126,9 +129,9 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	{
 		double totalScore = 0;
 
-		if( !tagger_->parseNBestInit( sentence.getString() ) )
+		if( !tagger_->parseNBestInit( strPtr ) )
 		{
-			cerr << "[Error] Cannot parseNBestInit on the " << sentence.getString() << endl;
+			cerr << "[Error] Cannot parseNBestInit on the " << strPtr << endl;
 			return 0;
 		}
 
@@ -198,7 +201,10 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 
-	const MeCab::Node* bosNode = tagger_->parseToNode( inStr );
+	string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
+	const char* strPtr =  retStr.data();
+
+	const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
 	strBuf_.clear();
 	if (printPOS) {
@@ -262,7 +268,10 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
             continue;
         }
 
-        const MeCab::Node* bosNode = tagger_->parseToNode( line.c_str() );
+        string retStr = knowledge_->getCType()->replaceSpaces(line.c_str(), ' ');
+        const char* strPtr =  retStr.data();
+
+        const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
         if (printPOS) {
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){

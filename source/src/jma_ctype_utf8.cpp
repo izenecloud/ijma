@@ -170,4 +170,35 @@ bool JMA_CType_UTF8::isSpace(const char* p) const
     return false;
 }
 
+string JMA_CType_UTF8::replaceSpaces(const char* str, char replacement)
+{
+	unsigned char replace = (unsigned char)replacement;
+	const unsigned char* uc = (const unsigned char*)str;
+	string ret(str);
+	unsigned char* c2 = (unsigned char*)ret.data();
+
+	while(*uc)
+	{
+		if(uc[0] < 0x80)
+		{
+			if(isspace(uc[0]))
+				*c2 = replace;
+			++uc;
+			++c2;
+		}
+
+		int bytesCount = getByteCount((const char*)uc);
+
+		//full-width space in UTF-8
+		if(bytesCount == 3 && uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80)
+			c2[0] = c2[1] = c2[2] = replace;
+
+		uc += bytesCount;
+		c2 += bytesCount;
+
+	}
+
+	return ret;
+}
+
 } // namespace jma

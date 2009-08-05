@@ -60,4 +60,35 @@ bool JMA_CType_SJIS::isSpace(const char* p) const
     return false;
 }
 
+string JMA_CType_SJIS::replaceSpaces(const char* str, char replacement)
+{
+	unsigned char replace = (unsigned char)replacement;
+	const unsigned char* uc = (const unsigned char*)str;
+	string ret(str);
+	unsigned char* c2 = (unsigned char*)ret.data();
+
+	while(*uc)
+	{
+		if(uc[0] < 0x80)
+		{
+			if(isspace(uc[0]))
+				*c2 = replace;
+			++uc;
+			++c2;
+		}
+		else
+		{
+			//full-width space in SHIFT-JIS
+			if(uc[0] == 0x81 && uc[1] == 0x40)
+			{
+				c2[0] = c2[1] = replace;
+			}
+			uc += 2;
+			c2 += 2;
+		}
+	}
+
+	return ret;
+}
+
 }
