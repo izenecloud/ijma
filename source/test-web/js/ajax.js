@@ -22,7 +22,7 @@ function uploadXml(xmlstring){
 	createRequest();
 	if(!request)
 		return;
-	var url = "docLogic.php?doc=save";
+	var url = "jmaslxml";
     request.open("POST", url, true);
 	request.onreadystatechange = finishUploadXml;
     request.send(xmlstring);
@@ -41,11 +41,11 @@ function finishUploadXml(){
 	}
 }
 
-function downloadloadXml(id){
+function downloadXml(id){
 	createRequest();
 	if(!request)
 		return;
-	var url = "docLogic.php?doc=load&id="+id;
+	var url = "jmaslxml?id="+id;
     request.open("POST", url, true);
 	request.onreadystatechange = finishDownloadXml;
     request.send(null);

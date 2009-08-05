@@ -1,3 +1,6 @@
+//only debug with client (no server)
+var clientDebugMode = true; 
+
 var defaultstring = "<?xml version=\"1.0\" encoding=\"utf-8\"?><jmacomp></jmacomp>";
 
 var errorBgColor = "red";
@@ -403,6 +406,8 @@ function loadXmlStringToComp(xmlStr)
 		
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
 	
+	$('#idS').text(getXPathValue(rootNode, 'stat/id'));
+	$('#fileS').text(getXPathValue(rootNode, 'stat/file'));
 	var upTotal = parseInt(getXPathValue(rootNode, 'stat/upTotal'));
 	var downTotal = parseInt(getXPathValue(rootNode, 'stat/downTotal'));
 	var sameTotal = parseInt(getXPathValue(rootNode, 'stat/sameTotal'));
@@ -522,7 +527,9 @@ function saveAllChange()
 			}
 		}
 	}
-		
+	
+	createElementTextAndAppend(xmlDoc, statXml, 'id', $('#idS').text());
+	createElementTextAndAppend(xmlDoc, statXml, 'file', $('#fileS').text());
 	createElementTextAndAppend(xmlDoc, statXml, 'upTotal', upTotal);
 	createElementTextAndAppend(xmlDoc, statXml, 'downTotal', downTotal);
 	createElementTextAndAppend(xmlDoc, statXml, 'sameTotal', sameTotal);	
@@ -534,7 +541,8 @@ function saveAllChange()
 	
 	//alert(XMLtoString(xmlDoc));
 	//save to the server
-	//uploadXml(XMLtoString(xmlDoc));
+	if(!clientDebugMode)	
+		uploadXml(XMLtoString(xmlDoc));
 	
 	
 	fireUserEdit(false);
@@ -565,10 +573,10 @@ function initialize()
 		return;
 	}
 	
-	loadXmlStringToComp(sampleXml);
-		//loadXmlStringToComp("<jmacomp><differs><sentence><origText>A</origText><single>A</single><double><up><small>C</small><small>D</small></up><down><small>CD</small></down></double></sentence></differs></jmacomp>");
-	
-	//$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
+	if(clientDebugMode)
+		loadXmlStringToComp(sampleXml);
+	else
+		downloadXml(docId);
 	
 	setTimeout(onTimeoutCheck, checkInterval);
 }
