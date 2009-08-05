@@ -566,17 +566,19 @@ function initialize()
 		return;
 	}
 	
-	docId = gup('id');
-	if(docId == null)
-	{
-		alert("Require Parameter 'id'!");
-		return;
-	}
-	
+		
 	if(clientDebugMode)
 		loadXmlStringToComp(sampleXml);
 	else
+	{
+		docId = gup('id');
+		if(docId == null)
+		{
+			alert("Require Parameter 'id'!");
+			return;
+		}
 		downloadXml(docId);
+	}
 	
 	setTimeout(onTimeoutCheck, checkInterval);
 }
