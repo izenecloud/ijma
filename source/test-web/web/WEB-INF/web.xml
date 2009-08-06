@@ -12,6 +12,10 @@
         <servlet-name>JMAXmlServlet</servlet-name>
         <servlet-class>jma.JMAXmlServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StatisticRemoveServlet</servlet-name>
+        <servlet-class>jma.StatisticRemoveServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>StatisticOverview</servlet-name>
         <url-pattern>/StatisticOverview</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>JMAXmlServlet</servlet-name>
         <url-pattern>/jmaslxml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StatisticRemoveServlet</servlet-name>
+        <url-pattern>/StatisticRemoveServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

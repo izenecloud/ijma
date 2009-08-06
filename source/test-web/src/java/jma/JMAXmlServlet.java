@@ -26,6 +26,7 @@ import org.dom4j.Element;
  * @author Vernkin
  */
 public class JMAXmlServlet extends HttpServlet {
+    private StatisticManager statManager_ = StatisticManager.getInstance(); /** the reference to the shared StatisticManager */
 
     private void toClient(PrintWriter pw, String msg) {
         pw.print(msg);
@@ -42,29 +43,34 @@ public class JMAXmlServlet extends HttpServlet {
     private String readXml(String id) {
         //System.out.println(new java.util.Date());
         //System.out.println("id: " + id);
-        // read from diff xml file
-        File dest = new File(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
-        if(!dest.exists()){
-            return "Not Exist Such ID : " + id;
-        }
-
-        InputStream is = null;
-        try {
-            byte[] buf = new byte[(int)dest.length()];
-            is = new FileInputStream(dest);
-            is.read(buf);
-            //System.out.println(new String(buf));
-            return new String(buf);
-        } catch (Exception e) {
-            System.err.println(new java.util.Date());
-            System.err.println("Error in read xml :" + e.getMessage());
-            return "Error in read xml :" + e.getMessage();
-        } finally{
-            if(is != null){
-                try{is.close();}catch(Exception ee){}
+        if(statManager_.hasRecord(Integer.parseInt(id))) {
+            // read from diff xml file
+            File dest;
+            dest = new File(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
+            if (dest.exists()) {
+                InputStream is = null;
+                try {
+                    byte[] buf = new byte[(int) dest.length()];
+                    is = new FileInputStream(dest);
+                    is.read(buf);
+                    //System.out.println(new String(buf));
+                    return new String(buf);
+                } catch (Exception e) {
+                    System.err.println(new java.util.Date());
+                    System.err.println("Error in read xml :" + e.getMessage());
+                    return "Error in read xml :" + e.getMessage();
+                } finally {
+                    if (is != null) {
+                        try {
+                            is.close();
+                        } catch (Exception ee) {
+                        }
+                    }
+                }
             }
         }
         
+        return "Error: not exist such ID : " + id + ",\nplease close current window.";
     }
 
     /** 
@@ -116,7 +122,6 @@ public class JMAXmlServlet extends HttpServlet {
             return;
         }
 
-        id = null;
         String name = null;
         int upTotal = 0;
         int downTotal = 0;
@@ -143,6 +148,13 @@ public class JMAXmlServlet extends HttpServlet {
             return;
         }
 
+        if(statManager_.hasRecord(Integer.parseInt(id)) == false) {
+            System.err.println(new java.util.Date());
+            System.err.println("jmacomop.html sent a request to JMAXmlServlet for saving diff.xml on id " + id + ", while it has been deleted.");
+            toClient(response.getWriter(), "Error: file ID " + id + " has been deleted, please close current window.");
+            return;
+        }
+
         try {
             // save to comparison file
             PrintWriter pw = new PrintWriter(new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME));
@@ -155,6 +167,9 @@ public class JMAXmlServlet extends HttpServlet {
             ex.printStackTrace();
             return;
         }
+
+        // save to statistics manager
+        statManager_.getRecord(Integer.parseInt(id)).setFromDocument(doc);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet 方法。单击左侧的 + 号以编辑代码。">

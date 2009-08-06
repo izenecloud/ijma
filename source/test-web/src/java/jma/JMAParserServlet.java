@@ -37,11 +37,22 @@ public class JMAParserServlet extends HttpServlet {
         StatisticRecord statRecord = statManager_.createNewRecord();
         int id = statRecord.getID();
 
+        // save the file user uploaded
+        JMAFileUploader uploader = new JMAFileUploader();
         try {
-            // save the file user uploaded
-            JMAFileUploader uploader = new JMAFileUploader();
             uploader.parseRequest(request, "rawfile");
+        } catch (Exception e) {
+            System.err.println(new java.util.Date());
+            System.err.println(e.getMessage());
+            
+            // remove the record if error happened
+            statManager_.removeRecord(id);
 
+            // return to index page
+            response.sendRedirect("index.jsp?error=outofsize");
+        }
+        
+        try {
             statRecord.setRawName(uploader.getFileName());
             String newName = StatisticManager.DB_PATH + id + ".txt";
             uploader.saveFile(newName);

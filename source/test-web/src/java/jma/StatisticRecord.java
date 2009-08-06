@@ -136,6 +136,15 @@ public class StatisticRecord {
         return (float)(diffTotal - downDiffError_) / diffTotal * 100;
     }
 
+    public float getFScore() {
+        float sum = upTotal_ + downTotal_;
+
+        if(sum == 0)
+            return 0;
+
+        return (float)sameTotal_ * 2 / sum * 100;
+    }
+
     public void setFromDocument(Document diffDoc) {
         Element statElem = diffDoc.getRootElement().element("stat");
 

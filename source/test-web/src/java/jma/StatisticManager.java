@@ -124,6 +124,15 @@ public class StatisticManager {
     }
 
     /**
+     * Returns true if this ID exists.
+     * @param id the ID value
+     * @return true for ID exists, false for not exists.
+     */
+    public boolean hasRecord(int id) {
+        return map_.containsKey(new Integer(id));
+    }
+
+    /**
      * Get the collection of all records.
      * @return the records collection.
      */
