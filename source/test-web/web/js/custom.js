@@ -1,6 +1,3 @@
-//only debug with client (no server)
-var clientDebugMode = false; 
-
 var defaultstring = "<?xml version=\"1.0\" encoding=\"utf-8\"?><jmacomp></jmacomp>";
 
 var errorBgColor = "red";
@@ -52,15 +49,19 @@ function backToHomepage(ele)
 {
 	if(modified)
 	{
-		if(confirm("There are some modifications unsaved, do you want to save them now?"))
+		if(!confirm("There are some modifications unsaved, do you want to leave then current page?"))
 		{
-			saveAllChange();
+			return false;
 		}
-		else if(!confirm("Are you sure to abort those modifications?"))
+		
+		if(confirm("Are you sure to save those modifications before leave?"))
 		{
 			saveAllChange();
 		}
 	}
+
+	ele.href = "index.jsp";
+	return true;
 }
 
 function fireOnLoading()
@@ -420,12 +421,13 @@ function loadXmlStringToComp(xmlStr)
 		
 	//++++++++++++ begin the compunit string
 		var compunitStr = "<div class=\"compunit\">" + 
-	"<div class=\"unitroottitle\">Sentence: " + (i+1)+"/"+totalSentences +
+	"<div class=\"unitroottitle\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+totalSentences + "</span>"+
 			"<input type=\"hidden\" id=\"lastApplyUserInput\" value=\"" + userInput + "\" />" +
 			"<input type=\"hidden\" id=\"senModified\" value=\"0\" />" +
 			"<input type=\"hidden\" id=\"senSameError\" value=\"" + senSameError + "\" />" +
 			"<input type=\"hidden\" id=\"senUpDiffError\" value=\"" + senUpDiffError + "\" />" +
-			"<input type=\"hidden\" id=\"senDownDiffError\" value=\"" + senDownDiffError + "\" /></div>" +
+			"<input type=\"hidden\" id=\"senDownDiffError\" value=\"" + senDownDiffError + "\" />" +
+			"<a href=\"#\" class=\"unitroothref\" onclick=\"return backToHomepage(this);\" title=\"Go to the Homepage\">Home</a></div>" +
 	"<div class=\"comprow\">" + 
 		"<div class=\"unittitle\">Original Text: </div>" + 
 		"<div class=\"unitcontent\" id=\"origText\"> " + origText + "</div>" + 
@@ -443,13 +445,13 @@ function loadXmlStringToComp(xmlStr)
 		"<div class=\"unittitle\">Suggestion: </div>" + 
 		"<div class=\"unitcontent\">" + 
 			"<textarea id=\"userInput\" cols=\"60\" rows=\"5\" wrap=\"soft\"></textarea>" +			
-			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/>" + 
-			"<input type=\"button\" class=\"userInputBtn\" value=\"Apply\" onclick=\"applyUserInput(this)\"/>" + 
-			"<input type=\"button\" class=\"userInputBtn\" value=\"Clear\" onclick=\"clearUserInput(this);\"/>" +
+			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/ title=\"Copy original text to the Seguestion area\">" + 
+			"<input type=\"button\" class=\"userInputBtn\" value=\"Apply\" onclick=\"applyUserInput(this)\" title=\"Apply the Suggestion\"/>" + 
+			"<input type=\"button\" class=\"userInputBtn\" value=\"Clear\" onclick=\"clearUserInput(this);\" title=\Clear the Suggestion area\"/>" +
 		"</div>" + 
 	"</div>" +
 	
-	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange()\"/><span class=\"saveAllPromt\"></span><a href=\"#stat\" class=\"stathref\">Statistical Information</a></div>" + 
+	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange()\" title=\"Save all the modifications\"/><span class=\"saveAllPromt\"></span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
 "</div>";
 	//+++++++++ end the compunit string
 	
