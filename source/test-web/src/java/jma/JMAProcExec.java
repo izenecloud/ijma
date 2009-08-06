@@ -13,11 +13,12 @@ import java.io.IOException;
  */
 public class JMAProcExec {
 
-public boolean execute(String cmd)
+public static boolean execute(String cmd)
 {
     try {
         exec(cmd);
     } catch (Exception e) {
+        System.err.println(new java.util.Date());
         System.err.println(e.getMessage());
         return false;
     }
@@ -25,7 +26,7 @@ public boolean execute(String cmd)
     return true;
 }
 
-private void exec(String cmd) throws Exception
+private static void exec(String cmd) throws Exception
 {
     Process proc = null;
     try {

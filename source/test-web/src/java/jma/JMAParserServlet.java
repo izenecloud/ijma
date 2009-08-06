@@ -22,7 +22,6 @@ import org.dom4j.Element;
  * @author jun
  */
 public class JMAParserServlet extends HttpServlet {
-    private static final String SCRIPT_FILE_PATH = "/home/jun/jma/web_test/script/go_jma.sh"; /** the path of script file */
     private StatisticManager statManager_ = StatisticManager.getInstance(); /** the reference to the shared StatisticManager */
 
     /** 
@@ -49,8 +48,8 @@ public class JMAParserServlet extends HttpServlet {
 //            out.println("succeed in uploading file to " + newName + ".<br>");
 
             // execute script
-            String cmd = SCRIPT_FILE_PATH + " " + id + " " + statRecord.getRawName();
-            boolean retVal = (new JMAProcExec()).execute(cmd);
+            String cmd = StatisticManager.SCRIPT_FILE_PATH + " " + id + " " + statRecord.getRawName();
+            boolean retVal = JMAProcExec.execute(cmd);
             if (!retVal) {
                 throw new JMAException("failed in script execution.");
             }
@@ -80,6 +79,9 @@ public class JMAParserServlet extends HttpServlet {
             
             response.sendRedirect("jmacomp.html?id=" + id);
         } catch (Exception e) {
+            System.err.println(new java.util.Date());
+            System.err.println(e.getMessage());
+            
             // remove the record if error happened
             statManager_.removeRecord(id);
             
@@ -98,8 +100,6 @@ public class JMAParserServlet extends HttpServlet {
             out.println("error message: " +e.getMessage() + "<br>");
             out.println("</body>");
             out.println("</html>");
-        } finally {
-
         }
     }
 

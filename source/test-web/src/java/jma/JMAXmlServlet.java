@@ -56,6 +56,8 @@ public class JMAXmlServlet extends HttpServlet {
             //System.out.println(new String(buf));
             return new String(buf);
         } catch (Exception e) {
+            System.err.println(new java.util.Date());
+            System.err.println("Error in read xml :" + e.getMessage());
             return "Error in read xml :" + e.getMessage();
         } finally{
             if(is != null){
@@ -93,6 +95,8 @@ public class JMAXmlServlet extends HttpServlet {
                 readLen = is.read(buf);
             }
         } catch (Throwable ex) {
+            System.err.println(new java.util.Date());
+            System.err.println("Error in read input stream : " + ex.getMessage());
             toClient(response.getWriter(), "Error in read input stream : " + ex.getMessage());
             return;
         }
@@ -105,6 +109,8 @@ public class JMAXmlServlet extends HttpServlet {
         try {
             doc = DocumentHelper.parseText(xmlStr);
         } catch (Throwable ex) {
+            System.err.println(new java.util.Date());
+            System.err.println("Error in parse xml : " + ex.getMessage());
             toClient(response.getWriter(), "Error in parse xml : " + ex.getMessage());
             ex.printStackTrace();
             return;
@@ -130,6 +136,8 @@ public class JMAXmlServlet extends HttpServlet {
             upDiffError = Integer.parseInt(statEle.elementText("upDiffError"));
             downDiffError = Integer.parseInt(statEle.elementText("downDiffError"));
         } catch (Throwable ex) {
+            System.err.println(new java.util.Date());
+            System.err.println("Error in analysis xml : " + ex.getMessage());
             toClient(response.getWriter(), "Error in analysis xml : " + ex.getMessage());
             ex.printStackTrace();
             return;
@@ -141,6 +149,8 @@ public class JMAXmlServlet extends HttpServlet {
             pw.print(xmlStr);
             pw.close();
         } catch (Throwable ex) {
+            System.err.println(new java.util.Date());
+            System.err.println("Error in saving xml : " + ex.getMessage());
             toClient(response.getWriter(), "Error in saving xml : " + ex.getMessage());
             ex.printStackTrace();
             return;

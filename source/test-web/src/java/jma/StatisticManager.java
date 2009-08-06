@@ -22,10 +22,13 @@ import java.util.Iterator;
  * @author jun
  */
 public class StatisticManager {
-    public static final String DB_PATH = "/home/jun/jma/web_test/db/"; /** the path of data files */
+    private static final String WEB_TEST_PATH = "/home/jun/git/jma/bin/web_test/"; /** the web test path containing script and data files */
+    public static final String DB_PATH = WEB_TEST_PATH + "db/"; /** the path of data files */
+    public static final String SCRIPT_FILE_PATH = WEB_TEST_PATH + "go_jma.sh"; /** the path of script file */
     public static final String DIFF_FILE_NAME = "diff.xml"; /** the name of the difference file */
-    private static StatisticManager instance_ = new StatisticManager(); /** the only instance */
+    
     private final String DB_FILE_NAME = "db.xml"; /** the file name of the database file */
+    private static StatisticManager instance_ = new StatisticManager(); /** the only instance */
     private TreeMap map_ = new TreeMap(); /** the map stores each statistic record */
 
     /**
@@ -53,6 +56,8 @@ public class StatisticManager {
         try {
             dbDoc = reader.read(DB_PATH + DB_FILE_NAME);
         } catch(DocumentException e) {
+            System.err.println(new java.util.Date());
+            System.out.println("StatisticManager.load(): " + DB_PATH + DB_FILE_NAME + " not exists, just create it.");
             // no such file exists, just create it with the root node.
             dbDoc = DocumentHelper.createDocument();
             dbDoc.addElement("Collection");
@@ -75,7 +80,8 @@ public class StatisticManager {
                 diffDoc = reader.read(diffFile);
             } catch (DocumentException e) {
                 // no such file exists, just ignore this record
-                System.out.println("error in reading file: " + diffFile);
+                System.err.println(new java.util.Date());
+                System.err.println("StatisticManager.load(): error in reading file: " + diffFile);
                 continue;
             }
 

@@ -85,6 +85,8 @@ public class JMACompareUtil {
                     try{
                         analysisSentence(line1, line2, senEle, stats);
                     }catch(Throwable t){
+                        System.err.println(new java.util.Date());
+                        System.err.println(t.getMessage());
                         //remove the senEle
                         differs.remove(senEle);
                     }
