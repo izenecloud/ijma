@@ -93,6 +93,19 @@ function findFatherWithTag(node, tag){
 	}
 }
 
+function findParentByClass(node, className)
+{
+	var parent = node.parentNode;
+	while(parent != undefined && parent != null)
+	{
+		if(parent.className == className)
+			return parent;
+		parent = parent.parentNode;
+	}
+	return null;
+}
+
+
 function removeHtmlChildren(node){
 	while(node.childNodes.length>0)
 		node.removeChild(node.childNodes[0]);

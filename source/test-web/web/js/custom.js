@@ -11,7 +11,11 @@ var lastSaveTime = null;
 
 var modified = false;
 
-var checkInterval = 30000; //in milliseconds
+var checkInterval = 60000; //in milliseconds
+if(!clientDebugMode)
+	checkInterval = 60000; // 1 minute
+
+var xmlDoc = null;
 
 Array.prototype.indexof = function(obj) {
   var i = this.length;
@@ -21,6 +25,42 @@ Array.prototype.indexof = function(obj) {
     }
   }
   return -1;
+}
+
+function showHidePromt(ele)
+{
+	var display = "block";
+	if(ele.value == "Hide Instructions")
+	{
+		ele.value = "Show Instructions"
+		display = "none";
+	}
+	else
+	{
+		ele.value = "Hide Instructions";
+	}
+	
+	$('.instructionDiv').each(function(index){
+		this.style.display = display;
+	});
+	$('.promtInfo').each(function(index){
+		this.style.display = display;
+	});
+}
+
+function backToHomepage(ele)
+{
+	if(modified)
+	{
+		if(confirm("There are some modifications unsaved, do you want to save them now?"))
+		{
+			saveAllChange();
+		}
+		else if(!confirm("Are you sure to abort those modifications?"))
+		{
+			saveAllChange();
+		}
+	}
 }
 
 function fireOnLoading()
@@ -73,7 +113,7 @@ function onTimeoutCheck()
 
 function copyOrig(ele)
 {
-	var rootNode = ele.parentNode.parentNode.parentNode;
+	var rootNode = findParentByClass(ele, "compunit");
 	var userInput = getFirstEleByIdItr(rootNode, "userInput");
 	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
 	if(origValue == userInput.value)
@@ -90,7 +130,7 @@ function copyOrig(ele)
 
 function clearUserInput(ele)
 {
-	var rootNode = ele.parentNode.parentNode.parentNode;
+	var rootNode = findParentByClass(ele, "compunit");
 	var userInput = getFirstEleByIdItr(rootNode, "userInput");
 	if(userInput.value.length > 0)
 	{
@@ -139,7 +179,7 @@ function applyUserInput(ele)
 {
 	if(!confirm("Are you sure to Apply the current Suggestion?"))
 		return;
-	var rootNode = ele.parentNode.parentNode.parentNode;
+	var rootNode = findParentByClass(ele, "compunit");
 	var userInput = getFirstEleByIdItr(rootNode, "userInput");
 	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
 	
@@ -250,8 +290,9 @@ function applyUserInput(ele)
 	
 	//save the last applied user input
 	var lastApplyInput = getFirstEleByIdItr(rootNode, "lastApplyUserInput");
-	lastApplyInput.value = userInput.value;
+	lastApplyInput.value = userValue;
 	
+	getFirstEleByIdItr(rootNode, "senModified").value = "1";
 	fireUserEdit(true);
 }
 
@@ -263,7 +304,10 @@ function diffChange(ele)
 		node.style.backgroundColor = errorBgColor;
 	else
 		node.style.backgroundColor = "";
-		
+	
+	var rootNode = findParentByClass(node, "compunit");
+	getFirstEleByIdItr(rootNode, "senModified").value = "1";
+	
 	fireUserEdit(true);
 }
 
@@ -282,11 +326,11 @@ function loadXmlStringToComp(xmlStr)
 	var differsHtml = document.getElementById('differs');
 	removeHtmlChildren(differsHtml);
 	
-	var xmlobject = loadXMLString(xmlStr);
-	if(xmlobject == null)
+	xmlDoc = loadXMLString(xmlStr);
+	if(xmlDoc == null)
 		return;
-	var rootNode = xmlobject.getElementsByTagName('jmacomp')[0];
-	var differs = xmlobject.getElementsByTagName('differs')[0];
+	var xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
+	var differs = xmlDoc.getElementsByTagName('differs')[0];
 	
 	var differsChildren = differs.childNodes;
 
@@ -305,6 +349,9 @@ function loadXmlStringToComp(xmlStr)
 		var origText;
 		var userInput = "";
 		var unitdiffers = "";
+		var senSameError = 0;
+		var senUpDiffError = 0;
+		var senDownDiffError = 0;
 		for(var j=0; j<senChildren.length; ++j){
 			var senChild = senChildren[j];
 			if(senChild.tagName == "origText")
@@ -319,7 +366,10 @@ function loadXmlStringToComp(xmlStr)
 			{
 				var bgColor = "";
 				if(senChild.getAttribute("error") != "0")
+				{
 					bgColor = "style=\"background-color:"+errorBgColor+"\"";
+					++senSameError;
+				}
 				unitdiffers += "<div class=\"unitdifferblock\"><div class=\"unitdiffsingle\" "+ bgColor +">" + 
 						getText(senChild) +"</div></div>";
 			}
@@ -340,7 +390,7 @@ function loadXmlStringToComp(xmlStr)
 				
 					if(smallChild.getAttribute("error") != "0")
 					{
-						//alert("error: " + getText(senChild));
+						++senUpDiffError;
 						bgColor = "style=\"background-color:"+errorBgColor+"\"";
 					}
 					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + getText(smallChild) +"</div>";
@@ -358,7 +408,7 @@ function loadXmlStringToComp(xmlStr)
 				
 					if(smallChild.getAttribute("error") != "0")
 					{
-						//alert("error: " + getText(smallChild));
+						++senDownDiffError;
 						bgColor = "style=\"background-color:"+errorBgColor+"\"";
 					}
 					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + getText(smallChild) +"</div>";
@@ -370,7 +420,12 @@ function loadXmlStringToComp(xmlStr)
 		
 	//++++++++++++ begin the compunit string
 		var compunitStr = "<div class=\"compunit\">" + 
-	"<div class=\"unitroottitle\">Sentence: " + (i+1)+"/"+totalSentences+"</div>" +
+	"<div class=\"unitroottitle\">Sentence: " + (i+1)+"/"+totalSentences +
+			"<input type=\"hidden\" id=\"lastApplyUserInput\" value=\"" + userInput + "\" />" +
+			"<input type=\"hidden\" id=\"senModified\" value=\"0\" />" +
+			"<input type=\"hidden\" id=\"senSameError\" value=\"" + senSameError + "\" />" +
+			"<input type=\"hidden\" id=\"senUpDiffError\" value=\"" + senUpDiffError + "\" />" +
+			"<input type=\"hidden\" id=\"senDownDiffError\" value=\"" + senDownDiffError + "\" /></div>" +
 	"<div class=\"comprow\">" + 
 		"<div class=\"unittitle\">Original Text: </div>" + 
 		"<div class=\"unitcontent\" id=\"origText\"> " + origText + "</div>" + 
@@ -387,9 +442,7 @@ function loadXmlStringToComp(xmlStr)
 	"<div class=\"comprow\">" + 
 		"<div class=\"unittitle\">Suggestion: </div>" + 
 		"<div class=\"unitcontent\">" + 
-			//"<input type=\"text\" id=\"userInput\" size=\"60\" value=\"" + userInput + "\"/>" +
-			"<textarea id=\"userInput\" cols=\"60\" rows=\"5\" wrap=\"soft\"></textarea>" +
-			"<input type=\"hidden\" id=\"lastApplyUserInput\" value=\"" + userInput + "\" />" +
+			"<textarea id=\"userInput\" cols=\"60\" rows=\"5\" wrap=\"soft\"></textarea>" +			
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/>" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Apply\" onclick=\"applyUserInput(this)\"/>" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Clear\" onclick=\"clearUserInput(this);\"/>" +
@@ -406,14 +459,14 @@ function loadXmlStringToComp(xmlStr)
 		
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
 	
-	$('#idS').text(getXPathValue(rootNode, 'stat/id'));
-	$('#fileS').text(getXPathValue(rootNode, 'stat/name'));
-	var upTotal = parseInt(getXPathValue(rootNode, 'stat/upTotal'));
-	var downTotal = parseInt(getXPathValue(rootNode, 'stat/downTotal'));
-	var sameTotal = parseInt(getXPathValue(rootNode, 'stat/sameTotal'));
-	var sameError = parseInt(getXPathValue(rootNode, 'stat/sameError'));
-	var upDiffError = parseInt(getXPathValue(rootNode, 'stat/upDiffError'));
-	var downDiffError = parseInt(getXPathValue(rootNode, 'stat/downDiffError'));
+	$('#idS').text(getXPathValue(xmlRoot, 'stat/id'));
+	$('#fileS').text(getXPathValue(xmlRoot, 'stat/name'));
+	var upTotal = parseInt(getXPathValue(xmlRoot, 'stat/upTotal'));
+	var downTotal = parseInt(getXPathValue(xmlRoot, 'stat/downTotal'));
+	var sameTotal = parseInt(getXPathValue(xmlRoot, 'stat/sameTotal'));
+	var sameError = parseInt(getXPathValue(xmlRoot, 'stat/sameError'));
+	var upDiffError = parseInt(getXPathValue(xmlRoot, 'stat/upDiffError'));
+	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);
 	
 	fireOnLoading();
@@ -444,108 +497,136 @@ function saveAllChange()
 	var differsHtml = document.getElementById('differs');
 	var differsChildren = differsHtml.childNodes;
 	
-	var xmlDoc = loadXMLString(defaultstring);
 	var xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
-	var differsXml = createElementAndAppend(xmlDoc, xmlRoot, "differs");
-	var statXml = createElementAndAppend(xmlDoc, xmlRoot, "stat");
+	var differsXml = xmlDoc.getElementsByTagName('differs')[0];
 	
-	var upTotal = 0;
-	var downTotal = 0;
-	var sameTotal = 0;
-	var sameError = 0;
-	var upDiffError = 0;
-	var downDiffError = 0;
+	var sameError = parseInt(getXPathValue(xmlRoot, 'stat/sameError'));
+	var upDiffError = parseInt(getXPathValue(xmlRoot, 'stat/upDiffError'));
+	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	
+	var sentenceXml = differsXml.firstChild;
 	for(var i=0; i<differsChildren.length; ++i)
 	{
 		var differChild = differsChildren[i];
 		if(differChild.className != "compunit")
 			continue;
-		var sentenceXml = createElementAndAppend(xmlDoc, differsXml, "sentence");
-		var origText = getFirstEleByIdItr(differChild, 'origText').innerHTML;
-		var userInput = getFirstEleByIdItr(differChild, 'lastApplyUserInput').value;
-		createElementTextAndAppend(xmlDoc, sentenceXml, 'origText', origText);
-		createElementTextAndAppend(xmlDoc, sentenceXml, 'userInput', userInput);
+		//ignore the unmodified sentence
+		if(getFirstEleByIdItr(differChild, "senModified").value != "1")
+		{
+			sentenceXml = sentenceXml.nextSibling;
+			continue;
+		}
+		//reset the modified flag
+		getFirstEleByIdItr(differChild, "senModified").value = "0";		
 		
+		var senSameError = 0;
+		var senUpDiffError = 0;
+		var senDownDiffError = 0;
+		
+		var userInput = getFirstEleByIdItr(differChild, 'lastApplyUserInput').value;
+		setText(sentenceXml.childNodes[1], userInput);
+
 		var unitDiffers = getFirstEleByClassItr(differChild, 'unitdiffers');
 		var differBlocks = unitDiffers.childNodes;
+		var differBlockXml  = sentenceXml.childNodes[2];
+		
 		for(var j=0; j<differBlocks.length; ++j)
 		{
-			var differChild = differBlocks[j];
-			if(differChild.className != "unitdifferblock")
-				continue;
 			var differBlock = differBlocks[j];
+			if(differBlock.className != "unitdifferblock")
+				continue;
+			//alert("Current: " + differBlockXml.tagName+", " + getText(differBlockXml));
+			
+			
 			var singleBlock = getFirstEleByClass(differBlock, 'unitdiffsingle');
 			if(singleBlock != null)
 			{
-				var text = singleBlock.innerHTML;
-				var isError = singleBlock.style.backgroundColor == errorBgColor;
-				appendXmlDiffBlcok(xmlDoc, sentenceXml, 'single', text, isError);
+				if(singleBlock.style.backgroundColor == errorBgColor)
+				{
+					differBlockXml.setAttribute("error", "1");
+					++senSameError;
+				}
+				else
+					differBlockXml.setAttribute("error", "0");
 				
-				++upTotal;
-				++downTotal;
-				++sameTotal;
-				if(isError)
-					++sameError;
+				//alert("single " + differBlockXml.tagName+", " + getText(differBlockXml));
+				differBlockXml = differBlockXml.nextSibling;
 				continue;
 			}
 			
 			var upBlock = getFirstEleByClass(differBlock, 'unitdifferup');
 			var downBlock = getFirstEleByClass(differBlock, 'unitdifferdown');
 			
-			var upXml = createElementAndAppend(xmlDoc, sentenceXml, "up");
-			var downXml = createElementAndAppend(xmlDoc, sentenceXml, "down");
+			var upXml = differBlockXml.firstChild;
+			var downXml = upXml.nextSibling;
+			
 			
 			var smallChildren = upBlock.childNodes;
+			var smallXml = upXml.firstChild;
 			for(var k=0; k<smallChildren.length; ++k)
 			{
 				var smallChild = smallChildren[k];
 				if(smallChild.className != "unitdiffsmall")
 					continue;
-				var text = smallChild.innerHTML;
-				var isError = smallChild.style.backgroundColor == errorBgColor;
-				appendXmlDiffBlcok(xmlDoc, upXml, 'small', text, isError);
-				
-				++upTotal;
-				if(isError)
-					++upDiffError;
+				if(smallChild.style.backgroundColor == errorBgColor)
+				{
+					smallXml.setAttribute("error", "1");
+					++senUpDiffError;
+				}
+				else
+					smallXml.setAttribute("error", "0");
+				smallXml = smallXml.nextSibling;
 			}
 			
 			smallChildren = downBlock.childNodes;
+			smallXml = downXml.firstChild;
 			for(var k=0; k<smallChildren.length; ++k)
 			{
 				var smallChild = smallChildren[k];
 				if(smallChild.className != "unitdiffsmall")
 					continue;
-				var text = smallChild.innerHTML;
-				var isError = smallChild.style.backgroundColor == errorBgColor;
-				appendXmlDiffBlcok(xmlDoc, downXml, 'small', text, isError);
-				
-				++downTotal;
-				if(isError)
-					++downDiffError;
+				if(smallChild.style.backgroundColor == errorBgColor)
+				{
+					smallXml.setAttribute("error", "1");
+					++senDownDiffError;
+				}
+				else
+					smallXml.setAttribute("error", "0");
+				smallXml = smallXml.nextSibling;
 			}
+			
+			differBlockXml = differBlockXml.nextSibling;
 		}
+		
+		var senSameErrorInput = getFirstEleByIdItr(differChild, "senSameError");
+		sameError = sameError - parseInt(senSameErrorInput.value) + senSameError;
+		senSameErrorInput.value = "" + senSameError;
+		
+		var senUpDiffErrorInput = getFirstEleByIdItr(differChild, "senUpDiffError");
+		upDiffError = upDiffError - parseInt(senUpDiffErrorInput.value) + senUpDiffError;
+		senUpDiffErrorInput.value = "" + senUpDiffError;
+		
+		var senDownDiffErrorInput = getFirstEleByIdItr(differChild, "senDownDiffError");		
+		downDiffError = downDiffError - parseInt(senDownDiffErrorInput.value) + senDownDiffError;
+		senDownDiffErrorInput.value = "" + senDownDiffError;
 	}
 	
-	createElementTextAndAppend(xmlDoc, statXml, 'id', $('#idS').text());
-	createElementTextAndAppend(xmlDoc, statXml, 'name', $('#fileS').text());
-	createElementTextAndAppend(xmlDoc, statXml, 'upTotal', upTotal);
-	createElementTextAndAppend(xmlDoc, statXml, 'downTotal', downTotal);
-	createElementTextAndAppend(xmlDoc, statXml, 'sameTotal', sameTotal);	
-	createElementTextAndAppend(xmlDoc, statXml, 'sameError', sameError);	
-	createElementTextAndAppend(xmlDoc, statXml, 'upDiffError', upDiffError);
-	createElementTextAndAppend(xmlDoc, statXml, 'downDiffError', downDiffError);
+	setXPathValue(xmlRoot, 'stat/sameError', sameError);
+	setXPathValue(xmlRoot, 'stat/upDiffError', upDiffError);
+	setXPathValue(xmlRoot, 'stat/downDiffError', downDiffError);
 	
+	var upTotal = parseInt(getXPathValue(xmlRoot, 'stat/upTotal'));
+	var downTotal = parseInt(getXPathValue(xmlRoot, 'stat/downTotal'));
+	var sameTotal = parseInt(getXPathValue(xmlRoot, 'stat/sameTotal'));
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);	
 	
-	//alert(XMLtoString(xmlDoc));
 	//save to the server
 	if(!clientDebugMode)	
 		uploadXml(XMLtoString(xmlDoc));
 	
-	
 	fireUserEdit(false);
+	
+	//alert(XMLtoString(xmlDoc));
 }
 
 

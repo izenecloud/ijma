@@ -35,6 +35,11 @@ function getText(node){
 	return node.firstChild.nodeValue;
 }
 
+function setText(node, val)
+{
+	node.firstChild.nodeValue = val;
+}
+
 function getChild(node, childName){	
 	var children = node.childNodes;
 	for(var i=0; i<children.length; ++i){
@@ -114,4 +119,12 @@ function getXPathValue(rootNode, xpath){
 		return null;
 	}
 	return getText(node);
+}
+
+function setXPathValue(rootNode, xpath, val){
+	var node = getXPathNode(rootNode, xpath);
+	if(node == null){
+		return;
+	}
+	return setText(node, val);
 }

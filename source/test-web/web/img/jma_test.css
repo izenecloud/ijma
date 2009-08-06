@@ -130,6 +130,16 @@ body {
 	width:50%;
 }
 
+.promtCtlDiv {
+	height:auto;
+	width:100%;
+	/*border-bottom:#000000 solid 1px;*/
+	margin-bottom:5px;
+	padding-bottom:5px;
+	color:purple;
+	text-align:left;
+}
+
 .instructionDiv {
 	height:auto;
 	width:100%;
