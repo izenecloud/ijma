@@ -1,0 +1,4 @@
+*
+!/.gitignore
+!/go_jma.sh
+!/db
