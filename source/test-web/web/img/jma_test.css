@@ -197,9 +197,18 @@ body {
 	height:30px;
 	margin-top: 5px;
 	margin-left:5px;
-	width: 200px;
+	margin-right:5px;
+	width: 100%;
 	font-weight: bold;
 	font-size:16px;
+	text-align:left;
+}
+
+.unitroothref{
+	margin-right:5px;
+	padding-right:5px;
+	font-size:14px;
+	float:right;
 }
 
 .unittitle {
