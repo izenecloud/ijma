@@ -22,6 +22,7 @@ import java.util.Iterator;
  * @author jun
  */
 public class StatisticManager {
+    //private static final String WEB_TEST_PATH = "/home/wisenut/tomcat/public_html/jma-test/jma/bin/web_test/"; /** the web test path containing script and data files */
     private static final String WEB_TEST_PATH = "/home/jun/git/jma/bin/web_test/"; /** the web test path containing script and data files */
     public static final String DB_PATH = WEB_TEST_PATH + "db/"; /** the path of data files */
     public static final String SCRIPT_FILE_PATH = WEB_TEST_PATH + "go_jma.sh"; /** the path of script file */
@@ -49,8 +50,8 @@ public class StatisticManager {
      * Load data from file.
      */
     public void load() {
-        //System.out.println(new java.util.Date());
-        //System.out.println("StatisticManager.load()");
+        System.out.println(new java.util.Date());
+        System.out.println("StatisticManager.load()");
         SAXReader reader = new SAXReader();
         Document dbDoc;
         try {
@@ -88,14 +89,17 @@ public class StatisticManager {
             statRecord.setFromDocument(diffDoc);
             map_.put(id, statRecord);
         }
-        //System.out.println("records number: " + map_.size());
-        //System.out.println();
+        System.out.println("records number: " + map_.size());
+        System.out.println();
     }
 
     /**
      * Save data to file.
      */
     synchronized public void save() throws IOException {
+        System.out.println(new java.util.Date());
+        System.out.println("StatisticManager.save()");
+
         // create document from map_
         Document dbDoc = DocumentHelper.createDocument();
         Element dbRoot = dbDoc.addElement("Collection");
@@ -112,6 +116,9 @@ public class StatisticManager {
         FileWriter fwriter = new FileWriter(DB_PATH + DB_FILE_NAME);
         dbDoc.write(fwriter);
         fwriter.close();
+
+        System.out.println("records number: " + map_.size());
+        System.out.println();
     }
 
     /**

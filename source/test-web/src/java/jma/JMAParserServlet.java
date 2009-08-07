@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
 /**
  *
  * @author jun
@@ -77,9 +80,18 @@ public class JMAParserServlet extends HttpServlet {
             statElem.element("name").setText(statRecord.getRawName());
 
             // save to comparison file
-            PrintWriter pw = new PrintWriter(new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME));
-            pw.print(diffDoc.asXML());
-            pw.close();
+//            PrintWriter pw = new PrintWriter(new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME));
+//            pw.print(diffDoc.asXML());
+//            pw.close();
+            // to avoid write Document to file in local character encoding, use Document.write() instead of PrintWriter.print()
+//            FileWriter fwriter = new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
+//            diffDoc.write(fwriter);
+//            fwriter.close();
+
+            FileOutputStream fstream = new FileOutputStream(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
+            OutputStreamWriter streamWriter = new OutputStreamWriter(fstream, "UTF-8");
+            streamWriter.write(diffDoc.asXML());
+            streamWriter.close();
 
             // set statistic result
             statRecord.setFromDocument(diffDoc);

@@ -403,7 +403,7 @@ function updateDiffersHtml(isInit)
 		pageDiv += "<a href=\"#\" onclick=\"return moveTo("+k+");\">"+(k+1)+"</a>";
 	}
 	
-	pageDiv += "<a href=\"#\" onclick=\"moveTo("+pageIdx+")\" class=\"curPage\">"+(pageIdx+1)+"</a>";
+	pageDiv += "<span class=\"curPage\">"+(pageIdx+1)+"</span>";
 	
 	for(var k=pageIdx+1; k<=idxEnd; ++k)
 	{
@@ -560,8 +560,10 @@ function updateDiffersHtml(isInit)
 	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);
 	
-	if(isInit || !modified)
+	if(isInit)
 		fireOnLoading();
+    else if(!modified)
+        fireUserEdit(false);
 }
 
 function appendXmlDiffBlcok(xmlDoc, father, newNodeName, text, isError)

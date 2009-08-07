@@ -68,7 +68,7 @@ function finishDownloadXml(){
 			if(ret.length > 0 && ret.charAt(0) != '<'){
 				alert("Server Error Message: "+ret);
 			}else{
-                alert("finish download");
+                //alert("finish download");
                 loadXmlStringToComp(ret);
 			}
 		}

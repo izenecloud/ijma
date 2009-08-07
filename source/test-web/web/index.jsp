@@ -20,6 +20,8 @@
     private static final int SUM_RECORD_ID = -1;
 
     public void init() throws ServletException {
+        System.out.println(new java.util.Date());
+        System.out.println("index.jsp.init()");
         statManager_.load();
     }
 
@@ -34,7 +36,8 @@
             out.println("<td rowspan=\"2\" colspan=\"2\" align=\"center\"> Sum </td>");
         }
 
-        java.text.DecimalFormat percentFormat = new java.text.DecimalFormat("00.00");
+        java.text.DecimalFormat percentFormat = new java.text.DecimalFormat();
+        percentFormat.setMaximumFractionDigits(2);
 
         out.println("<td align=\"center\">Basis</td>");
         out.println("<td align=\"center\">" + statRecord.getUpTotal() + "</td>");
@@ -195,7 +198,7 @@ function isDelete(idVal) {
         if (error != null && error.equals("outofsize")) {
 %>
 <script language="javascript" type="text/javascript">
-        alert("The file uploaded exceeds maximum size.\nplease upload a file within 5Mega bytes.");
+        alert("The file uploaded exceeds maximum size.\nplease upload a file within 2Mega bytes.");
 </script>
 <%
         }

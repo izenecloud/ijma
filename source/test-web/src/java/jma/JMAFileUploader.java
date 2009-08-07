@@ -22,7 +22,7 @@ public class JMAFileUploader {
 
     private String fileName_; /** the name of the file to save */
 
-    private static final int MAX_SIZE = 5000000; /** the maximum size (5M bytes) of file to upload */
+    private static final int MAX_SIZE = 2000000; /** the maximum size (2M bytes) of file to upload */
 
     /**
      * Parse the form field in HTTP request and save the file item.

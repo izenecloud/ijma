@@ -16,12 +16,17 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import java.io.FileInputStream;
+import java.io.DataInputStream;
+import java.io.InputStreamReader;
+
+
 /**
  *
  * @author Vernkin
  */
 public class JMACompareUtil {
-
+    private static final String CHAR_ENCODE = "UTF-8"; /** UTF-8 character encoding */
 	/**
 	 * <strong>The file1 and file2 must be encoded with utf8!</strong><br><br>
 	 *
@@ -57,8 +62,13 @@ public class JMACompareUtil {
 		BufferedReader br2 = null;
 
 		try{
-			br1 = new BufferedReader(new FileReader(file1));
-			br2 = new BufferedReader(new FileReader(file2));
+//			br1 = new BufferedReader(new FileReader(file1));
+//			br2 = new BufferedReader(new FileReader(file2));
+            // to avoid using default character encoding in reading file, use InputStreamReader instead of FileReader
+            FileInputStream fstream1 = new FileInputStream(file1);
+            br1 = new BufferedReader(new InputStreamReader(fstream1, CHAR_ENCODE));
+            FileInputStream fstream2 = new FileInputStream(file2);
+            br2 = new BufferedReader(new InputStreamReader(fstream2, CHAR_ENCODE));
 
 			String line1 = br1.readLine();
 			String line2 = br2.readLine();

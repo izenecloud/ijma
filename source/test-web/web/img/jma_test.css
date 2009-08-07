@@ -328,6 +328,7 @@ body {
 .curPage {
 	font-weight:bold;
 	font-size:16px;
+    color:red;
 }
 
 .pagesDiv a{

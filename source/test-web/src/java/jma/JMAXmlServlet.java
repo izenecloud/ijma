@@ -21,6 +21,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
+import java.io.InputStreamReader;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
 /**
  *
  * @author Vernkin
@@ -45,16 +49,16 @@ public class JMAXmlServlet extends HttpServlet {
         //System.out.println("id: " + id);
         if(statManager_.hasRecord(Integer.parseInt(id))) {
             // read from diff xml file
-            File dest;
-            dest = new File(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
+            File dest = new File(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
             if (dest.exists()) {
                 InputStream is = null;
                 try {
                     byte[] buf = new byte[(int) dest.length()];
                     is = new FileInputStream(dest);
                     is.read(buf);
+
                     //System.out.println(new String(buf));
-                    return new String(buf);
+                    return new String(buf, "UTF-8");
                 } catch (Exception e) {
                     System.err.println(new java.util.Date());
                     System.err.println("Error in read xml :" + e.getMessage());
@@ -107,7 +111,7 @@ public class JMAXmlServlet extends HttpServlet {
             return;
         }
         //use default utf8 encoding
-        String xmlStr = bos.toString();
+        String xmlStr = bos.toString("UTF-8");
         //System.out.println("Write Xml "+xmlStr);
 
         Document doc = null;
@@ -157,9 +161,14 @@ public class JMAXmlServlet extends HttpServlet {
 
         try {
             // save to comparison file
-            PrintWriter pw = new PrintWriter(new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME));
-            pw.print(xmlStr);
-            pw.close();
+//            PrintWriter pw = new PrintWriter(new FileWriter(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME));
+//            pw.print(xmlStr);
+//            pw.close();
+
+            FileOutputStream fstream = new FileOutputStream(StatisticManager.DB_PATH + id + "/" + StatisticManager.DIFF_FILE_NAME);
+            OutputStreamWriter streamWriter = new OutputStreamWriter(fstream, "UTF-8");
+            streamWriter.write(xmlStr);
+            streamWriter.close();
         } catch (Throwable ex) {
             System.err.println(new java.util.Date());
             System.err.println("Error in saving xml : " + ex.getMessage());
