@@ -57,10 +57,12 @@ function backToHomepage(ele)
 		if(confirm("Are you sure to save those modifications before leave?"))
 		{
 			saveAllChange(function(){window.location.href="index.jsp"});
+            return false;
 		}
 	}
 
-	return false;
+    ele.href = "index.jsp";
+	return true;
 }
 
 function fireOnLoading()

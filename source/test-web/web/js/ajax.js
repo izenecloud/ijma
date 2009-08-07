@@ -29,19 +29,23 @@ function uploadXml(xmlstring, callbackFun){
 }
 
 function finishUploadXml(callbackFun){
-	if (request.readyState == 4){
+	if(request.readyState == 1 && callbackFun != undefined)
+    {
+        callbackFun();
+    }
+
+    if (request.readyState == 4){
 		if (request.status == 200){
 			var ret = request.responseText;
 			if(ret.length > 0){
 				alert("Error: "+ret);
 			}else{
-				if(callbackFun != undefined)
+				if(callbackFun != undefined){
 					callbackFun();
+                }
 			}
 		
-		}/*else if(request.status == 0){
-			//do nothing
-		}*/else{
+		}else{
 			alert("Server Error Code:"+request.status);
 		}
 	}
@@ -64,6 +68,7 @@ function finishDownloadXml(){
 			if(ret.length > 0 && ret.charAt(0) != '<'){
 				alert("Server Error Message: "+ret);
 			}else{
+                alert("finish download");
                 loadXmlStringToComp(ret);
 			}
 		}
