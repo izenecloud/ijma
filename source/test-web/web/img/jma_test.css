@@ -320,3 +320,17 @@ body {
 	font-size:12px;
 	vertical-align:bottom;
 }
+
+.pagesDiv {
+	text-align:center
+}
+
+.curPage {
+	font-weight:bold;
+	font-size:16px;
+}
+
+.pagesDiv a{
+	margin-left:3px;
+	margin-right:3px;
+}

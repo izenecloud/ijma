@@ -1,2 +1,2 @@
 //only debug in the browser (without server)
-var clientDebugMode = false;
+var clientDebugMode = true;

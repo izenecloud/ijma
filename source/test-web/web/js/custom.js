@@ -6,13 +6,28 @@ var docId;
 
 var lastSaveTime = null;
 
+var lastSaveTimePromt = "";
+
 var modified = false;
 
-var checkInterval = 60000; //in milliseconds
+var pageSize = 20;
+var pageScope = 5;
+var pageIdx = 0;
+var maxPageIdx = 0;
+
+var sentenceSize = 0;
+
+var autoSaveInterval = 180000; // 3 min
+
+var checkInterval = 30000; //in milliseconds
 if(!clientDebugMode)
-	checkInterval = 300000; // 3 minute
+	checkInterval = 30000; // 30 s
 
 var xmlDoc = null;
+var xmlRoot = null;
+var differsXml = null;
+
+var promtDisplay = "block";
 
 Array.prototype.indexof = function(obj) {
   var i = this.length;
@@ -26,11 +41,10 @@ Array.prototype.indexof = function(obj) {
 
 function showHidePromt(ele)
 {
-	var display = "block";
 	if(ele.value == "Hide Instructions")
 	{
 		ele.value = "Show Instructions"
-		display = "none";
+		promtDisplay = "none";
 	}
 	else
 	{
@@ -38,10 +52,10 @@ function showHidePromt(ele)
 	}
 	
 	$('.instructionDiv').each(function(index){
-		this.style.display = display;
+		this.style.display = promtDisplay;
 	});
 	$('.promtInfo').each(function(index){
-		this.style.display = display;
+		this.style.display = promtDisplay;
 	});
 }
 
@@ -98,15 +112,20 @@ function updateSaveAllPromt()
 	{
 		var minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/60000);
 		//var minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/1000);
-		$('.saveAllPromt').html('(saved ' + minutes + ' minutes ago)');
+		lastSaveTimePromt = '(saved ' + minutes + ' minutes ago)';
+		$('.saveAllPromt').html(lastSaveTimePromt);
 	}
 }
 
 function onTimeoutCheck()
 {
-	if(modified)
+	var lastSavePeriod = 0;
+	if(lastSaveTime != null)
+		lastSavePeriod = parseInt(((new Date()).getTime() - lastSaveTime.getTime()));
+	
+	if((lastSavePeriod > autoSaveInterval) && modified)
 	{
-		saveAllChange();
+		saveAllChange(null, true);
 	}
 	
 	updateSaveAllPromt();
@@ -325,27 +344,88 @@ function practiseDiffChange(ele)
 
 function loadXmlStringToComp(xmlStr)
 {
-	//var differsHtml = document.getElementById('differs');
-	//removeHtmlChildren(differsHtml);
-	$('#differs').remove();
-
 	xmlDoc = loadXMLString(xmlStr);
 	if(xmlDoc == null)
 		return;
-	var xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
+	xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
+	differsXml = xmlDoc.getElementsByTagName('differs')[0];
+	sentenceSize = differsXml.childNodes.length;
+	
+	pageIdx = 0;
+	maxPageIdx = Math.ceil(sentenceSize / pageSize);
+	
+	//alert("maxpageidx " + maxPageIdx);
+	
+	updateDiffersHtml(true);
+}
+
+function moveTo(pPageIdx)
+{
+	//alert("moveto " + pPageIdx);
+	saveAllChange();
+	pageIdx = pPageIdx;
+	updateDiffersHtml(false);
+	return false;
+}
+
+function updateDiffersHtml(isInit)
+{
+
+	$('#differs').remove();
+	
 	var differs = xmlDoc.getElementsByTagName('differs')[0];
 	
-	var differsChildren = differs.childNodes;
+	var differsChildren = differsXml.childNodes;
 
-	var totalSentences = 0;
+	/*var totalSentences = 0;
 	for(var i=0; i<differsChildren.length; ++i){
 		if(differsChildren[i].tagName == "sentence")
 			++totalSentences;
+	}*/
+	
+	//add pages div
+	var pageDiv = "<div class=\"pagesDiv\">";
+	
+	if(pageIdx >= 1)
+	{
+		pageDiv += "<a href=\"#\" onclick=\"return moveTo(0);\">First</a><a href=\"#\" onclick=\"return moveTo("+(pageIdx-1)+");\">Previous</a>";
+	}	
+	
+	var idxBegin = pageIdx - pageScope;
+	if(idxBegin<0)
+		idxBegin = 0;
+	var idxEnd = pageIdx + pageScope;
+	if(idxEnd >= maxPageIdx)
+		idxEnd = maxPageIdx - 1;
+
+	for(var k=idxBegin; k<pageIdx; ++k)
+	{
+		pageDiv += "<a href=\"#\" onclick=\"return moveTo("+k+");\">"+(k+1)+"</a>";
 	}
 	
-	var differsStr = "<div id=\"differs\">";
+	pageDiv += "<a href=\"#\" onclick=\"moveTo("+pageIdx+")\" class=\"curPage\">"+(pageIdx+1)+"</a>";
+	
+	for(var k=pageIdx+1; k<=idxEnd; ++k)
+	{
+		pageDiv += "<a href=\"#\" onclick=\"return moveTo("+k+");\">"+(k+1)+"</a>";
+	}
+	
+	if(pageIdx < maxPageIdx - 1)
+	{
+		pageDiv += "<a href=\"#\" onclick=\"return moveTo("+(pageIdx+1)+");\">Next</a><a href=\"#\" onclick=\"return moveTo("+(maxPageIdx-1)+");\">Last</a>";
+	}
+	
+	pageDiv += "</div>"
+	
+	
+	
+	var differsStr = "<div id=\"differs\">" + pageDiv;
 
-	for(var i=0; i<differsChildren.length; ++i){
+	var xmlBegin = pageIdx * pageSize;
+	var xmlEnd = xmlBegin + pageSize;
+	if( xmlEnd > sentenceSize )
+		xmlEnd = sentenceSize;
+	for(var i=xmlBegin; i<xmlEnd; ++i){
 		var sentence = differsChildren[i];
 		if(sentence.tagName != "sentence")
 			continue;
@@ -425,7 +505,7 @@ function loadXmlStringToComp(xmlStr)
 		
 	//++++++++++++ begin the compunit string
 		var compunitStr = "<div class=\"compunit\">" + 
-	"<div class=\"unitroottitle\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+totalSentences + "</span>"+
+	"<div class=\"unitroottitle\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+sentenceSize + "</span>"+
 			"<input type=\"hidden\" id=\"lastApplyUserInput\" value=\"" + userInput + "\" />" +
 			"<input type=\"hidden\" id=\"senModified\" value=\"0\" />" +
 			"<input type=\"hidden\" id=\"senSameError\" value=\"" + senSameError + "\" />" +
@@ -438,12 +518,12 @@ function loadXmlStringToComp(xmlStr)
 	"</div>" + 
 	
 	"<div class=\"compinforow\">" + 
-		"<span class=\"promtInfo\"><strong>Recommended: </strong>Single click wrong segmented words (wrong words are with " +errorBgColor+ " background color) <strong>Below</strong>. Remove a wrong word by single click that word one more time.</span>" + 
+		"<span class=\"promtInfo\" style=\"display:"+promtDisplay+";\"><strong>Recommended: </strong>Single click wrong segmented words (wrong words are with " +errorBgColor+ " background color) <strong>Below</strong>. Remove a wrong word by single click that word one more time.</span>" + 
 	"</div>" +	
 	"<div class=\"unitdiffers\">" + unitdiffers + "</div>" + 
 	
 	"<div class=\"compinforow\">" + 
-		"<span class=\"promtInfo\"><strong>Not Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with English spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
+		"<span class=\"promtInfo\" style=\"display:"+promtDisplay+";\"><strong>Not Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with English spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
 	"</div>" + 
 	"<div class=\"comprow\">" + 
 		"<div class=\"unittitle\">Suggestion: </div>" + 
@@ -455,19 +535,21 @@ function loadXmlStringToComp(xmlStr)
 		"</div>" + 
 	"</div>" +
 	
-	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange()\" title=\"Save all the modifications\"/><span class=\"saveAllPromt\"></span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
+	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange(null, true);\" title=\"Save all the modifications\"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
 "</div>";
 	//+++++++++ end the compunit string
 	
 	differsStr += compunitStr;
-	//$("#differs").append(compunitStr);
 	
 	}
+	
+
+	
 	//alert(differsStr.length);
-	$("#stat").after(differsStr + "</div>");
+	$("#stat").after(differsStr + pageDiv + "</div>");
 		
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
-	
+		
 	$('#idS').text(getXPathValue(xmlRoot, 'stat/id'));
 	$('#fileS').text(getXPathValue(xmlRoot, 'stat/name'));
 	var upTotal = parseInt(getXPathValue(xmlRoot, 'stat/upTotal'));
@@ -478,7 +560,8 @@ function loadXmlStringToComp(xmlStr)
 	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);
 	
-	fireOnLoading();
+	if(isInit || !modified)
+		fireOnLoading();
 }
 
 function appendXmlDiffBlcok(xmlDoc, father, newNodeName, text, isError)
@@ -501,19 +584,22 @@ function updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, d
 	$('#jmaPrecisionS').text(((downTotal - sameError - downDiffError)/downTotal).toFixed(4));
 }
 
-function saveAllChange(callbackFun)
+/**
+  * must given isUpload = true if want to upload
+  */
+function saveAllChange(callbackFun, isUpload)
 {
 	var differsHtml = document.getElementById('differs');
 	var differsChildren = differsHtml.childNodes;
-	
-	var xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
-	var differsXml = xmlDoc.getElementsByTagName('differs')[0];
 	
 	var sameError = parseInt(getXPathValue(xmlRoot, 'stat/sameError'));
 	var upDiffError = parseInt(getXPathValue(xmlRoot, 'stat/upDiffError'));
 	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	
-	var sentenceXml = differsXml.firstChild;
+	var xmlBegin = pageIdx * pageSize;
+	var xmlEnd = xmlBegin + pageSize;
+	
+	var sentenceXml = differsXml.childNodes[xmlBegin];
 	for(var i=0; i<differsChildren.length; ++i)
 	{
 		var differChild = differsChildren[i];
@@ -630,10 +716,15 @@ function saveAllChange(callbackFun)
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);	
 	
 	//save to the server
-	if(!clientDebugMode)	
-		uploadXml(XMLtoString(xmlDoc), callbackFun);
+	if(!clientDebugMode){	
+		if(isUpload != undefined && isUpload){
+			uploadXml(XMLtoString(xmlDoc), callbackFun);		
+			fireUserEdit(false);
+		}
+	}else{
+		fireUserEdit(false);
+	}
 	
-	fireUserEdit(false);
 	
 	//alert(XMLtoString(xmlDoc));
 }
