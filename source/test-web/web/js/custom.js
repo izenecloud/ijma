@@ -10,7 +10,7 @@ var modified = false;
 
 var checkInterval = 60000; //in milliseconds
 if(!clientDebugMode)
-	checkInterval = 60000; // 1 minute
+	checkInterval = 300000; // 3 minute
 
 var xmlDoc = null;
 
@@ -325,9 +325,10 @@ function practiseDiffChange(ele)
 
 function loadXmlStringToComp(xmlStr)
 {
-	var differsHtml = document.getElementById('differs');
-	removeHtmlChildren(differsHtml);
-	
+	//var differsHtml = document.getElementById('differs');
+	//removeHtmlChildren(differsHtml);
+	$('#differs').remove();
+
 	xmlDoc = loadXMLString(xmlStr);
 	if(xmlDoc == null)
 		return;
@@ -342,6 +343,8 @@ function loadXmlStringToComp(xmlStr)
 			++totalSentences;
 	}
 	
+	var differsStr = "<div id=\"differs\">";
+
 	for(var i=0; i<differsChildren.length; ++i){
 		var sentence = differsChildren[i];
 		if(sentence.tagName != "sentence")
@@ -456,9 +459,12 @@ function loadXmlStringToComp(xmlStr)
 "</div>";
 	//+++++++++ end the compunit string
 	
-	$("#differs").append(compunitStr);
+	differsStr += compunitStr;
+	//$("#differs").append(compunitStr);
 	
 	}
+	//alert(differsStr.length);
+	$("#stat").after(differsStr + "</div>");
 		
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
 	

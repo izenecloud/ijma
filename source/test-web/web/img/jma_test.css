@@ -293,12 +293,15 @@ body {
 .buttonsdiv {
 	text-align:center;
 	margin-bottom:5px;
+	padding-top:2px;
+	padding-bottom:10px;
 }
 
 .stathref {
 	/*text-align:right;*/
 	float:right;
 	margin-right:10px;
+	padding-bottom:2px;
 }
 
 #userInput {
