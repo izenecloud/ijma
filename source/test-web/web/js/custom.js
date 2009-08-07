@@ -56,12 +56,11 @@ function backToHomepage(ele)
 		
 		if(confirm("Are you sure to save those modifications before leave?"))
 		{
-			saveAllChange();
+			saveAllChange(function(){window.location.href="index.jsp"});
 		}
 	}
 
-	ele.href = "index.jsp";
-	return true;
+	return false;
 }
 
 function fireOnLoading()
@@ -494,7 +493,7 @@ function updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, d
 	$('#jmaPrecisionS').text(((downTotal - sameError - downDiffError)/downTotal).toFixed(4));
 }
 
-function saveAllChange()
+function saveAllChange(callbackFun)
 {
 	var differsHtml = document.getElementById('differs');
 	var differsChildren = differsHtml.childNodes;
@@ -624,7 +623,7 @@ function saveAllChange()
 	
 	//save to the server
 	if(!clientDebugMode)	
-		uploadXml(XMLtoString(xmlDoc));
+		uploadXml(XMLtoString(xmlDoc), callbackFun);
 	
 	fireUserEdit(false);
 	

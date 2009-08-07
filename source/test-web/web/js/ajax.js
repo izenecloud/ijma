@@ -18,24 +18,30 @@ function createRequest() {
 	}
 }
 
-function uploadXml(xmlstring){
+function uploadXml(xmlstring, callbackFun){
     createRequest();
 	if(!request)
 		return;
 	var url = "jmaslxml";
     request.open("POST", url, true);
-	request.onreadystatechange = finishUploadXml;
+	request.onreadystatechange = finishUploadXml(callbackFun);
     request.send(xmlstring);
 }
 
-function finishUploadXml(){
+function finishUploadXml(callbackFun){
 	if (request.readyState == 4){
-       if (request.status == 200){
+		if (request.status == 200){
 			var ret = request.responseText;
 			if(ret.length > 0){
 				alert("Error: "+ret);
+			}else{
+				if(callbackFun != undefined)
+					callbackFun();
 			}
-		}else{
+		
+		}/*else if(request.status == 0){
+			//do nothing
+		}*/else{
 			alert("Server Error Code:"+request.status);
 		}
 	}
