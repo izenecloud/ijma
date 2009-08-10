@@ -38,10 +38,10 @@
 <div id="stat">
 
 <div class="promtCtlDiv">
-<input value="Hide Instructions" onclick="showHidePromt(this)" type="button"/> If you are familiar with this webpage, you can click &quot;Hide Instructions&quot; to save more spaces.
+<input value="Show Instructions" onclick="showHidePromt(this)" type="button"/> Click &quot;Show Instrctions if you are not familiar with this webpage.
 </div>
 
-<div class="instructionDiv">
+<div class="instructionDiv" style="display:none;">
 <h3>Instruction for Manual Check (Please read it carefully in the first time)</h3>
 
 <p>For Each sentence below, there are two approaches to do the manual check.</p>
@@ -115,12 +115,14 @@ All the modifications would be saved automatically (the checking interval is 3 m
 
 
 <div id="differs">
+	<div id="loadingPromt">
+		Please Wait, Loading data... 
+	</div>
 </div>
 
 	<div class="footer">
 		<p><a href="http://www.izenesoft.com" target="_blank">Contact</a> | <a href="mailto:vernkin@gmail.com">Advices</a> <br />
 		&copy; Copyright 2009 iZENEsoft (Shanghai) Co., Ltd.</p>
 	</div>
-
 </body>
 </html>

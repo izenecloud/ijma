@@ -27,7 +27,10 @@ var xmlDoc = null;
 var xmlRoot = null;
 var differsXml = null;
 
-var promtDisplay = "block";
+var promtDisplay = "none";
+
+var saveAllBtns = null;
+var sameAllPromts = null;
 
 Array.prototype.indexof = function(obj) {
   var i = this.length;
@@ -49,6 +52,7 @@ function showHidePromt(ele)
 	else
 	{
 		ele.value = "Hide Instructions";
+		promtDisplay = "block";
 	}
 	
 	$('.instructionDiv').each(function(index){
@@ -70,7 +74,7 @@ function backToHomepage(ele)
 		
 		if(confirm("Are you sure to save those modifications before leave?"))
 		{
-			saveAllChange(function(){window.location.href="index.jsp"});
+			saveAllChange(function(){window.location.href="index.jsp"}, true);
             return false;
 		}
 	}
@@ -81,7 +85,7 @@ function backToHomepage(ele)
 
 function fireOnLoading()
 {
-	$('.saveAllBtn').attr('disabled', 'disabled');
+	saveAllBtns.attr('disabled', 'disabled');
 	lastSaveTime = null;
 	modified = false;
 }
@@ -93,11 +97,11 @@ function fireUserEdit(isEdit)
 	modified = isEdit;
 	if(isEdit)
 	{
-		$(".saveAllBtn").attr('disabled', '');
+		saveAllBtns.attr('disabled', '');
 	}
 	else
 	{
-		$(".saveAllBtn").attr('disabled', 'disabled');
+		saveAllBtns.attr('disabled', 'disabled');
 		lastSaveTime = new Date();
 		updateSaveAllPromt();
 	}
@@ -107,13 +111,17 @@ function updateSaveAllPromt()
 {
 	//update the last modified time
 	if(lastSaveTime == null)
-		$('.saveAllPromt').html('');
+		saveAllPromts.html('');
 	else
-	{
-		var minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/60000);
-		//var minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/1000);
+	{		
+		var minutes = 0;
+		if(clientDebugMode)
+			minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/1000);
+		else
+			minutes = parseInt(((new Date()).getTime() - lastSaveTime.getTime())/60000);
+		
 		lastSaveTimePromt = '(saved ' + minutes + ' minutes ago)';
-		$('.saveAllPromt').html(lastSaveTimePromt);
+		saveAllPromts.html(lastSaveTimePromt);
 	}
 }
 
@@ -349,6 +357,10 @@ function loadXmlStringToComp(xmlStr)
 		return;
 	xmlRoot = xmlDoc.getElementsByTagName('jmacomp')[0];
 	differsXml = xmlDoc.getElementsByTagName('differs')[0];
+	if(!differsXml)
+	{
+		return;
+	}
 	sentenceSize = differsXml.childNodes.length;
 	
 	pageIdx = 0;
@@ -356,7 +368,9 @@ function loadXmlStringToComp(xmlStr)
 	
 	//alert("maxpageidx " + maxPageIdx);
 	
-	updateDiffersHtml(true);
+	updateDiffersHtml();
+	
+	setTimeout(onTimeoutCheck, checkInterval);
 }
 
 function moveTo(pPageIdx)
@@ -364,13 +378,17 @@ function moveTo(pPageIdx)
 	//alert("moveto " + pPageIdx);
 	saveAllChange();
 	pageIdx = pPageIdx;
-	updateDiffersHtml(false);
+	updateDiffersHtml();
 	return false;
 }
 
-function updateDiffersHtml(isInit)
+function updateDiffersHtml()
 {
-
+	if(!differsXml)
+	{
+		return;
+	}
+	
 	$('#differs').remove();
 	
 	var differs = xmlDoc.getElementsByTagName('differs')[0];
@@ -417,7 +435,11 @@ function updateDiffersHtml(isInit)
 	
 	pageDiv += "</div>"
 	
+	//end of the pageDiv
 	
+	var saveAllBtnDisabled = "";
+	if(!modified)
+		saveAllBtnDisabled = "disabled = \"disabled\"";
 	
 	var differsStr = "<div id=\"differs\">" + pageDiv;
 
@@ -535,7 +557,7 @@ function updateDiffersHtml(isInit)
 		"</div>" + 
 	"</div>" +
 	
-	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange(null, true);\" title=\"Save all the modifications\"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
+	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange(null, true);\" title=\"Save all the modifications\" "+saveAllBtnDisabled+"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
 "</div>";
 	//+++++++++ end the compunit string
 	
@@ -560,10 +582,9 @@ function updateDiffersHtml(isInit)
 	var downDiffError = parseInt(getXPathValue(xmlRoot, 'stat/downDiffError'));
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);
 	
-	if(isInit)
-		fireOnLoading();
-    else if(!modified)
-        fireUserEdit(false);
+	saveAllBtns = $('.saveAllBtn');
+	saveAllPromts = $('.saveAllPromt');
+	
 }
 
 function appendXmlDiffBlcok(xmlDoc, father, newNodeName, text, isError)
@@ -591,6 +612,14 @@ function updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, d
   */
 function saveAllChange(callbackFun, isUpload)
 {
+	if(!differsXml)
+	{
+		return;
+	}
+	
+	if(!modified)
+		return;
+		
 	var differsHtml = document.getElementById('differs');
 	var differsChildren = differsHtml.childNodes;
 	
@@ -718,14 +747,18 @@ function saveAllChange(callbackFun, isUpload)
 	updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError);	
 	
 	//save to the server
-	if(!clientDebugMode){	
-		if(isUpload != undefined && isUpload){
+	if(isUpload){
+		if(!clientDebugMode)
 			uploadXml(XMLtoString(xmlDoc), callbackFun);		
+		
+		if(fireUserEdit != undefined)
 			fireUserEdit(false);
-		}
-	}else{
-		fireUserEdit(false);
 	}
+	else
+	{
+		fireUserEdit(true);
+	}
+	
 	
 	
 	//alert(XMLtoString(xmlDoc));
@@ -762,8 +795,6 @@ function initialize()
 		}
 		downloadXml(docId);
 	}
-	
-	setTimeout(onTimeoutCheck, checkInterval);
 }
 
 $(function() {

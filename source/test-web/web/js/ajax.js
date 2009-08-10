@@ -24,17 +24,12 @@ function uploadXml(xmlstring, callbackFun){
 		return;
 	var url = "jmaslxml";
     request.open("POST", url, true);
-	request.onreadystatechange = finishUploadXml(callbackFun);
+	request.onreadystatechange = function() {finishUploadXml(callbackFun);};
     request.send(xmlstring);
 }
 
 function finishUploadXml(callbackFun){
-	if(request.readyState == 1 && callbackFun != undefined)
-    {
-        callbackFun();
-    }
-
-    if (request.readyState == 4){
+	if (request.readyState == 4){
 		if (request.status == 200){
 			var ret = request.responseText;
 			if(ret.length > 0){
