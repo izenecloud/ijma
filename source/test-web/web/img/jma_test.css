@@ -342,3 +342,27 @@ body {
 	font-size:20px;
 	font-weight:bold;
 }
+
+#feedback {
+	display:block;
+	width:95%;
+}
+
+.nbestDiv {
+	color:blue;
+}
+
+.showNbestDiv{
+	padding-bottom:3px;
+}
+
+.showNbestDiv ol li{
+	font-size:15px;
+	color:black;
+}
+
+.scoreSpan {
+	color:red;
+	font-size:20px;
+	padding-right:7px;
+}

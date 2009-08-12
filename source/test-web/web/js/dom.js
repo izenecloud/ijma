@@ -110,3 +110,17 @@ function removeHtmlChildren(node){
 	while(node.childNodes.length>0)
 		node.removeChild(node.childNodes[0]);
 }
+
+/**
+ * xpath is combined by id, like id1/id2
+ */
+function getFirstEleByIDXPath(rootNode, xpath){
+	var names = xpath.split("/");
+	var node = rootNode;
+	for(var i=0;i<names.length;++i){
+		node = getFirstEleById(node, names[i]);
+		if(node == null)
+			return null;
+	}
+	return node;
+}

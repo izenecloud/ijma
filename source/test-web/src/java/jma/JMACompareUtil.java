@@ -8,7 +8,6 @@ package jma;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
@@ -17,8 +16,10 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import java.io.FileInputStream;
-import java.io.DataInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -26,9 +27,44 @@ import java.io.InputStreamReader;
  * @author Vernkin
  */
 public class JMACompareUtil {
+    
     private static final String CHAR_ENCODE = "UTF-8"; /** UTF-8 character encoding */
+
+    private static class WordPOS
+    {
+
+        /** only include word */
+        public String word;
+        
+        /** include word and origin */
+        public String origin;
+
+        /**
+         *
+         * @param origText include or not include POS, if include, separeted by "/"
+         */
+        public WordPOS(String origText)
+        {
+            origin = origText;
+            int posIdx = origText.lastIndexOf('/');
+            if(posIdx < 0)
+                posIdx = origText.length();
+            word = origText.substring(0, posIdx);
+        }
+    }
+
+
+    private static String getJMANBestString(String in)
+    {
+        StringBuffer sb = new StringBuffer(in.length() + 20);
+        int idx = in.indexOf(' ');
+        sb.append("<score>").append(in.substring(0, idx).trim()).
+                append("</score>").append(in.substring(idx+1).trim());
+        return sb.toString();
+    }
+
 	/**
-	 * <strong>The file1 and file2 must be encoded with utf8!</strong><br><br>
+	 * <strong>The basisFile and jmaFile must be encoded with utf8!</strong><br><br>
 	 *
 	 * The root node of the xml is jmacomp.<BR>
 	 *
@@ -56,22 +92,24 @@ public class JMACompareUtil {
 	 * @param file2 the output of the second JMA
 	 * @return the comparison xml document
 	 */
-	public static Document generateDiffXml(File file1, File file2) throws Exception
+	public static Document generateDiffXml(File basisFile, File jmaFile) throws Exception
 	{
-		BufferedReader br1 = null;
-		BufferedReader br2 = null;
+		BufferedReader basisBr = null;
+		BufferedReader jmaBr = null;
 
 		try{
 //			br1 = new BufferedReader(new FileReader(file1));
 //			br2 = new BufferedReader(new FileReader(file2));
             // to avoid using default character encoding in reading file, use InputStreamReader instead of FileReader
-            FileInputStream fstream1 = new FileInputStream(file1);
-            br1 = new BufferedReader(new InputStreamReader(fstream1, CHAR_ENCODE));
-            FileInputStream fstream2 = new FileInputStream(file2);
-            br2 = new BufferedReader(new InputStreamReader(fstream2, CHAR_ENCODE));
+            FileInputStream fstream1 = new FileInputStream(basisFile);
+            basisBr = new BufferedReader(new InputStreamReader(fstream1, CHAR_ENCODE));
 
-			String line1 = br1.readLine();
-			String line2 = br2.readLine();
+            FileInputStream fstream2 = new FileInputStream(jmaFile);
+            jmaBr = new BufferedReader(new InputStreamReader(fstream2, CHAR_ENCODE));
+
+
+			String basisLine = basisBr.readLine();
+			String jmaLine = jmaBr.readLine();
 
 			Document diffDoc = DocumentHelper.createDocument();
 			Element root = diffDoc.addElement( "jmacomp" );
@@ -81,19 +119,37 @@ public class JMACompareUtil {
 	        int[] stats = new int[3];
 	        Arrays.fill(stats, 0);
 
-			while(line1 != null && line2 != null)
+			while(basisLine != null && jmaLine != null)
 			{
-				line1 = line1.trim();
-				line2 = line2.trim();
+				basisLine = basisLine.trim();
+                jmaLine = jmaLine.trim();
 
-				if( (line1.length() == 0 || line2.length() == 0)
-						&& line1.length() != line2.length())
+                if( (basisLine.length() == 0 || jmaLine.length() == 0)
+						&& basisLine.length() != jmaLine.length())
 					throw new RuntimeException("One line in file1 and file2 are not empty " +
-							"in the same time. line1: " + line1 + "; line2: " + line2 + ".");
-				if(line1.length() > 0){
+							"in the same time. line1: " + basisLine + "; line2: " + jmaLine + ".");
+
+				
+				if(basisLine.length() > 0){
+                    int nBestNum = Integer.parseInt(jmaLine);
+                    jmaLine = jmaBr.readLine();
+
+                    StringBuffer nBestStr = new StringBuffer(nBestNum * 256);
+                    nBestStr.append("<li>").append(
+                            getJMANBestString(jmaLine)).append("</li>");
+                    for(int nbi = nBestNum - 1; nbi > 0; --nbi)
+                    {
+                        nBestStr.append("<li>").append(getJMANBestString(
+                                jmaBr.readLine())).append("</li>");
+                    }
+
+                    //remove the score of the first result
+                    jmaLine = jmaLine.substring(jmaLine.indexOf(' ') + 1).trim();
+
 					Element senEle = differs.addElement("sentence");
                     try{
-                        analysisSentence(line1, line2, senEle, stats);
+                        analysisSentence(basisLine, jmaLine, nBestStr.toString(),
+                                senEle, stats);
                     }catch(Throwable t){
                         System.err.println(new java.util.Date());
                         System.err.println(t.getMessage());
@@ -101,8 +157,8 @@ public class JMACompareUtil {
                         differs.remove(senEle);
                     }
                 }
-				line1 = br1.readLine();
-				line2 = br2.readLine();
+				basisLine = basisBr.readLine();
+				jmaLine = jmaBr.readLine();
 			}
 
 			statEle.addElement("id").addText("0");
@@ -117,48 +173,71 @@ public class JMACompareUtil {
 		}catch(Exception t){
 			throw t;
 		}finally{
-			forceClose(br1);
-			forceClose(br2);
+			forceClose(basisBr);
+			forceClose(jmaBr);
 		}
 	}
 
-	private static String removeAllSpace(String in)
+	private static String removeSpaceAndPOS(String in, List<WordPOS> wpList)
 	{
-		StringBuffer sb = new StringBuffer(in.length());
-		for(int i = 0 ; i < in.length(); ++i )
-		{
-			char c = in.charAt(i);
-			if(c != ' ')
-				sb.append(c);
-		}
+		StringTokenizer st = new StringTokenizer(in, " ");
+        StringBuffer sb = new StringBuffer((int)Math.round(in.length()/1.5));
+		while(st.hasMoreTokens())
+        {
+            WordPOS wp = new WordPOS(st.nextToken());
+            wpList.add(wp);
+            sb.append(wp.word);
+        }
+        
 		return sb.toString();
 	}
 
 
-	private static void analysisSentence(String line1, String line2, Element senEle, int[] stats)
+	private static void analysisSentence(String basisLine, String jmaLine,
+            String jmaNBest, Element senEle, int[] stats)
 	{
-		String origText = removeAllSpace(line1);
-		//validate the segment result
-		if(!origText.equals(removeAllSpace(line2)))
-			throw new RuntimeException("File1 (" + line1 + ") or file2 (" + line2 + ") contains" +
+		ArrayList<WordPOS> basisWP = new ArrayList<WordPOS>();
+        String basisOrigText = removeSpaceAndPOS(basisLine, basisWP);
+		
+        ArrayList<WordPOS> jmaWP = new ArrayList<WordPOS>();
+        String jmaOrigText = removeSpaceAndPOS(jmaLine, jmaWP);
+
+        //validate the segment result
+		if(!basisOrigText.equals(jmaOrigText))
+			throw new RuntimeException("File1 (" + basisLine + ") or file2 (" + jmaLine + ") contains" +
 					" invalid characters (non-whitespace).");
-		senEle.addElement("origText").addCDATA(origText);
+		senEle.addElement("origText").addCDATA(basisOrigText);
 		senEle.addElement("userInput").addCDATA("");
+        senEle.addElement("jmaNBest").addCDATA(jmaNBest);
+        senEle.addElement("feedback").addCDATA("");
 
-		StringTokenizer st1 = new StringTokenizer(line1, " ");
-		StringTokenizer st2 = new StringTokenizer(line2, " ");
+		stats[0] += basisWP.size();
+		stats[1] += jmaWP.size();
 
-		stats[0] += st1.countTokens();
-		stats[1] += st2.countTokens();
+        Iterator<WordPOS> basisItr = basisWP.iterator();
+        Iterator<WordPOS> jmaItr = jmaWP.iterator();
 
-		while(st1.hasMoreTokens() && st2.hasMoreTokens())
+		while(basisItr.hasNext() && jmaItr.hasNext())
 		{
-			String token1 = st1.nextToken();
-			String token2 = st2.nextToken();
-			if(token1.length() == token2.length())
+			WordPOS bwp = basisItr.next();
+            WordPOS jwp = jmaItr.next();
+
+            if(bwp.word.length() == jwp.word.length())
 			{
-				++stats[2];
-				senEle.addElement("single").addAttribute("error", "0").addCDATA(token1);
+				if(bwp.origin.equals(jwp.origin))
+                {
+                    //with same pos
+                    ++stats[2];
+                    senEle.addElement("single").addAttribute("error", "0").addCDATA(bwp.origin);
+                }
+                else
+                {
+                    Element dblEle = senEle.addElement("double");
+                    dblEle.addElement("up").addElement("small").
+                            addAttribute("error", "0").addCDATA(bwp.origin);
+                    dblEle.addElement("down").addElement("small").
+                            addAttribute("error", "0").addCDATA(jwp.origin);
+                }
 				continue;
 			}
 
@@ -166,24 +245,24 @@ public class JMACompareUtil {
 			Element dblEle = senEle.addElement("double");
 			Element upEle = dblEle.addElement("up");
 			Element downEle = dblEle.addElement("down");
-			upEle.addElement("small").addAttribute("error", "0").addCDATA(token1);
-			downEle.addElement("small").addAttribute("error", "0").addCDATA(token2);
+			upEle.addElement("small").addAttribute("error", "0").addCDATA(bwp.origin);
+			downEle.addElement("small").addAttribute("error", "0").addCDATA(jwp.origin);
 
-			int len1 = token1.length();
-			int len2 = token2.length();
+			int len1 = bwp.word.length();
+			int len2 = jwp.word.length();
 			while( len1 != len2 )
 			{
 				if(len1 < len2)
 				{
-					token1 = st1.nextToken();
-					len1 += token1.length();
-					upEle.addElement("small").addAttribute("error", "0").addCDATA(token1);
+					bwp = basisItr.next();
+                    len1 += bwp.word.length();
+					upEle.addElement("small").addAttribute("error", "0").addCDATA(bwp.origin);
 				}
 				else
 				{
-					token2 = st2.nextToken();
-					len2 += token2.length();
-					downEle.addElement("small").addAttribute("error", "0").addCDATA(token2);
+					jwp = jmaItr.next();
+                    len2 += jwp.word.length();
+					downEle.addElement("small").addAttribute("error", "0").addCDATA(jwp.origin);
 				}
 			}
 
@@ -205,10 +284,10 @@ public class JMACompareUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception{
-		File f1 = new File("basis-utf8.txt");
-		File f2 = new File("jma-utf8.txt");
+		File f1 = new File("/home/vernkin/temp/seg1.txt");
+		File f2 = new File("/home/vernkin/temp/seg2.txt");
 		String ret = generateDiffXml(f1, f2).asXML();
-		java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter("a.xml"));
+		java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter("/home/vernkin/temp/seg-diff.xml"));
 		pw.print(ret);
 		pw.close();
 	}

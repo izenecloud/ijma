@@ -32,6 +32,19 @@ var promtDisplay = "none";
 var saveAllBtns = null;
 var sameAllPromts = null;
 
+var showNBestPromt = "Show iJMA's N-best Result";
+var hideNBestPromt = "Hide iJMA's N-best Result";
+
+//statistical information object;
+var idS;
+var fileS;
+var upTotalS;
+var downTotalS;
+var samePercentS;
+var samePrecisionS;
+var basisPrecisionS;
+var jmaPrecisionS;
+
 Array.prototype.indexof = function(obj) {
   var i = this.length;
   while (i--) {
@@ -143,8 +156,8 @@ function onTimeoutCheck()
 function copyOrig(ele)
 {
 	var rootNode = findParentByClass(ele, "compunit");
-	var userInput = getFirstEleByIdItr(rootNode, "userInput");
-	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
+	var userInput = getFirstEleByIDXPath(rootNode, "suggestionRow/contentDiv/userInput");
+	var origValue = getFirstEleByIDXPath(rootNode, "originRow/origText").innerHTML;
 	if(origValue == userInput.value)
 		return;	
 	if(userInput.value.length > 0)
@@ -160,7 +173,7 @@ function copyOrig(ele)
 function clearUserInput(ele)
 {
 	var rootNode = findParentByClass(ele, "compunit");
-	var userInput = getFirstEleByIdItr(rootNode, "userInput");
+	var userInput = getFirstEleByIDXPath(rootNode, "suggestionRow/contentDiv/userInput");
 	if(userInput.value.length > 0)
 	{
 		if(confirm("Are you sure to Clear the current Suggestion?"))
@@ -209,8 +222,8 @@ function applyUserInput(ele)
 	if(!confirm("Are you sure to Apply the current Suggestion?"))
 		return;
 	var rootNode = findParentByClass(ele, "compunit");
-	var userInput = getFirstEleByIdItr(rootNode, "userInput");
-	var origValue = getFirstEleByIdItr(rootNode, "origText").innerHTML;
+	var userInput = getFirstEleByIDXPath(rootNode, "suggestionRow/contentDiv/userInput");
+	var origValue = getFirstEleByIDXPath(rootNode, "originRow/origText").innerHTML;
 	
 	var userValue = userInput.value;
 	
@@ -318,27 +331,50 @@ function applyUserInput(ele)
 	}
 	
 	//save the last applied user input
-	var lastApplyInput = getFirstEleByIdItr(rootNode, "lastApplyUserInput");
+	var lastApplyInput = getFirstEleByIDXPath(rootNode, "titleRow/lastApplyUserInput");
 	lastApplyInput.value = userValue;
 	
-	getFirstEleByIdItr(rootNode, "senModified").value = "1";
+	getFirstEleByIDXPath(rootNode, "titleRow/senModified").value = "1";
 	fireUserEdit(true);
 }
 
-function diffChange(ele)
+function diffChange(node)
 {
-	var node = ele;
-	
 	if(node.style.backgroundColor != errorBgColor)
 		node.style.backgroundColor = errorBgColor;
 	else
 		node.style.backgroundColor = "";
 	
 	var rootNode = findParentByClass(node, "compunit");
-	getFirstEleByIdItr(rootNode, "senModified").value = "1";
+	getFirstEleByIDXPath(rootNode, "titleRow/senModified").value = "1";
 	
 	fireUserEdit(true);
 }
+
+function feedbackChange(ele)
+{
+	var rootNode = findParentByClass(ele, "compunit");
+	getFirstEleByIDXPath(rootNode, "titleRow/senModified").value = "1";
+	fireUserEdit(true);
+}
+
+function switchVisibleOfFeedback(ele)
+{
+	var rootNode = ele.parentNode.parentNode;
+	var advDiv = getFirstEleByClass(rootNode, "nbestDiv");
+	//alert(advDiv + "," + advDiv.style.display);
+	if(advDiv.style.display == "none")
+	{
+		advDiv.style.display = "block";
+		ele.value = hideNBestPromt;
+	}
+	else
+	{
+		advDiv.style.display = "none";
+		ele.value = showNBestPromt;
+	}
+}
+
 
 function practiseDiffChange(ele)
 {
@@ -455,21 +491,16 @@ function updateDiffersHtml()
 		
 		var origText;
 		var userInput = "";
+		var nbestStr = "";
+		var feedback = "";
 		var unitdiffers = "";
 		var senSameError = 0;
 		var senUpDiffError = 0;
 		var senDownDiffError = 0;
 		for(var j=0; j<senChildren.length; ++j){
 			var senChild = senChildren[j];
-			if(senChild.tagName == "origText")
-			{
-				origText = getText(senChild);
-			}
-			else if(senChild.tagName == "userInput")
-			{
-				userInput = getText(senChild);
-			}
-			else if(senChild.tagName == "single")
+			
+			if(senChild.tagName == "single")
 			{
 				var bgColor = "";
 				if(senChild.getAttribute("error") != "0")
@@ -522,19 +553,36 @@ function updateDiffersHtml()
 				}
 				
 				unitdiffers += "</div></div>"; //close of the unitdifferdown and unitdifferblock;
+			} // end if senChild.tagName == "double"
+			else if(senChild.tagName == "origText")
+			{
+				origText = getText(senChild);
+			}
+			else if(senChild.tagName == "userInput")
+			{
+				userInput = getText(senChild);
+			}
+			else if(senChild.tagName == "jmaNBest")
+			{
+				nbestStr = getText(senChild);
+				nbestStr = nbestStr.replace(/<score>/g, "<span class=\"scoreSpan\">").replace(/<\/score>/g,"</span>");
+			}
+			else if(senChild.tagName == "feedback")
+			{
+				feedback = getText(senChild);
 			}
 		}
 		
 	//++++++++++++ begin the compunit string
 		var compunitStr = "<div class=\"compunit\">" + 
-	"<div class=\"unitroottitle\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+sentenceSize + "</span>"+
+	"<div class=\"unitroottitle\" id=\"titleRow\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+sentenceSize + "</span>"+
 			"<input type=\"hidden\" id=\"lastApplyUserInput\" value=\"" + userInput + "\" />" +
 			"<input type=\"hidden\" id=\"senModified\" value=\"0\" />" +
 			"<input type=\"hidden\" id=\"senSameError\" value=\"" + senSameError + "\" />" +
 			"<input type=\"hidden\" id=\"senUpDiffError\" value=\"" + senUpDiffError + "\" />" +
 			"<input type=\"hidden\" id=\"senDownDiffError\" value=\"" + senDownDiffError + "\" />" +
 			"<a href=\"#\" class=\"unitroothref\" onclick=\"return backToHomepage(this);\" title=\"Go to the Homepage\">Home</a></div>" +
-	"<div class=\"comprow\">" + 
+	"<div class=\"comprow\" id=\"originRow\">" + 
 		"<div class=\"unittitle\">Original Text: </div>" + 
 		"<div class=\"unitcontent\" id=\"origText\"> " + origText + "</div>" + 
 	"</div>" + 
@@ -542,20 +590,27 @@ function updateDiffersHtml()
 	"<div class=\"compinforow\">" + 
 		"<span class=\"promtInfo\" style=\"display:"+promtDisplay+";\"><strong>Recommended: </strong>Single click wrong segmented words (wrong words are with " +errorBgColor+ " background color) <strong>Below</strong>. Remove a wrong word by single click that word one more time.</span>" + 
 	"</div>" +	
-	"<div class=\"unitdiffers\">" + unitdiffers + "</div>" + 
+	"<div class=\"unitdiffers\" id=\"differsRow\">" + unitdiffers + "</div>" + 
 	
 	"<div class=\"compinforow\">" + 
 		"<span class=\"promtInfo\" style=\"display:"+promtDisplay+";\"><strong>Not Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with English spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
 	"</div>" + 
-	"<div class=\"comprow\">" + 
+	"<div class=\"comprow\" id=\"suggestionRow\">" + 
 		"<div class=\"unittitle\">Suggestion: </div>" + 
-		"<div class=\"unitcontent\">" + 
-			"<textarea id=\"userInput\" cols=\"60\" rows=\"5\" wrap=\"soft\"></textarea>" +			
+		"<div class=\"unitcontent\" id=\"contentDiv\">" + 
+			"<textarea id=\"userInput\" cols=\"60\" rows=\"3\" wrap=\"soft\"></textarea>" +			
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/ title=\"Copy original text to the Seguestion area\">" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Apply\" onclick=\"applyUserInput(this)\" title=\"Apply the Suggestion\"/>" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Clear\" onclick=\"clearUserInput(this);\" title=\Clear the Suggestion area\"/>" +
 		"</div>" + 
 	"</div>" +
+	 "<div class=\"comprow\" id=\"nbestRow\">" + 
+		"<div class=\"unittitle\"><input type=\"button\" class=\"userInputBtn\" value=\"" + showNBestPromt +"\" onclick=\"switchVisibleOfFeedback(this)\" title=\"Show/Hide iJMA's N-best Result\"></div>" + 
+		"<div class=\"nbestDiv\" style=\"display:none;\" id=\"contentDiv\">" + 
+			"<div class=\"showNbestDiv\">iJMA's N-Best Result: <ol> " + nbestStr+ "</ol>Please put your feedback on iJMA's N-best result into input box below.</div>" + 
+			"<textarea id=\"feedback\" cols=\"60\" rows=\"3\" wrap=\"soft\" onchange=\"feedbackChange(this)\">" + feedback + "</textarea>" +
+		"</div>" + 
+	"</div>" + 
 	
 	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange(null, true);\" title=\"Save all the modifications\" "+saveAllBtnDisabled+"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
 "</div>";
@@ -572,8 +627,8 @@ function updateDiffersHtml()
 		
 	$(".unitdiffsingle,.unitdiffsmall").bind('click', function() { diffChange(this);});
 		
-	$('#idS').text(getXPathValue(xmlRoot, 'stat/id'));
-	$('#fileS').text(getXPathValue(xmlRoot, 'stat/name'));
+	idS.text(getXPathValue(xmlRoot, 'stat/id'));
+	fileS.text(getXPathValue(xmlRoot, 'stat/name'));
 	var upTotal = parseInt(getXPathValue(xmlRoot, 'stat/upTotal'));
 	var downTotal = parseInt(getXPathValue(xmlRoot, 'stat/downTotal'));
 	var sameTotal = parseInt(getXPathValue(xmlRoot, 'stat/sameTotal'));
@@ -599,12 +654,12 @@ function appendXmlDiffBlcok(xmlDoc, father, newNodeName, text, isError)
 
 function updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, downDiffError)
 {
-	$('#upTotalS').text(upTotal);
-	$('#downTotalS').text(downTotal);
-	$('#samePercentS').text(((sameTotal/upTotal+sameTotal/downTotal)/2).toFixed(4));
-	$('#samePrecisionS').text(((sameTotal - sameError)/sameTotal).toFixed(4));
-	$('#basisPrecisionS').text(((upTotal - sameError - upDiffError)/upTotal).toFixed(4));
-	$('#jmaPrecisionS').text(((downTotal - sameError - downDiffError)/downTotal).toFixed(4));
+	upTotalS.text(upTotal);
+	downTotalS.text(downTotal);
+	samePercentS.text(((sameTotal/upTotal+sameTotal/downTotal)/2).toFixed(4));
+	samePrecisionS.text(((sameTotal - sameError)/sameTotal).toFixed(4));
+	basisPrecisionS.text(((upTotal - sameError - upDiffError)/upTotal).toFixed(4));
+	jmaPrecisionS.text(((downTotal - sameError - downDiffError)/downTotal).toFixed(4));
 }
 
 /**
@@ -637,24 +692,27 @@ function saveAllChange(callbackFun, isUpload)
 		if(differChild.className != "compunit")
 			continue;
 		//ignore the unmodified sentence
-		if(getFirstEleByIdItr(differChild, "senModified").value != "1")
+		if(getFirstEleByIDXPath(differChild, "titleRow/senModified").value != "1")
 		{
 			sentenceXml = sentenceXml.nextSibling;
 			continue;
 		}
 		//reset the modified flag
-		getFirstEleByIdItr(differChild, "senModified").value = "0";		
+		getFirstEleByIDXPath(differChild, "titleRow/senModified").value = "0";		
 		
 		var senSameError = 0;
 		var senUpDiffError = 0;
 		var senDownDiffError = 0;
 		
-		var userInput = getFirstEleByIdItr(differChild, 'lastApplyUserInput').value;
+		var userInput = getFirstEleByIDXPath(differChild, 'titleRow/lastApplyUserInput').value;
 		setText(sentenceXml.childNodes[1], userInput);
-
-		var unitDiffers = getFirstEleByClassItr(differChild, 'unitdiffers');
+	
+		var feedback = getFirstEleByIDXPath(differChild, 'nbestRow/contentDiv/feedback').value;
+		setText(sentenceXml.childNodes[3], feedback);
+		
+		var unitDiffers = getFirstEleByIDXPath(differChild, 'differsRow');
 		var differBlocks = unitDiffers.childNodes;
-		var differBlockXml  = sentenceXml.childNodes[2];
+		var differBlockXml  = sentenceXml.childNodes[4];
 		
 		for(var j=0; j<differBlocks.length; ++j)
 		{
@@ -724,15 +782,15 @@ function saveAllChange(callbackFun, isUpload)
 			differBlockXml = differBlockXml.nextSibling;
 		}
 		
-		var senSameErrorInput = getFirstEleByIdItr(differChild, "senSameError");
+		var senSameErrorInput = getFirstEleByIDXPath(differChild, "titleRow/senSameError");
 		sameError = sameError - parseInt(senSameErrorInput.value) + senSameError;
 		senSameErrorInput.value = "" + senSameError;
 		
-		var senUpDiffErrorInput = getFirstEleByIdItr(differChild, "senUpDiffError");
+		var senUpDiffErrorInput = getFirstEleByIDXPath(differChild, "titleRow/senUpDiffError");
 		upDiffError = upDiffError - parseInt(senUpDiffErrorInput.value) + senUpDiffError;
 		senUpDiffErrorInput.value = "" + senUpDiffError;
 		
-		var senDownDiffErrorInput = getFirstEleByIdItr(differChild, "senDownDiffError");		
+		var senDownDiffErrorInput = getFirstEleByIDXPath(differChild, "titleRow/senDownDiffError");		
 		downDiffError = downDiffError - parseInt(senDownDiffErrorInput.value) + senDownDiffError;
 		senDownDiffErrorInput.value = "" + senDownDiffError;
 	}
@@ -759,8 +817,6 @@ function saveAllChange(callbackFun, isUpload)
 		fireUserEdit(true);
 	}
 	
-	
-	
 	//alert(XMLtoString(xmlDoc));
 }
 
@@ -782,7 +838,17 @@ function initialize()
 		return;
 	}
 	
-		
+	
+	idS = $('#idS');
+	fileS = $('#fileS');
+	upTotalS = $('#upTotalS');
+	downTotalS = $('#downTotalS');
+	samePercentS = $('#samePercentS');
+	samePrecisionS = $('#samePrecisionS');
+	basisPrecisionS = $('#basisPrecisionS');
+	jmaPrecisionS = $('#jmaPrecisionS');
+
+	
 	if(clientDebugMode)
 		loadXmlStringToComp(sampleXml);
 	else
