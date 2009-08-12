@@ -67,7 +67,7 @@ public class JMAFileUploader {
             throw new JMAException("Error: no field name is " + fieldName + ".");
         }
 
-        if(fileName_.isEmpty()) {
+        if(fileName_.length() == 0) {
             throw new JMAException("Error: no file is selected to upload.");
         }
     }
