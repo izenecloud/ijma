@@ -132,11 +132,18 @@ public class JMACompareUtil {
 				basisLine = basisLine.trim();
                 jmaLine = jmaLine.trim();
 
+                if(basisLine.length() == 0 && jmaLine.equals("1"))
+                {
+                    jmaLine = jmaBr.readLine().trim();
+                }
+
                 if( (basisLine.length() == 0 || jmaLine.length() == 0)
 						&& basisLine.length() != jmaLine.length())
-					throw new RuntimeException("One line in file1 and file2 are not empty " +
-							"in the same time. line1: " + basisLine + "; line2: " + jmaLine + ".");
+                {
 
+                    throw new RuntimeException("One line in file1 and file2 are not empty " +
+							"in the same time. line1: " + basisLine + "; line2: " + jmaLine + ".");
+                }
 				
 				if(basisLine.length() > 0){
                     int nBestNum = Integer.parseInt(jmaLine);

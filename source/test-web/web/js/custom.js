@@ -605,7 +605,7 @@ function updateDiffersHtml()
 			else if(senChild.tagName == "jmaNBest")
 			{
 				nbestStr = getText(senChild);
-				nbestStr = nbestStr.replace(/<score>/g, "<span class=\"scoreSpan\">").replace(/<\/score>/g,"</span>");
+				nbestStr = nbestStr.replace(/ /g,"&nbsp;&nbsp;&nbsp;").replace(/<score>/g, "<span class=\"scoreSpan\">").replace(/<\/score>/g,"</span>");
 			}
 			else if(senChild.tagName == "feedback")
 			{
@@ -639,7 +639,7 @@ function updateDiffersHtml()
 	"<div class=\"comprow\" id=\"suggestionRow\">" + 
 		"<div class=\"unittitle\">Suggestion: </div>" + 
 		"<div class=\"unitcontent\" id=\"contentDiv\">" + 
-			"<textarea id=\"userInput\" cols=\"60\" rows=\"3\" wrap=\"soft\"></textarea>" +			
+			"<textarea id=\"userInput\" cols=\"60\" rows=\"3\" wrap=\"soft\">"+userInput+"</textarea>" +			
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/ title=\"Copy original text to the Seguestion area\">" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Apply\" onclick=\"applyUserInput(this)\" title=\"Apply the Suggestion\"/>" + 
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Clear\" onclick=\"clearUserInput(this);\" title=\Clear the Suggestion area\"/>" +
@@ -834,6 +834,8 @@ function saveAllChange(callbackFun, isUpload)
 		var senDownDiffErrorInput = getFirstEleByIDXPath(differChild, "titleRow/senDownDiffError");		
 		downDiffError = downDiffError - parseInt(senDownDiffErrorInput.value) + senDownDiffError;
 		senDownDiffErrorInput.value = "" + senDownDiffError;
+
+        sentenceXml = sentenceXml.nextSibling;
 	}
 	
 	setXPathValue(xmlRoot, 'stat/sameError', sameError);

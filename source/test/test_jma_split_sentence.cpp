@@ -21,6 +21,7 @@
 #include "analyzer.h"
 #include "knowledge.h"
 #include "sentence.h"
+#include "strutil.h"
 
 #include <iostream>
 #include <fstream>
@@ -132,7 +133,10 @@ int main(int argc, char* argv[])
         analyzer->splitSentence(line.c_str(), sentVec);
         for(size_t i=0; i<sentVec.size(); ++i)
         {
-            to << sentVec[i].getString() << endl;
+            string str(sentVec[i].getString());
+            trimSelf(str);
+            if(!str.empty())
+                to << str << endl;
         }
     }
 
