@@ -621,7 +621,8 @@ function updateDiffersHtml()
 			"<input type=\"hidden\" id=\"senSameError\" value=\"" + senSameError + "\" />" +
 			"<input type=\"hidden\" id=\"senUpDiffError\" value=\"" + senUpDiffError + "\" />" +
 			"<input type=\"hidden\" id=\"senDownDiffError\" value=\"" + senDownDiffError + "\" />" +
-			"<a href=\"#\" class=\"unitroothref\" onclick=\"return backToHomepage(this);\" title=\"Go to the Homepage\">Home</a></div>" +
+			"<a href=\"#\" class=\"unitroothref\" onclick=\"return backToHomepage(this);\" title=\"Go to the Homepage\">Home</a>" +
+			"<a href=\"postable.htm\" target=\"_blank\" class=\"unitroothref\" title=\"View the POS Tag Sets\">POS Tag Sets</a></div>" +
 	"<div class=\"comprow\" id=\"originRow\">" + 
 		"<div class=\"unittitle\">Original Text: </div>" + 
 		"<div class=\"unitcontent\" id=\"origText\"> " + origText + "</div>" + 
