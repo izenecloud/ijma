@@ -51,6 +51,14 @@ public class JMACompareUtil {
                 posIdx = origText.length();
             word = origText.substring(0, posIdx);
         }
+
+        public String getPOS()
+        {
+            int posIdx = origin.lastIndexOf('/');
+            if(posIdx < 0)
+                return "";
+            return origin.substring(posIdx + 1);
+        }
     }
 
 
@@ -224,20 +232,12 @@ public class JMACompareUtil {
 
             if(bwp.word.length() == jwp.word.length())
 			{
-				if(bwp.origin.equals(jwp.origin))
-                {
-                    //with same pos
-                    ++stats[2];
-                    senEle.addElement("single").addAttribute("error", "0").addCDATA(bwp.origin);
-                }
-                else
-                {
-                    Element dblEle = senEle.addElement("double");
-                    dblEle.addElement("up").addElement("small").
-                            addAttribute("error", "0").addCDATA(bwp.origin);
-                    dblEle.addElement("down").addElement("small").
-                            addAttribute("error", "0").addCDATA(jwp.origin);
-                }
+				++stats[2];
+                String text = bwp.origin;
+                if(!text.equals(jwp.origin))
+                    text += ", " + jwp.getPOS();
+                senEle.addElement("single").addAttribute("error", "0").
+                        addCDATA(text);
 				continue;
 			}
 

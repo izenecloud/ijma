@@ -366,3 +366,15 @@ body {
 	font-size:20px;
 	padding-right:7px;
 }
+
+.possame {
+	font-weight:bold;
+}
+
+.pos1 {
+	color:Lime;
+}
+
+.pos2 {
+	color:Teal;
+}

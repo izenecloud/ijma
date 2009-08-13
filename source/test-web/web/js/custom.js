@@ -32,8 +32,8 @@ var promtDisplay = "none";
 var saveAllBtns = null;
 var sameAllPromts = null;
 
-var showNBestPromt = "Show iJMA's N-best Result";
-var hideNBestPromt = "Hide iJMA's N-best Result";
+var showNBestPromt = "Show iJMA's N-best Results";
+var hideNBestPromt = "Hide iJMA's N-best Results";
 
 //statistical information object;
 var idS;
@@ -285,7 +285,7 @@ function applyUserInput(ele)
 		var singleBlock = getFirstEleByClass(differBlock, 'unitdiffsingle');
 		if(singleBlock != null)
 		{
-			var text = singleBlock.innerHTML;
+			var text = getWordFromInnerHTML(singleBlock.innerHTML);
 			lenTotal += text.length;
 			var idx = lenArray.indexof(lenTotal);
 			if(idx >= 0 && singleLenArray[idx] == text.length)
@@ -305,7 +305,7 @@ function applyUserInput(ele)
 			var smallChild = smallChildren[k];
 			if(smallChild.className != "unitdiffsmall")
 				continue;
-			var text = smallChild.innerHTML;
+			var text = getWordFromInnerHTML(smallChild.innerHTML);
 			tmpTotal += text.length;
 			var idx = lenArray.indexof(tmpTotal);
 			if(idx >= 0 && singleLenArray[idx] == text.length)
@@ -320,7 +320,7 @@ function applyUserInput(ele)
 			var smallChild = smallChildren[k];
 			if(smallChild.className != "unitdiffsmall")
 				continue;
-			var text = smallChild.innerHTML;
+			var text = getWordFromInnerHTML(smallChild.innerHTML);
 			lenTotal += text.length;
 			var idx = lenArray.indexof(lenTotal);
 			if(idx >= 0 && singleLenArray[idx] == text.length)
@@ -418,6 +418,44 @@ function moveTo(pPageIdx)
 	return false;
 }
 
+/**
+ * text likes word/pos
+ * isSingle: true if it is single node in comparison xml, false if it is small node
+ * This function is associated with getWordFromInnerHTML(innerHTML)
+ */
+function highlightPOS(text, isSingle, isUp)
+{
+	var idx = text.lastIndexOf("/");
+	if(idx < 0)
+		return text;
+		
+	var ret = text.substring(0, idx) + "&nbsp;/&nbsp;"
+	if(isSingle)
+	{
+		var posText = text.substring(idx+1);
+		//check whether contains to 
+		var sepIdx = posText.indexOf(", ");
+		if(sepIdx < 0)
+			return ret + "<span class=\"possame\">" + posText + "</span>";
+		return ret + "<span class=\"pos1\">" + posText.substring(0, sepIdx) + "</span>,&nbsp<span class=\"pos2\">" + posText.substring(sepIdx + 2) + "</span>";;
+	}
+	else if(isUp)
+		return ret + "<span class=\"pos1\">" + text.substring(idx+1) + "</span>";		
+	else
+		return ret + "<span class=\"pos2\">" + text.substring(idx+1) + "</span>";
+}
+
+/**
+ * This function is associated with highlightPOS(text, isSingle, isUp)
+ */
+function getWordFromInnerHTML(text)
+{
+	var idx = text.indexOf("&nbsp;/&nbsp;");
+	if(idx < 0)
+		return text;
+	return text.substring(0, idx); // minut "&nbsp;"
+}
+
 function updateDiffersHtml()
 {
 	if(!differsXml)
@@ -509,7 +547,7 @@ function updateDiffersHtml()
 					++senSameError;
 				}
 				unitdiffers += "<div class=\"unitdifferblock\"><div class=\"unitdiffsingle\" "+ bgColor +">" + 
-						getText(senChild) +"</div></div>";
+						highlightPOS(getText(senChild), true, false) +"</div></div>";
 			}
 			else if(senChild.tagName == "double")
 			{
@@ -531,7 +569,8 @@ function updateDiffersHtml()
 						++senUpDiffError;
 						bgColor = "style=\"background-color:"+errorBgColor+"\"";
 					}
-					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + getText(smallChild) +"</div>";
+					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + 
+							highlightPOS(getText(smallChild), false, true) +"</span></div>";
 				}
 				
 				unitdiffers += "</div><div class=\"unitdifferdown\">"; //close of the <div class="unitdifferup">
@@ -549,7 +588,8 @@ function updateDiffersHtml()
 						++senDownDiffError;
 						bgColor = "style=\"background-color:"+errorBgColor+"\"";
 					}
-					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + getText(smallChild) +"</div>";
+					unitdiffers += "<div class=\"unitdiffsmall\" "+ bgColor +">" + 
+							highlightPOS(getText(smallChild), false, false) +"</span></div>";
 				}
 				
 				unitdiffers += "</div></div>"; //close of the unitdifferdown and unitdifferblock;

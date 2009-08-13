@@ -44,6 +44,12 @@
 <div class="instructionDiv" style="display:none;">
 <h3>Instruction for Manual Check (Please read it carefully in the first time)</h3>
 
+<p>If a result display in one line, it means two segmentations share the same word segmentation; if display in two line, the top line is the result from Basis while the bottom like is from iJMA.</p>
+
+<p>
+The POS that after each word (behind &quot;/&quot;)are for reference in this webpage. If two results share the same POS, like <span class="samepos">N</span>; If two results share the same word segmentation but different in POS, it look like <span class="pos1">N</span>,&nbsp<span class="pos2">V</span> (the previous is from Basis and the latter from iJMA); If the POS is from Basis, like <span class="pos1">N</span>; If the POS is from iJMA, like <span class="pos2">N</span>; 
+</p>
+
 <p>For Each sentence below, there are two approaches to do the manual check.</p>
 
 <p>The first approach is <strong>Recommended</strong> by <strong>single click (no double click)</strong> the wrong segmented word directly. If a word is wrong, its background color is red, like <span style="background:red;">体罰</span> and if it is correct, its background is white, like <span>体罰</span>. If you don't think a wrong word (with red background color) is wrong, just click that word one more time. Here you can practise it by click the word: <span onclick="practiseDiffChange(this)">体罰</span>.</p>
@@ -66,6 +72,10 @@ If input the invalid character, for example, the original text is <strong>教師
 
 <p>
 It is <strong>Not Recommended</strong> to use two approaches for a sentence at the same. 
+</p>
+
+<p>
+Click &quot;Show iJMA's N-best Results&quot; at the bottom of each sentence of the sentence block to show iJMA's N-best results, and you can put your feedback on the N-best results.
 </p>
 
 <p>
