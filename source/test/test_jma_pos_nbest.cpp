@@ -4,8 +4,12 @@
  * The "DICT_PATH" in below examples is the dictionary path, which is "../db/ipadic/bin_eucjp" defautly.
  * \code
  * To analyze the raw input file "INPUT", and print the n-best result to "OUTPUT".
- * (the example of "INPUT" file could be available as "../db/test/asahi_test_raw_eucjp.txt")
- * $ ./jma_run --dict DICT_PATH --nbest N INPUT OUTPUT
+ * (the example of the parameters below could be:
+ * DICT_PATH: ../db/ipadic/bin_eucjp
+ * CONIFG_PATH: ../db/config/pos-ipadic.config
+ * INPUT: ../db/test/asahi_test_raw_eucjp.txt
+ * )
+ * $ ./jma_pos_nbest --dict DICT_PATH --config CONFIG_PATH --nbest N INPUT OUTPUT
  *
  * The output format for each sentence is defined below:
  * k (int, the number of candidates for the sentence)
@@ -28,6 +32,7 @@
 #include <fstream>
 #include <cassert>
 #include <string>
+#include <vector>
 
 #include <ctime>
 
@@ -36,6 +41,63 @@
 
 using namespace std;
 using namespace jma;
+
+namespace
+{
+/** the part-of-speech table mapping from POS index to POS abbreviation form such as NN, NP, V, etc */
+vector<string> POSTable;
+}
+
+/**
+ * load POS table from config file.
+ * \param fileName the config file name
+ * the format of the config file is like below:
+ * index POS
+ *
+ * example:
+ * 0 NN
+ * 1 NP
+ * 2 V
+ * ...
+ */
+void loadPOSTable(const char* fileName)
+{
+	assert(fileName);
+
+	ifstream in(fileName);
+	if(! in)
+	{
+		cerr << "[Error] The POS config file " << fileName << " not exists!" << endl;
+		exit(1);
+	}
+
+    int posIndex = 0;
+    string posStr;
+    while(in >> posIndex >> posStr)
+    {
+        if(posIndex >= 0)
+        {
+            int tableSize = static_cast<int>(POSTable.size()); 
+            if(posIndex == tableSize)
+            {
+                POSTable.push_back(posStr);
+            }
+            else
+            {
+                if(posIndex > tableSize)
+                {
+                    POSTable.resize(posIndex+1);
+                }
+
+                POSTable[posIndex] = posStr;
+            }
+        }
+        else
+        {
+            cerr << "negative POS index is not allowed in " << fileName << endl;
+        }
+    }
+}
 
 /**
  * Analyze a sentence.
@@ -72,7 +134,11 @@ void testWithSentence(Analyzer& analyzer, const string& str, ofstream& output)
                 }
 
                 const char* pLexicon = s.getLexicon(i, j);
-                output << pLexicon << analyzer.getPOSDelimiter() << s.getStrPOS(i, j) << analyzer.getWordDelimiter();
+                // print word with POS complete string
+                //output << pLexicon << analyzer.getPOSDelimiter() << s.getStrPOS(i, j) << analyzer.getWordDelimiter();
+
+                // print word with POS abbreviation string
+                output << pLexicon << analyzer.getPOSDelimiter() << POSTable[s.getPOS(i, j)] << analyzer.getWordDelimiter();
             }
             output << endl;
         }
@@ -117,7 +183,7 @@ void testWithStream(Analyzer& analyzer, const char* source, const char* dest)
  */
 void printUsage()
 {
-    cerr << "Usages: ./jma_pos_nbest --dict DICT_PATH --nbest N INPUT OUTPUT" << endl;
+    cerr << "Usages: ./jma_pos_nbest --dict DICT_PATH --config CONFIG_PATH --nbest N INPUT OUTPUT" << endl;
 }
 
 /**
@@ -125,21 +191,22 @@ void printUsage()
  */
 int main(int argc, char* argv[])
 {
-    if(argc < 7)
+    if(argc < 9)
     {
         printUsage();
         exit(1);
     }
 
     // check argument
-    if(strcmp(argv[1], "--dict") || strcmp(argv[3], "--nbest"))
+    if(strcmp(argv[1], "--dict") || strcmp(argv[3], "--config") || strcmp(argv[5], "--nbest"))
     {
         printUsage();
         exit(1);
     }
 
     const char* sysdict = argv[2];
-    int nbest = atoi(argv[4]);
+    const char* posconfig = argv[4];
+    int nbest = atoi(argv[6]);
     if(nbest < 1)
     {
         cerr << "invalid number for n-best value" << endl;
@@ -149,6 +216,9 @@ int main(int argc, char* argv[])
 
     // time evaluation for command option "--stream INPUT OUTPUT"
     clock_t stime = clock();
+
+    // load POS config file
+    loadPOSTable(posconfig);
 
     // create instances
     JMA_Factory* factory = JMA_Factory::instance();
@@ -190,7 +260,7 @@ int main(int argc, char* argv[])
     double dif = (double)(etime - stime) / CLOCKS_PER_SEC;
     cout << "knowledge loading time: " << dif << endl;
 
-    testWithStream(*analyzer, argv[5], argv[6]);
+    testWithStream(*analyzer, argv[7], argv[8]);
 
     dif = (double)(clock() - etime) / CLOCKS_PER_SEC;
     cout << "stream analysis time: " << dif << endl;
