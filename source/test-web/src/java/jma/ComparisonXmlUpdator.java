@@ -18,7 +18,6 @@ import org.dom4j.Element;
  * @author vernkin
  */
 public class ComparisonXmlUpdator {
-
     public static void updateComparisonXml(Document doc)
     {
         Element root = doc.getRootElement();
@@ -105,19 +104,20 @@ public class ComparisonXmlUpdator {
     {
         File root = new File(StatisticManager.DB_PATH);
         File[] children = root.listFiles();
+        int id = 0;
         for(File child : children)
         {
             try{
-                Integer.parseInt(child.getName());
+                id = Integer.parseInt(child.getName());
             }catch(NumberFormatException e){
                 //only care about the directories with number as name
                 continue;
             }
-            updateXmlCounter(child);
+            updateXmlCounter(child, id);
         }
     }
 
-    private static void updateXmlCounter(File father)
+    private static void updateXmlCounter(File father, int index)
     {
         File diffFile = new File(father, StatisticManager.DIFF_FILE_NAME);
         if(!diffFile.exists())
@@ -126,7 +126,15 @@ public class ComparisonXmlUpdator {
             Document d = FreqUtil.createDocument(diffFile);
             updateComparisonXml(d);
             FreqUtil.writeStringToFile(diffFile, d.asXML());
-            //TODO can update the global counter here
+
+            // update the global statistic manager
+            StatisticManager statManager = StatisticManager.getInstance();
+            if (statManager.hasRecord(index) == false) {
+                System.err.println(new java.util.Date());
+                System.err.println("ComparisonXmlUpdator request to update record id " + index + ", which does not exist in StatisticManager.");
+                return;
+            }
+            statManager.getRecord(index).setFromDocument(d);
         }catch(Exception ex){
             System.err.println("Error in update File " + diffFile +
                     " : " + ex.getMessage());
