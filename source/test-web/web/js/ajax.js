@@ -1,4 +1,5 @@
 function createRequest() {
+	var request = null;
 	try {
 		request = new XMLHttpRequest();
 	} catch (trymicrosoft) {
@@ -15,20 +16,22 @@ function createRequest() {
 	
 	if (!request){
 		alert("Error initializing XMLHttpRequest!");
+		return null;
 	}
+	return true;
 }
 
 function uploadXml(xmlstring, callbackFun){
-    createRequest();
+    var request = createRequest();
 	if(!request)
 		return;
 	var url = "jmaslxml";
     request.open("POST", url, true);
-	request.onreadystatechange = function() {finishUploadXml(callbackFun);};
+	request.onreadystatechange = function() {finishUploadXml(request, callbackFun);};
     request.send(xmlstring);
 }
 
-function finishUploadXml(callbackFun){
+function finishUploadXml(request, callbackFun){
 	if (request.readyState == 4){
 		if (request.status == 200){
 			var ret = request.responseText;
@@ -47,16 +50,16 @@ function finishUploadXml(callbackFun){
 }
 
 function downloadXml(id){
-	createRequest();
+	var request = createRequest();
 	if(!request)
 		return;
 	var url = "jmaslxml?id="+id;
     request.open("POST", url, true);
-	request.onreadystatechange = finishDownloadXml;
+	request.onreadystatechange = function() {finishDownloadXml(request);};
     request.send(null);
 }
 
-function finishDownloadXml(){
+function finishDownloadXml(request){
 	if (request.readyState == 4){
        if (request.status == 200){
 			var ret = request.responseText;

@@ -45,6 +45,9 @@ var samePrecisionS;
 var basisPrecisionS;
 var jmaPrecisionS;
 
+var isUploading = false;
+var appendingFunc = null;
+
 Array.prototype.indexof = function(obj) {
   var i = this.length;
   while (i--) {
@@ -76,6 +79,12 @@ function showHidePromt(ele)
 	});
 }
 
+function leavingCurrentPage()
+{
+	$('#differs').remove();
+	$("#stat").after("<div id=\"loadingPromt\">Please Wait, modifications are being uploaded. The page will redirect to homepage after that.</div>");
+}
+
 function backToHomepage(ele)
 {
 	if(modified)
@@ -87,7 +96,10 @@ function backToHomepage(ele)
 		
 		if(confirm("Are you sure to save those modifications before leave?"))
 		{
-			saveAllChange(function(){window.location.href="index.jsp"}, true);
+			var ret = saveAllChange(function(){window.location.href="index.jsp"}, true, function(){leavingCurrentPage();});
+			appendingFunc = function() {
+				saveAllChange(function(){window.location.href="index.jsp"}, true, function(){leavingCurrentPage();});
+			};
             return false;
 		}
 	}
@@ -653,7 +665,7 @@ function updateDiffersHtml()
 		"</div>" + 
 	"</div>" + 
 	
-	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChange(null, true);\" title=\"Save all the modifications\" "+saveAllBtnDisabled+"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
+	"<div class=\"buttonsdiv\"><input type=\"button\" value=\"Save Changes\" class=\"saveAllBtn\"  onclick=\"saveAllChangeByBtn();\" title=\"Save all the modifications\" "+saveAllBtnDisabled+"/><span class=\"saveAllPromt\">"+lastSaveTimePromt+"</span><a href=\"#stat\" class=\"stathref\" title=\"See the statistical information of the current file\">Statistical Information</a></div>" + 
 "</div>";
 	//+++++++++ end the compunit string
 	
@@ -703,19 +715,36 @@ function updateStatInfo(upTotal, downTotal, sameTotal, sameError, upDiffError, d
 	jmaPrecisionS.text(((downTotal - sameError - downDiffError)/downTotal).toFixed(4));
 }
 
+
+function saveAllChangeByBtn()
+{
+	var ret = saveAllChange(null, true);
+	if(!ret)
+	{
+		appendingFunc = function() {
+			saveAllChange(null, true);
+		};
+		alert("The previous modifications are being uploaded, current modifications would be saved after that automatically!");
+	}
+}
+
 /**
   * must given isUpload = true if want to upload
   */
-function saveAllChange(callbackFun, isUpload)
+function saveAllChange(callbackFun, isUpload, beforeUploadFun)
 {
 	if(!differsXml)
 	{
-		return;
+		return false;
 	}
 	
+	if(isUploading)
+		return false;
+	
 	if(!modified)
-		return;
+		return false;
 		
+	isUploading = true;
 	var differsHtml = document.getElementById('differs');
 	var differsChildren = differsHtml.childNodes;
 	
@@ -850,8 +879,11 @@ function saveAllChange(callbackFun, isUpload)
 	//save to the server
 	if(isUpload){
 		if(!clientDebugMode)
-			uploadXml(XMLtoString(xmlDoc), callbackFun);		
-		
+		{
+			if(beforeUploadFun != undefined)
+				beforeUploadFun();
+			uploadXml(XMLtoString(xmlDoc), callbackFun);
+		}
 		if(fireUserEdit != undefined)
 			fireUserEdit(false);
 	}
@@ -860,7 +892,17 @@ function saveAllChange(callbackFun, isUpload)
 		fireUserEdit(true);
 	}
 	
+	isUploading = false;
 	//alert(XMLtoString(xmlDoc));
+	
+	if(appendingFunc)
+	{
+		var opFun = appendingFunc;
+		appendingFunc = null;
+		opFun();
+	}
+	
+	return true;
 }
 
 
