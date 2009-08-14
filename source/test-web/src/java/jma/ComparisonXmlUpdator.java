@@ -47,6 +47,8 @@ public class ComparisonXmlUpdator {
                 if(block.getName().equals("single"))
                 {
                     ++sameTotal;
+                    ++upTotal;
+                    ++downTotal;
                     if(block.attribute("error").getValue().equals("1"))
                         ++sameError;
                 }
