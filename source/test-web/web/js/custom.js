@@ -48,6 +48,19 @@ var jmaPrecisionS;
 var isUploading = false;
 var appendingFunc = null;
 
+function chooseCss()
+{
+	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
+	if(isFirefox)
+	{
+		document.write("<link href=\"img/ff_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
+	}
+	else
+	{
+		document.write("<link href=\"img/ie_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
+	}
+}
+
 Array.prototype.indexof = function(obj) {
   var i = this.length;
   while (i--) {
@@ -909,7 +922,7 @@ function saveAllChange(callbackFun, isUpload, beforeUploadFun)
 function initialize()
 {
 	//check whether is firefox
-	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
+	/*var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
 	if(!isFirefox)
 	{
 		$('#header').before("<div id=\"warnheader\">Only <strong>Firefox</strong> support all the functions! You should: "+
@@ -922,6 +935,7 @@ function initialize()
 		
 		return;
 	}
+	*/
 	
 	
 	idS = $('#idS');
