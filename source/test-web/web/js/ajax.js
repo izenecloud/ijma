@@ -18,7 +18,7 @@ function createRequest() {
 		alert("Error initializing XMLHttpRequest!");
 		return null;
 	}
-	return true;
+	return request;
 }
 
 function uploadXml(xmlstring, callbackFun){

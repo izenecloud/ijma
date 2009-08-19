@@ -48,16 +48,41 @@ var jmaPrecisionS;
 var isUploading = false;
 var appendingFunc = null;
 
-function chooseCss()
+var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
+
+
+function LoadJsCssFile(filename)
 {
-	var isFirefox = navigator.userAgent.indexOf("Firefox") >= 0 || navigator.userAgent.indexOf("Shiretoko") >= 0;
+	if (strEndOf(filename.toLowerCase(), "js")){
+		var fileref=document.createElement('script');
+		fileref.setAttribute("type","text/javascript");
+		fileref.setAttribute("src",filename);
+		document.getElementsByTagName("head")[0].appendChild(fileref);
+	}
+	else if (strEndOf(filename.toLowerCase(), "css")){
+		var fileref=document.createElement("link");
+		fileref.setAttribute("rel", "stylesheet");
+		fileref.setAttribute("type", "text/css");
+		fileref.setAttribute("href",filename);
+		document.getElementsByTagName("head")[0].appendChild(fileref);
+	}
+
+	
+}
+
+
+function chooseCss()
+{	
+	//alert("isFirefox " + isFirefox + "," + navigator.userAgent);
 	if(isFirefox)
 	{
-		document.write("<link href=\"img/ff_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
+		LoadJsCssFile("img/ff_spec.css");
+		//document.write("<link href=\"img/ff_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
 	}
 	else
 	{
-		document.write("<link href=\"img/ie_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
+		LoadJsCssFile("img/ie_spec.css");
+		//document.write("<link href=\"img/ie_spec.css\" rel=\"stylesheet\" type=\"text/css\"/>");
 	}
 }
 
@@ -256,25 +281,25 @@ function applyUserInput(ele)
 	var i = j = 0;
 	for( ; i < userValue.length; ++i )
 	{
-		if(userValue[i] == " ")
+		if(userValue.charAt(i) == " ")
 			continue;
 		
 		if(j == origValue.length)
 		{
-			alert("Invalid User Input(Non-Space) \'" + userValue[i] + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")");
+			alert("Invalid User Input(Non-Space) \'" + userValue.charAt(i) + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")_1");
 			return;
 		}
 				
 		
-		while(origValue[j] == " ")
+		while(origValue.charAt(j) == " ")
 			++j;
 		
-		if(userValue[i] == origValue[j])
+		if(userValue.charAt(i) == origValue.charAt(j))
 		{
 			j++;
 			continue;
 		}
-		alert("Invalid User Input(Non-Space) \'" + userValue[i] + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")");
+		alert("Invalid User Input(Non-Space) \'" + userValue.charAt(i) + "\' at index " + i + " (" + getSurroundedString(userValue, i, 4) + ")_2");
 		return;
 	}
 	
@@ -662,7 +687,7 @@ function updateDiffersHtml()
 		"<span class=\"promtInfo\" style=\"display:"+promtDisplay+";\"><strong>Not Recommended: </strong>Or input the correct segmentation directly, following the steps below: <ol> <li>Click &quot;Copy Origininal Text&quot; button to get the original text;<li>Separate the words with English spaces <strong>(Avoid to enter other characters and Make sure you are using English Input Method)</strong>; <li>Click &quot;Apply&quot; button to apply your input.</ol></span>" +
 	"</div>" + 
 	"<div class=\"comprow\" id=\"suggestionRow\">" + 
-		"<div class=\"unittitle\">Suggestion: </div>" + 
+		"<div class=\"unittitle\">Suggestion (Input the correct segmentation here): </div>" + 
 		"<div class=\"unitcontent\" id=\"contentDiv\">" + 
 			"<textarea id=\"userInput\" cols=\"60\" rows=\"3\" wrap=\"soft\">"+userInput+"</textarea>" +			
 			"<input type=\"button\" class=\"userInputBtn\" value=\"Copy Origininal Text\" onclick=\"copyOrig(this);\"/ title=\"Copy original text to the Seguestion area\">" + 
@@ -671,7 +696,7 @@ function updateDiffersHtml()
 		"</div>" + 
 	"</div>" +
 	 "<div class=\"comprow\" id=\"nbestRow\">" + 
-		"<div class=\"unittitle\"><input type=\"button\" class=\"userInputBtn\" value=\"" + showNBestPromt +"\" onclick=\"switchVisibleOfFeedback(this)\" title=\"Show/Hide iJMA's N-best Result\"></div>" + 
+		"<div class=\"unittitle\"><input type=\"button\" class=\"userInputBtn\" value=\"" + showNBestPromt +"\" onclick=\"switchVisibleOfFeedback(this)\" title=\"Show/Hide iJMA's N-best Results\">After show N-best Results, you can put your feedback below. </div>" + 
 		"<div class=\"nbestDiv\" style=\"display:none;\" id=\"contentDiv\">" + 
 			"<div class=\"showNbestDiv\">iJMA's N-Best Result: <ol> " + nbestStr+ "</ol>Please put your feedback on iJMA's N-best result into input box below.</div>" + 
 			"<textarea id=\"feedback\" cols=\"60\" rows=\"3\" wrap=\"soft\" onchange=\"feedbackChange(this)\">" + feedback + "</textarea>" +
@@ -906,7 +931,8 @@ function saveAllChange(callbackFun, isUpload, beforeUploadFun)
 	}
 	
 	isUploading = false;
-	//alert(XMLtoString(xmlDoc));
+	if(clientDebugMode)
+        alert(XMLtoString(xmlDoc));
 	
 	if(appendingFunc)
 	{
@@ -936,7 +962,13 @@ function initialize()
 		return;
 	}
 	*/
-	
+	chooseCss();
+	if(clientDebugMode)
+	{
+		LoadJsCssFile("a.js");	
+		if(isFirefox)
+			LoadJsCssFile("js/firebug-lite-compressed.js");
+	}
 	
 	idS = $('#idS');
 	fileS = $('#fileS');

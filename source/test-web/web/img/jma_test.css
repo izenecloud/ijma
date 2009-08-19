@@ -183,6 +183,7 @@ body {
 	height:auto;
 	border-bottom:#000000 dashed 2px;
 	display:block;
+    width:100%;
 }
 
 .compinforow{
@@ -192,6 +193,7 @@ body {
 	padding-bottom:5px;
 	height:auto;
 	display:block;
+    width:100%;
 }
 
 .unitroottitle{
@@ -215,7 +217,7 @@ body {
 
 .unittitle {
 	font-weight: bold;	
-	width: 100px;
+	/*width: 100px;*/
 	margin-bottom:5px;
 	/*float: left;*/
 }
