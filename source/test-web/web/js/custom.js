@@ -662,7 +662,9 @@ function updateDiffersHtml()
 				feedback = getText(senChild);
 			}
 		}
-		
+		var feedBackPromt = "";
+        if(feedback.length > 0)
+            feedBackPromt = "&nbsp;(Have Feedback)";
 	//++++++++++++ begin the compunit string
 		var compunitStr = "<div class=\"compunit\">" + 
 	"<div class=\"unitroottitle\" id=\"titleRow\"><span style=\"float:left;\">Sentence: " + (i+1)+"/"+sentenceSize + "</span>"+
@@ -696,9 +698,9 @@ function updateDiffersHtml()
 		"</div>" + 
 	"</div>" +
 	 "<div class=\"comprow\" id=\"nbestRow\">" + 
-		"<div class=\"unittitle\"><input type=\"button\" class=\"userInputBtn\" value=\"" + showNBestPromt +"\" onclick=\"switchVisibleOfFeedback(this)\" title=\"Show/Hide iJMA's N-best Results\">After show N-best Results, you can put your feedback below. </div>" + 
+		"<div class=\"unittitle\"><input type=\"button\" class=\"userInputBtn\" value=\"" + showNBestPromt +"\" onclick=\"switchVisibleOfFeedback(this)\" title=\"Show/Hide iJMA's N-best Results\">After show N-best Results, you can put your feedback below" + feedBackPromt + ". </div>" +
 		"<div class=\"nbestDiv\" style=\"display:none;\" id=\"contentDiv\">" + 
-			"<div class=\"showNbestDiv\">iJMA's N-Best Result: <ol> " + nbestStr+ "</ol>Please put your feedback on iJMA's N-best result into input box below.</div>" + 
+			"<div class=\"showNbestDiv\">iJMA's N-Best Result: <ol> " + nbestStr+ "</ol>Please put your feedback on iJMA's N-best result into input box below.</div>" +
 			"<textarea id=\"feedback\" cols=\"60\" rows=\"3\" wrap=\"soft\" onchange=\"feedbackChange(this)\">" + feedback + "</textarea>" +
 		"</div>" + 
 	"</div>" + 
