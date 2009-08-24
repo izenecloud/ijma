@@ -107,6 +107,13 @@ public:
     int getPOSCatNum() const;
 
     /**
+     * Get the feature offset of base form.
+     * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of base form "見る" would be 6.
+     * \return POS category number.
+     */
+    int getBaseFormOffset() const;
+
+    /**
      * Check whether is a seperator of sentence.
      * \param p pointer to the character string
      * \return true for separator, false for non separator.
@@ -145,6 +152,24 @@ private:
      * Remove the tagger and temporary dictionary file if exists.
      */
     void clear();
+
+    /**
+     * Create tagger by loading dictionary files.
+     * \return the tagger created. 0 is returned when failure.
+     */
+    MeCab::Tagger* createTagger();
+
+    /**
+     * Load "pos-id.def" to get POS category number.
+     * \return true for success, false for failure.
+     */
+    bool loadPOSDef();
+
+    /**
+     * Load dictionary config file "dicrc" to get base form feature offset value from entry "base-form-feature-offset".
+     * \return true for success, false for failure.
+     */
+    bool loadDictConfig();
 
     /**
      * Create a unique temporary file and output its file name.
@@ -200,6 +225,9 @@ private:
 
     /** POS category number, which value is got from "pos-id.def" in the directory of system dictionary in binary type */
     int posCatNum_;
+
+    /** the feature offset (starting from zero) of base form, which value is got from entry "base-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
+    int baseFormOffset_;
 
     /** The Character Type */
     JMA_CType* ctype_;

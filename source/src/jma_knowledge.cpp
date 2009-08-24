@@ -11,6 +11,7 @@
 #include "dictionary.h"
 
 #include "mecab.h" // MeCab::Tagger
+#include "param.h" // MeCab::Param
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
@@ -37,6 +38,9 @@ const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
 /** Default value of POS category number */
 const int POS_CAT_NUM_DEFAULT = 4;
 
+/** Default value of base form feature offset */
+const int BASE_FORM_OFFSET_DEFAULT = 6;
+
 /** Dictionary configure and definition files */
 const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
 
@@ -48,7 +52,7 @@ namespace jma
 {
 
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0), isOutputFullPOS_(false), posCatNum_(POS_CAT_NUM_DEFAULT), ctype_(0)
+    : tagger_(0), isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0), ctype_(0)
 {
     onEncodeTypeChange( getEncodeType() );
 }
@@ -80,7 +84,7 @@ void JMA_Knowledge::clear()
     }
 }
 
-int JMA_Knowledge::loadDict()
+MeCab::Tagger* JMA_Knowledge::createTagger()
 {
     const size_t userDictNum = userDictNames_.size();
 
@@ -98,9 +102,6 @@ int JMA_Knowledge::loadDict()
     }
 #endif
 
-    // remove the previous tagger and temporary file
-    clear();
-
     // construct parameter to create tagger
     string taggerParam("-d ");
     taggerParam += systemDictPath_;
@@ -112,7 +113,7 @@ int JMA_Knowledge::loadDict()
         if(! tempResult)
         {
             cerr << "fail to create a temporary user ditionary file" << endl;
-            return false;
+            return 0;
         }
 #if JMA_DEBUG_PRINT
         cout << "temporary file name of binary user dictionary: " << tempUserDic_ << endl;
@@ -165,41 +166,93 @@ int JMA_Knowledge::loadDict()
 #endif
 
     // create tagger by loading dictioanry files
-    tagger_ = MeCab::createTagger(taggerParam.c_str());
+    return MeCab::createTagger(taggerParam.c_str());
+}
 
+bool JMA_Knowledge::loadPOSDef()
+{
     // get POS category number from "pos-id.def"
     string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
     ifstream posFile(posFileName.c_str());
-    // if no "pos-id.def" exists, the default value of POS category number would be used.
-    if(posFile)
+
+    if(! posFile)
     {
-        // read in a non-emtpy line
-        string line;
-        while(getline(posFile, line) && line.empty()) ;
-
-        // the format of the line is assumed such like "その他,間投,*,* 0"
-        if(! line.empty())
-        {
-            // remove characters starting from space
-            line.erase(line.find(' '));
-
-            // count the number of separator ','
-            int count = 0;
-            for(size_t i=0; i<line.size(); ++i)
-            {
-                if(line[i] == ',')
-                {
-                    ++count;
-                }
-            }
-            posCatNum_ = count + 1;
-        }
-#if JMA_DEBUG_PRINT
-        cout << posCatNum_ << " POS categories in " << posFileName << endl;
-#endif
+        return false;
     }
 
-    return tagger_ ? 1 : 0;
+    // read in a non-emtpy line
+    string line;
+    while(getline(posFile, line) && line.empty()) ;
+
+    // the format of the line is assumed such like "その他,間投,*,* 0"
+    if(! line.empty())
+    {
+        // remove characters starting from space
+        line.erase(line.find(' '));
+
+        // count the number of separator ','
+        int count = 0;
+        for(size_t i=0; i<line.size(); ++i)
+        {
+            if(line[i] == ',')
+            {
+                ++count;
+            }
+        }
+        posCatNum_ = count + 1;
+    }
+#if JMA_DEBUG_PRINT
+    cout << posCatNum_ << " POS categories in " << posFileName << endl;
+#endif
+
+    return true;
+}
+
+bool JMA_Knowledge::loadDictConfig()
+{
+    string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[0]);
+    MeCab::Param param;
+
+    if(! param.load(configFile.c_str()))
+    {
+        return false;
+    }
+
+    baseFormOffset_ = param.get<size_t>("base-form-feature-offset");
+
+#if JMA_DEBUG_PRINT
+    cout << "base form feature offset is " << baseFormOffset_ << " in " << configFile << endl;
+#endif
+
+    return true;
+}
+
+int JMA_Knowledge::loadDict()
+{
+    // remove the previous tagger and temporary file
+    clear();
+
+    tagger_ = createTagger();
+    if(! tagger_)
+    {
+        return 0;
+    }
+
+    if(! loadPOSDef())
+    {
+        // if no "pos-id.def" exists,
+        // the default value of POS category number would be used.
+        posCatNum_ = POS_CAT_NUM_DEFAULT;
+    }
+
+    if(! loadDictConfig())
+    {
+        // if no "dicrc" exists,
+        // the default value of base form feature offset would be used.
+        baseFormOffset_ = BASE_FORM_OFFSET_DEFAULT;
+    }
+
+    return 1;
 }
 
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
@@ -409,6 +462,11 @@ bool JMA_Knowledge::isOutputFullPOS() const
 int JMA_Knowledge::getPOSCatNum() const
 {
     return posCatNum_;
+}
+
+int JMA_Knowledge::getBaseFormOffset() const
+{
+    return baseFormOffset_;
 }
 
 bool JMA_Knowledge::createTempFile(std::string& tempName)
