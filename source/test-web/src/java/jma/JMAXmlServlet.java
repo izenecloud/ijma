@@ -32,6 +32,9 @@ import java.io.OutputStreamWriter;
 public class JMAXmlServlet extends HttpServlet {
     private StatisticManager statManager_ = StatisticManager.getInstance(); /** the reference to the shared StatisticManager */
 
+    //the special id
+    public final static String STAT_ID = "error_stat";
+
     private void toClient(PrintWriter pw, String msg) {
         pw.print(msg);
         pw.flush();
@@ -45,6 +48,11 @@ public class JMAXmlServlet extends HttpServlet {
      * @return
      */
     private String readXml(String id) {
+        if(id.equals(STAT_ID))
+        {
+            return ComparisonXmlUpdator.collectAllModifiedSentence().asXML();
+        }
+
         //System.out.println(new java.util.Date());
         //System.out.println("id: " + id);
         if(statManager_.hasRecord(Integer.parseInt(id))) {
@@ -137,6 +145,11 @@ public class JMAXmlServlet extends HttpServlet {
         try {
             Element statEle = doc.getRootElement().element("stat");
             id = statEle.elementText("id");
+            if(id != null && id.equals(STAT_ID))
+            {
+                throw new IllegalArgumentException("The Error Stat File cannot be saved, " +
+                        "just for review errors. Please Refresh the current page for lastest modifications!");
+            }
             name = statEle.elementText("name");
             upTotal = Integer.parseInt(statEle.elementText("upTotal"));
             downTotal = Integer.parseInt(statEle.elementText("downTotal"));
@@ -145,6 +158,11 @@ public class JMAXmlServlet extends HttpServlet {
             upDiffError = Integer.parseInt(statEle.elementText("upDiffError"));
             downDiffError = Integer.parseInt(statEle.elementText("downDiffError"));
         } catch (Throwable ex) {
+            if(ex instanceof IllegalArgumentException)
+            {
+                toClient(response.getWriter(), ex.getMessage());
+                return;
+            }
             System.err.println(new java.util.Date());
             System.err.println("Error in analysis xml : " + ex.getMessage());
             toClient(response.getWriter(), "Error in analysis xml : " + ex.getMessage());

@@ -207,7 +207,7 @@ public class ComparisonXmlUpdator {
     }
 
 
-    public synchronized Document collectAllModifiedSentence()
+    public static synchronized Document collectAllModifiedSentence()
     {
         File root = new File(StatisticManager.DB_PATH);
         File[] children = root.listFiles();
@@ -235,8 +235,8 @@ public class ComparisonXmlUpdator {
         Element root = doc.addElement( "jmacomp" );
 	    Element differs = root.addElement( "differs" );
         Element stat = root.addElement( "stat" );
-        stat.addElement("id").addText("-1");
-        stat.addElement("name").addCDATA("Modified Sentence");
+        stat.addElement("id").addText(JMAXmlServlet.STAT_ID);
+        stat.addElement("name").addCDATA("Modified Sentences");
 
         for(File file : files)
         {
@@ -252,6 +252,7 @@ public class ComparisonXmlUpdator {
             }
         }
 
+        updateComparisonXml(doc);
         return doc;
     }
 

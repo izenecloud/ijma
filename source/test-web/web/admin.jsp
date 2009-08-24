@@ -48,7 +48,7 @@
             <td>recompute the statistics in all of the comparison result, and update into result files</td>
         </tr>
         <tr>
-            <td><a href="admin.jsp?opt=2"> Download </a></td>
+            <td><a href="jmaadmin?a=stat" target="_blank"> Download </a></td>
             <td>download the sentences corrected by user</td>
         </tr>
         </table>
@@ -65,8 +65,7 @@
                     break;
 
                 case 2:
-                    ComparisonXmlUpdator updater = new ComparisonXmlUpdator();
-                    updater.collectAllModifiedSentence();
+                    ComparisonXmlUpdator.collectAllModifiedSentence();
                     out.println("Operation result:<br>the modified sentences file is downloaded.");
                     break;
 

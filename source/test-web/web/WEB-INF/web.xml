@@ -13,6 +13,10 @@
         <servlet-class>jma.JMAXmlServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>JMAAdminServlet</servlet-name>
+        <servlet-class>jma.JMAAdminServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>StatisticRemoveServlet</servlet-name>
         <servlet-class>jma.StatisticRemoveServlet</servlet-class>
     </servlet>
@@ -27,6 +31,10 @@
     <servlet-mapping>
         <servlet-name>JMAXmlServlet</servlet-name>
         <url-pattern>/jmaslxml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JMAAdminServlet</servlet-name>
+        <url-pattern>/jmaadmin</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StatisticRemoveServlet</servlet-name>
