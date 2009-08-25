@@ -48,8 +48,9 @@ struct Morpheme
 	 * \param lexicon the lexicon string value
 	 * \param posCode the index code of part-of-speech tag
 	 * \param posStr the POS string value
+	 * \param baseForm the base form string value.
 	 */
-	Morpheme(std::string& lexicon, int posCode, std::string& posStr);
+	Morpheme(std::string& lexicon, int posCode, std::string& posStr, std::string& baseForm);
 };
 
 /** A list of morphemes. */

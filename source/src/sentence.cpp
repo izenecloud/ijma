@@ -19,8 +19,8 @@ Morpheme::Morpheme()
 {
 }
 
-Morpheme::Morpheme(std::string& lexicon, int posCode, std::string& posStr)
-	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr)
+Morpheme::Morpheme(std::string& lexicon, int posCode, std::string& posStr, std::string& baseForm)
+	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm)
 {
 
 }

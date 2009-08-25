@@ -87,6 +87,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     }
 
     maxPosCateOffset_ = knowledge_->getPOSCatNum() - 1;
+    preBaseFormOffset_ = knowledge_->getBaseFormOffset();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -116,6 +117,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			list.push_back(Morpheme());
 			Morpheme& morp = list.back();
 			morp.lexicon_ = seg;
+			setBaseForm(seg, node->feature, morp.baseForm_);
 			if(printPOS)
 			{
 				morp.posCode_ = (int)node->posid;
@@ -151,6 +153,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				list.push_back(Morpheme());
 				Morpheme& morp = list.back();
 				morp.lexicon_ = seg;
+				setBaseForm(seg, node->feature, morp.baseForm_);
 				if(printPOS)
 				{
 					morp.posCode_ = (int)node->posid;
@@ -358,7 +361,8 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
 }
 
 
-int JMA_Analyzer::getPOSOffset(const char* feature){
+int JMA_Analyzer::getPOSOffset(const char* feature)
+{
 	if( knowledge_->isOutputFullPOS() )
 	{
 		// count for the index of the fourth offset
@@ -395,6 +399,38 @@ int JMA_Analyzer::getPOSOffset(const char* feature){
 	}
 
 	return offset;
+}
+
+void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, string& retVal)
+{
+	int offset = 0;
+	int commaCount = 0;
+	int begin = -1;
+	int end = -1;
+	for( ; feature[offset]; ++offset )
+	{
+		if(feature[offset] == ',')
+		{
+			++commaCount;
+			if(commaCount == preBaseFormOffset_)
+				begin = offset + 1;
+			else if(commaCount == preBaseFormOffset_ + 1)
+			{
+				end = offset;
+				break;
+			}
+		}
+	}
+
+	if(begin >= 0)
+	{
+		if(end < 0)
+			end = offset;
+		retVal = string(feature + begin, end - begin);
+	}
+
+	if(!retVal.size() || retVal == "*")
+		retVal = origForm;
 }
 
 } // namespace jma

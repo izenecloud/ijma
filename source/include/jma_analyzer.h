@@ -92,6 +92,15 @@ private:
 	 */
 	inline int getPOSOffset(const char* feature);
 
+	/**
+	 * Set the base form of a string, the return value is stored into retVal
+	 *
+	 * \param origForm the original form of the word
+	 * \param feature the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
+	 * \param retVal to store the base form
+	 */
+	inline void setBaseForm(const string& origForm, const char* feature, string& retVal);
+
 private:
 	/**
 	 * hold the JMA_Knowledge Object
@@ -109,6 +118,11 @@ private:
 	 * The max index(begin with 0) of the POS Category Levels
 	 */
 	int maxPosCateOffset_;
+
+	/**
+	 * Previous comma index of the base form offset
+	 */
+	int preBaseFormOffset_;
 };
 
 } // namespace jma
