@@ -177,11 +177,17 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 			long score = tagger_->nextScore();
 			if( i == 0 )
-				base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
+			{
+				if(score > 0 )
+					base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
+				else
+					base = score - BASE_NBEST_SCORE;
+			}
 
 			double dScore = 1.0 / (score - base );
 			totalScore += dScore;
 			sentence.addList( list, dScore );
+
 			++i;
 		}
 
