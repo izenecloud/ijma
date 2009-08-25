@@ -71,6 +71,11 @@ const char* Sentence::getStrPOS(int nPos, int nIdx) const
     return candidates_[nPos][nIdx].posStr_.c_str();
 }
 
+const char* Sentence::getBaseForm(int nPos, int nIdx) const
+{
+    return candidates_[nPos][nIdx].baseForm_.c_str();
+}
+
 const MorphemeList* Sentence::getMorphemeList(int nPos) const
 {
 	return &candidates_[nPos];

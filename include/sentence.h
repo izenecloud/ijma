@@ -31,6 +31,12 @@ struct Morpheme
     std::string posStr_;
 
     /**
+     * the base form string value.
+     * As an example in Japanese, "来る" is the base form of lexicon "来".
+     */
+    std::string baseForm_;
+
+    /**
      * Constructor.
      * The lexicon string value and POS string value are initialized with empty string,
      * and the index code of part-of-speech tag is initialized with -1, meaning that no part-of-speech tag is available.
@@ -149,6 +155,15 @@ public:
      * \return POS string
      */
     const char* getStrPOS(int nPos, int nIdx) const;
+
+    /**
+     * Get the base form string of morpheme \e nIdx in candidate result \e nPos.
+     * For example in Japanese, "来る" is returned as the base form of morpheme "来".
+     * \param nPos candidate result index
+     * \param nIdx morpheme index
+     * \return base form string
+     */
+    const char* getBaseForm(int nPos, int nIdx) const;
 
     /**
      * Get the MorphemeList of candidate result \e nPos.
