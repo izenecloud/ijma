@@ -92,7 +92,7 @@ int main()
 			cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
 			for(int j=0; j<s.getCount(i); ++j)
 			{
-				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << " ";
+				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
 				//cout<< s.getLexicon(i, j) << "/" << s.getPOS(i, j) << " ";
 			}
 			cout<<endl;
