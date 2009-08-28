@@ -12,12 +12,18 @@
 #include "knowledge.h"
 #include "generic_array.h"
 #include "jma_ctype.h"
+#include "strutil.h"
 
 #include <string>
 #include <set>
+#include <map>
+#include <fstream>
 
 using std::string;
 using std::set;
+using std::map;
+using std::ofstream;
+using std::ifstream;
 
 namespace MeCab
 {
@@ -68,6 +74,7 @@ public:
      * \return 0 for fail, 1 for success
      */
     virtual int loadConfig(const char* fileName);
+
 
     /**
      * Encode the system dictionary files from text to binary format.
@@ -166,10 +173,40 @@ private:
     bool loadPOSDef();
 
     /**
+     * Load property config file, with format key = value
+     * \param filename the target file name
+     * \param map the return values are stored in this map
+     * \return true for success, false for failure.
+     */
+    bool loadConfig0(const char *filename, map<string, string>& map);
+
+    /**
      * Load dictionary config file "dicrc" to get base form feature offset value from entry "base-form-feature-offset".
      * \return true for success, false for failure.
      */
     bool loadDictConfig();
+
+    /**
+     * Load the POS to feature mapping
+     * \return true for success, false for failure.
+     */
+    bool loadPOSFeatureMapping();
+
+
+    /**
+     * Convert the User's txt file to CSV format, also change POS to feature
+     * \param userDicFile user dictionary file
+     * \param ostream csv output stream
+     */
+    void convertTxtToCSV(const char* userDicFile, ofstream& ostream);
+
+    /**
+     * Whether the str is the dictionary feature, if it is, do not convert
+     * \param the string to be checked
+     * \param includedWord whether the str include the word
+     * \return true if the str is the dictionary feature
+     */
+    bool isDictFeature( const char* str, bool includeWord = false );
 
     /**
      * Create a unique temporary file and output its file name.
@@ -217,8 +254,14 @@ private:
     /** temporary file name for binary user dictionary */
     std::string tempUserDic_;
 
+    /** temporary csv file for user dictionary */
+    std::string tempUserDicCSVFile_;
+
     /** stop words set */
     set<string> stopWords_;
+
+    /** the pos to feature mapping */
+    map<string, string> posFeatureMap_;
 
     /** whether POS result is in the format of full category */
     bool isOutputFullPOS_;
@@ -228,6 +271,15 @@ private:
 
     /** the feature offset (starting from zero) of base form, which value is got from entry "base-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
     int baseFormOffset_;
+
+    /** the tokens size in a feature */
+    size_t featureTokenSize_;
+
+    /** default pos in the user dictionary if not set or set to wrong (not exists) */
+    string defaultPOS_;
+
+    /** default feature which gained from defaultPOS_ */
+    string* defaultFeature_;
 
     /** The Character Type */
     JMA_CType* ctype_;

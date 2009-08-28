@@ -32,17 +32,21 @@ int main()
     // set dictionary files
     const char* sysdict;
     const char* userdict;
+    const char* userdict1;
 #if defined(_WIN32) && !defined(__CYGWIN__)
     sysdict = "../../db/ipadic/bin_eucjp";
     userdict = "../../db/userdic/eucjp.csv";
+    userdict1 = "../../db/userdic/eucjp.txt";
 #else
     sysdict = "../db/ipadic/bin_eucjp";
     userdict = "../db/userdic/eucjp.csv";
+    userdict1 = "../db/userdic/eucjp.txt";
 #endif
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
     knowledge->addUserDict(userdict);
+    knowledge->addUserDict(userdict1);
     int result = knowledge->loadDict();
     if(result == 0)
     {

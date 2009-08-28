@@ -41,8 +41,15 @@ const int POS_CAT_NUM_DEFAULT = 4;
 /** Default value of base form feature offset */
 const int BASE_FORM_OFFSET_DEFAULT = 6;
 
+/** Default tokens size in a feature */
+const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
+
+/** default pos in the user dictionary if not set or set to wrong (not exists) */
+const string DEFAULT_POS_DEFAULT("n");
+
 /** Dictionary configure and definition files */
-const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
+const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def",
+		"right-id.def", "pos-feature.def"};
 
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
@@ -51,8 +58,17 @@ const char* POS_ID_DEF_FILE = "pos-id.def";
 namespace jma
 {
 
+inline string* getMapValue(map<string, string>& map, const string& key)
+{
+	std::map<string, string>::iterator itr = map.find( key );
+	if( itr == map.end() )
+		return 0;
+	return &itr->second;
+}
+
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0), isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0), ctype_(0)
+    : tagger_(0), isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0),
+    defaultFeature_(0), ctype_(0)
 {
     onEncodeTypeChange( getEncodeType() );
 }
@@ -80,8 +96,14 @@ void JMA_Knowledge::clear()
     if(! tempUserDic_.empty())
     {
         int r = unlink(tempUserDic_.c_str());
-        assert(r == 0 && "temporary file is removed successfully");
+        assert(r == 0 && "tempUserDic_ temporary file is removed successfully");
     }
+
+    if(! tempUserDicCSVFile_.empty())
+	{
+		int r = unlink(tempUserDicCSVFile_.c_str());
+		assert(r == 0 && "tempUserDicCSVFile_ temporary file is removed successfully");
+	}
 }
 
 MeCab::Tagger* JMA_Knowledge::createTagger()
@@ -112,7 +134,7 @@ MeCab::Tagger* JMA_Knowledge::createTagger()
         bool tempResult = createTempFile(tempUserDic_);
         if(! tempResult)
         {
-            cerr << "fail to create a temporary user ditionary file" << endl;
+            cerr << "fail to create a temporary user dictionary binary file" << endl;
             return 0;
         }
 #if JMA_DEBUG_PRINT
@@ -133,11 +155,20 @@ MeCab::Tagger* JMA_Knowledge::createTagger()
         compileParam.push_back((char*)"-t");
         compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
 
+        //convert user dictionaries to a csv file
+        if(! createTempFile(tempUserDicCSVFile_))
+		{
+			cerr << "fail to create a temporary user dictionary csv file" << endl;
+			return 0;
+		}
+        ofstream ostream(tempUserDicCSVFile_.c_str());
+
+
         // append source files of user dictionary
-        for(size_t i=0; i<userDictNum; ++i)
-        {
-            compileParam.push_back(const_cast<char*>(userDictNames_[i].c_str()));
-        }
+		for(size_t i=0; i<userDictNum; ++i)
+			convertTxtToCSV(userDictNames_[i].c_str(), ostream);
+
+        compileParam.push_back(const_cast<char*>(tempUserDicCSVFile_.c_str()));
 
 #if JMA_DEBUG_PRINT
         cout << "parameter of mecab_dict_index() to compile user dictionary: ";
@@ -208,6 +239,29 @@ bool JMA_Knowledge::loadPOSDef()
     return true;
 }
 
+bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
+  std::ifstream ifs(filename);
+  assert(ifs);
+
+  std::string line;
+  while (std::getline(ifs, line)) {
+    if (!line.size() ||
+        (line.size() && (line[0] == ';' || line[0] == '#'))) continue;
+
+    size_t pos = line.find('=');
+    assert(pos != std::string::npos && "format error: ");
+
+    size_t s1, s2;
+    for (s1 = pos+1; s1 < line.size() && isspace(line[s1]); s1++);
+    for (s2 = pos-1; static_cast<long>(s2) >= 0 && isspace(line[s2]); s2--);
+    //const std::string value = line.substr(s1, line.size() - s1);
+    //const std::string key   = line.substr(0, s2 + 1);
+    map[line.substr(0, s2 + 1)] = line.substr(s1, line.size() - s1);
+  }
+
+  return true;
+}
+
 bool JMA_Knowledge::loadDictConfig()
 {
     string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[0]);
@@ -219,6 +273,8 @@ bool JMA_Knowledge::loadDictConfig()
     }
 
     baseFormOffset_ = param.get<size_t>("base-form-feature-offset");
+    featureTokenSize_ = param.get<size_t>("feature-token-size");
+    defaultPOS_ = param.get<string>("default-pos");
 
 #if JMA_DEBUG_PRINT
     cout << "base form feature offset is " << baseFormOffset_ << " in " << configFile << endl;
@@ -227,17 +283,15 @@ bool JMA_Knowledge::loadDictConfig()
     return true;
 }
 
+bool JMA_Knowledge::loadPOSFeatureMapping()
+{
+	string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[4]);
+	posFeatureMap_.clear();
+	return loadConfig0( configFile.c_str(), posFeatureMap_ );
+}
+
 int JMA_Knowledge::loadDict()
 {
-    // remove the previous tagger and temporary file
-    clear();
-
-    tagger_ = createTagger();
-    if(! tagger_)
-    {
-        return 0;
-    }
-
     if(! loadPOSDef())
     {
         // if no "pos-id.def" exists,
@@ -250,6 +304,23 @@ int JMA_Knowledge::loadDict()
         // if no "dicrc" exists,
         // the default value of base form feature offset would be used.
         baseFormOffset_ = BASE_FORM_OFFSET_DEFAULT;
+        // also set other default value
+        featureTokenSize_ = FEATURE_TOKEN_SIZE_DEFAULT;
+        defaultPOS_ = DEFAULT_POS_DEFAULT;
+    }
+
+    if(! loadPOSFeatureMapping() )
+    	cerr<< "Fail to load POS - Feature Mapping, User dictionary can't work"<<endl;
+    else
+    	defaultFeature_ = getMapValue(posFeatureMap_, defaultPOS_);
+
+    // remove the previous tagger and temporary file
+    clear();
+
+    tagger_ = createTagger();
+    if(! tagger_)
+    {
+        return 0;
     }
 
     return 1;
@@ -702,6 +773,92 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 	}
 	in.close();
 	return 1;
+}
+
+bool JMA_Knowledge::isDictFeature( const char* str, bool includeWord )
+{
+	size_t tokenSize = includeWord ? 0 : 1;
+	while(*str)
+	{
+		if(*str == ',')
+			++tokenSize;
+		++str;
+	}
+	return tokenSize == featureTokenSize_;
+}
+
+void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
+{
+	ifstream in(userDicFile);
+	if( !in )
+	{
+		cerr << "Can't Find User Dictionary " << userDicFile << ", and IGNORE this file." << endl;
+		return;
+	}
+
+	cout<<"Converting User Dictionary " << userDicFile << " ..." << endl;
+
+	string line;
+	while( !in.eof() )
+	{
+		getline(in, line);
+		trimSelf(line);
+		if(line.empty())
+			continue;
+
+		vector<string> vec;
+		stringToVector( line, vec );
+		if(vec.empty())
+			continue;
+
+		size_t vecSize = vec.size();
+		string& word = vec[0];
+		if( vecSize == 1 )
+		{
+			if( isDictFeature( word.c_str(), true) )
+				ostream << word << endl;
+			else if( defaultFeature_ )
+				ostream << vec[0] << "," << *defaultFeature_ << endl;
+			continue;
+		}
+
+		set<string> usedFeatures;
+		for( size_t i = 1; i < vecSize; ++i )
+		{
+			string& posOrFec = vec[i];
+			// posOrFec is a feature itself
+			if( isDictFeature( posOrFec.c_str() ) )
+			{
+				//don't insert duplicate entry
+				if( usedFeatures.find(posOrFec) == usedFeatures.end() )
+				{
+					ostream << word << "," << posOrFec << endl;
+					usedFeatures.insert(posOrFec);
+				}
+			}
+			else
+			{
+				string* fec = getMapValue( posFeatureMap_, posOrFec );
+				//don't insert duplicate entry
+				if( fec )
+				{
+					if( usedFeatures.find( *fec ) == usedFeatures.end() )
+					{
+						ostream << word << "," << *fec << endl;
+						usedFeatures.insert( *fec );
+					}
+				}
+				else
+					cerr << "Can't find POS for " << posOrFec << endl;
+			}
+		}
+
+		if( usedFeatures.empty() && defaultFeature_ )
+		{
+			ostream << vec[0] << "," << *defaultFeature_ << endl;
+		}
+	}
+
 }
 
 } // namespace jma

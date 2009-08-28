@@ -199,7 +199,7 @@ inline string getWord (string& s, const string delim = " ", const bool trim_spac
 //      "a,b"   => 2 items
 //      "a,b,"  => 3 items (last one empty)
 
-inline void stringToVector (const string s, vector<string> & v, const string delim = " ", const bool trim_spaces = true)
+inline void stringToVector (const string& s, vector<string> & v, const string delim = " ", const bool trim_spaces = true)
 {
     // start with initial string, trimmed of leading/trailing spaces if required
     string s1 (trim_spaces ? trim (s) : s);
