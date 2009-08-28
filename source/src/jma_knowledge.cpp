@@ -53,6 +53,9 @@ const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def",
 
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
+
+/** POS feature mapping file name */
+const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 }
 
 namespace jma
@@ -510,6 +513,14 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     if(copyFile(src.c_str(), dest.c_str()) == false)
     {
         cout << POS_ID_DEF_FILE << " is not found in " << txtDirPath << ", default POS index would be 1." << endl;
+    }
+
+    // if pos-feature.def exists, copy it to the destination directory
+    src = createFilePath(txtDirPath, POS_FEATURE_DEF_FILE);
+    dest = createFilePath(binDirPath, POS_FEATURE_DEF_FILE);
+    if(copyFile(src.c_str(), dest.c_str()) == false)
+    {
+        cout << POS_FEATURE_DEF_FILE << " is not found in " << txtDirPath << ", no default feature is defined for those words in user dictionary." << endl;
     }
 
     return 1;
