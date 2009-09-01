@@ -5,7 +5,7 @@ BUILD_PATH=./temp
 CURRENT_PATH=`pwd`
 
 # build type
-BUILD_TYPE=debug
+BUILD_TYPE=release
 
 if [ "$1" = "clean" ]
 then 
