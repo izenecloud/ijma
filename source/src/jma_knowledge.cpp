@@ -70,7 +70,7 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 }
 
 JMA_Knowledge::JMA_Knowledge()
-    : tagger_(0), isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0),
+    : isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0),
     defaultFeature_(0), ctype_(0)
 {
     onEncodeTypeChange( getEncodeType() );
@@ -78,7 +78,14 @@ JMA_Knowledge::JMA_Knowledge()
 
 JMA_Knowledge::~JMA_Knowledge()
 {
-    clear();
+    // remove the temporary user file in binary format
+    if(hasUserDict())
+    {
+        if(! removeFile(tempUserDic_))
+        {
+            cerr << "fail to delete tempUserDic_ file: " << tempUserDic_ << endl;
+        }
+    }
 
     if(ctype_)
     {
@@ -86,36 +93,17 @@ JMA_Knowledge::~JMA_Knowledge()
     }
 }
 
-void JMA_Knowledge::clear()
+bool JMA_Knowledge::hasUserDict() const
 {
-    // destroy the tagger if exists
-    if(tagger_)
-    {
-        delete tagger_;
-        tagger_ = 0;
-    }
-
-    // remove the temporary file if exists
-    if(! tempUserDic_.empty())
-    {
-        int r = unlink(tempUserDic_.c_str());
-        assert(r == 0 && "tempUserDic_ temporary file is removed successfully");
-    }
-
-    if(! tempUserDicCSVFile_.empty())
-	{
-		int r = unlink(tempUserDicCSVFile_.c_str());
-		assert(r == 0 && "tempUserDicCSVFile_ temporary file is removed successfully");
-	}
+    return ! userDictNames_.empty();
 }
 
-MeCab::Tagger* JMA_Knowledge::createTagger()
+bool JMA_Knowledge::compileUserDict()
 {
     const size_t userDictNum = userDictNames_.size();
 
 #if JMA_DEBUG_PRINT
-    cout << "JMA_Knowledge::loadDict()" << endl;
-    cout << "system dictionary path: " << systemDictPath_ << endl;
+    cout << "JMA_Knowledge::compileUserDict()" << endl;
     if(userDictNum != 0)
     {
         cout << "user dictionary: ";
@@ -127,68 +115,102 @@ MeCab::Tagger* JMA_Knowledge::createTagger()
     }
 #endif
 
+    if(userDictNum == 0)
+    {
+        return false;
+    }
+
+    // remove the temporary use binary file if exists
+    if(! tempUserDic_.empty())
+    {
+        if(! removeFile(tempUserDic_))
+        {
+            cerr << "fail to delete tempUserDic_ file: " << tempUserDic_ << endl;
+        }
+    }
+
+    // create a unique temporary file for user dictionary in binary type
+    bool tempResult = createTempFile(tempUserDic_);
+    if(! tempResult)
+    {
+        cerr << "fail to create a temporary user dictionary binary file" << endl;
+        return false;
+    }
+#if JMA_DEBUG_PRINT
+    cout << "temporary file name of binary user dictionary: " << tempUserDic_ << endl;
+#endif
+
+    // construct parameter to compile user dictionary
+    vector<char*> compileParam;
+    compileParam.push_back((char*)"JMA_Knowledge");
+    compileParam.push_back((char*)"-d");
+    compileParam.push_back(const_cast<char*>(systemDictPath_.c_str()));
+    compileParam.push_back((char*)"-u");
+    compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
+
+    // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
+    // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
+    // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
+    compileParam.push_back((char*)"-t");
+    compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
+
+    // temporary csv file for user dictionary
+    string tempUserCSVFile;
+
+    // convert user dictionaries to a csv file
+    if(! createTempFile(tempUserCSVFile))
+    {
+        cerr << "fail to create a temporary user dictionary csv file" << endl;
+        return false;
+    }
+#if JMA_DEBUG_PRINT
+    cout << "temporary file name of user csv file: " << tempUserCSVFile << endl;
+#endif
+
+    ofstream ostream(tempUserCSVFile.c_str());
+
+    // append source files of user dictionary
+    for(size_t i=0; i<userDictNum; ++i)
+        convertTxtToCSV(userDictNames_[i].c_str(), ostream);
+
+    compileParam.push_back(const_cast<char*>(tempUserCSVFile.c_str()));
+
+#if JMA_DEBUG_PRINT
+    cout << "parameter of mecab_dict_index() to compile user dictionary: ";
+    for(size_t i=0; i<compileParam.size(); ++i)
+    {
+        cout << compileParam[i] << " ";
+    }
+    cout << endl;
+#endif
+
+    // compile user dictionary files into binary type
+    int compileResult = mecab_dict_index(compileParam.size(), &compileParam[0]);
+    if(compileResult != 0)
+    {
+        cerr << "fail to compile user ditionary" << endl;
+        return false;
+    }
+
+    // as the binary user dictionary is created,
+    // remove the temporary user csv file
+    if(! removeFile(tempUserCSVFile))
+    {
+        cerr << "fail to delete tempUserCSVFile file: " << tempUserCSVFile << endl;
+    }
+
+    return true;
+}
+
+MeCab::Tagger* JMA_Knowledge::createTagger() const
+{
     // construct parameter to create tagger
     string taggerParam("-d ");
     taggerParam += systemDictPath_;
 
-    if(userDictNum != 0)
+    if(hasUserDict())
     {
-        // create a unique temporary file for user dictionary in binary type
-        bool tempResult = createTempFile(tempUserDic_);
-        if(! tempResult)
-        {
-            cerr << "fail to create a temporary user dictionary binary file" << endl;
-            return 0;
-        }
-#if JMA_DEBUG_PRINT
-        cout << "temporary file name of binary user dictionary: " << tempUserDic_ << endl;
-#endif
-
-        // construct parameter to compile user dictionary
-        vector<char*> compileParam;
-        compileParam.push_back((char*)"JMA_Knowledge");
-        compileParam.push_back((char*)"-d");
-        compileParam.push_back(const_cast<char*>(systemDictPath_.c_str()));
-        compileParam.push_back((char*)"-u");
-        compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
-
-        // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
-        // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
-        // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
-        compileParam.push_back((char*)"-t");
-        compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
-
-        //convert user dictionaries to a csv file
-        if(! createTempFile(tempUserDicCSVFile_))
-		{
-			cerr << "fail to create a temporary user dictionary csv file" << endl;
-			return 0;
-		}
-        ofstream ostream(tempUserDicCSVFile_.c_str());
-
-
-        // append source files of user dictionary
-		for(size_t i=0; i<userDictNum; ++i)
-			convertTxtToCSV(userDictNames_[i].c_str(), ostream);
-
-        compileParam.push_back(const_cast<char*>(tempUserDicCSVFile_.c_str()));
-
-#if JMA_DEBUG_PRINT
-        cout << "parameter of mecab_dict_index() to compile user dictionary: ";
-        for(size_t i=0; i<compileParam.size(); ++i)
-        {
-            cout << compileParam[i] << " ";
-        }
-        cout << endl;
-#endif
-
-        // compile user dictionary files into binary type
-        int compileResult = mecab_dict_index(compileParam.size(), &compileParam[0]);
-        if(compileResult != 0)
-        {
-            cerr << "fail to compile user ditionary" << endl;
-            return 0;
-        }
+        assert(! tempUserDic_.empty() && "the temporary file of user dictionary in binary format should have been created by JMA_Knowledge::compileUserDict()");
 
         // append the name of user dictionary binary file to the parameter of tagger creation
         taggerParam += " -u ";
@@ -317,14 +339,28 @@ int JMA_Knowledge::loadDict()
     else
     	defaultFeature_ = getMapValue(posFeatureMap_, defaultPOS_);
 
-    // remove the previous tagger and temporary file
-    clear();
+#if JMA_DEBUG_PRINT
+    cout << "JMA_Knowledge::loadDict()" << endl;
+    cout << "system dictionary path: " << systemDictPath_ << endl;
+#endif
 
-    tagger_ = createTagger();
-    if(! tagger_)
+    if(hasUserDict())
+    {
+        if(! compileUserDict())
+        {
+            return 0;
+        }
+    }
+
+    // load into temporary instance to check the result
+    MeCab::Tagger* tagger = createTagger();
+    if(! tagger)
     {
         return 0;
     }
+
+    // destroy the temporary instance
+    delete tagger;
 
     return 1;
 }
@@ -526,11 +562,6 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     return 1;
 }
 
-MeCab::Tagger* JMA_Knowledge::getTagger() const
-{
-    return tagger_;
-}
-
 bool JMA_Knowledge::isStopWord(const string& word) const
 {
 	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
@@ -593,6 +624,18 @@ bool JMA_Knowledge::createTempFile(std::string& tempName)
 #endif
 
     return true;
+}
+
+bool JMA_Knowledge::removeFile(const std::string& fileName)
+{
+    if(unlink(fileName.c_str()) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool JMA_Knowledge::isDirExist(const char* dirPath)

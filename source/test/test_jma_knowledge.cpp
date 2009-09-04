@@ -51,8 +51,8 @@ int main()
         exit(1);
     }
 
-    // get tagger
-    MeCab::Tagger* tagger = knowledge->getTagger();
+    // create tagger, which life cycle is managed by the caller.
+    MeCab::Tagger* tagger = knowledge->createTagger();
     assert(tagger && "MeCab::Tagger is accessible after dictionary is loaded");
 
     // just for test: get dictionary info
@@ -68,6 +68,9 @@ int main()
         cout << endl;
     }
 
+    // destroy tagger
+    delete tagger;
+
     cout<<"\n#Test the Sentence Separator "<<endl;
     const char* senConfig;
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -76,7 +79,8 @@ int main()
     senConfig = "../db/config/sen-eucjp.config";
 #endif
     knowledge->loadSentenceSeparatorConfig(senConfig);
-    assert( knowledge->isSentenceSeparator(".") );
+    // comment the line below as "." is removed from "../db/config/sen-eucjp.config"
+    //assert( knowledge->isSentenceSeparator(".") );
     assert( knowledge->isSentenceSeparator("!") );
     assert( !knowledge->isSentenceSeparator("=") );
     assert( knowledge->isSentenceSeparator("¡£") );

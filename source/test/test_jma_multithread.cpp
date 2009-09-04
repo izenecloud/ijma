@@ -35,6 +35,7 @@ int done[NUM_THREADS];
 struct pthread_t_data{
 	unsigned int thread_id;
 	string input_filename;
+	string output_filename;
 	Analyzer* analyzer;
 };
 
@@ -48,7 +49,7 @@ void* analyzerWithThread(void* threadarg)	{
 	ostringstream ss;
 	ss << data->thread_id;
 	string source = data->input_filename;
-	string dest = source +  ".output-" + ss.str();
+	string dest = data->output_filename +  ".output-" + ss.str();
 	
 	cerr << "########## Thread No." << data->thread_id << " => test method runWithStream()" << endl;
 	cerr << "##### input file: " << source << endl;
@@ -75,7 +76,8 @@ void* analyzerWithThread(void* threadarg)	{
  */
 void printUsage()
 {
-    cerr << "Usages:\t raw_file" << endl;
+    cerr << "Usages:\t raw_file [result_file]" << endl;
+    cerr << "if result_file is not given, it would be raw_file.output-* defaultly." << endl;
 }
 
 /**
@@ -123,7 +125,6 @@ int main(int argc, char* argv[])
 		knowledge->setEncodeType(encode);
 #endif
 
-
 #ifdef USE_SAME_ANALYZER
 	Analyzer *analyzer = factory->createAnalyzer();
 	analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
@@ -137,9 +138,22 @@ int main(int argc, char* argv[])
 	pthread_t threads[NUM_THREADS];
 	pthread_t_data thread_data[NUM_THREADS];
 	
+    // file name of input and output
+    string input = argv[1];
+    string output;
+    if(argc < 3)
+    {
+        output = input;
+    }
+    else
+    {
+        output = argv[2];
+    }
+
 	while(tid < NUM_THREADS)	{
 		thread_data[tid].thread_id = tid;
-		thread_data[tid].input_filename = string(argv[1]);
+		thread_data[tid].input_filename = input;
+		thread_data[tid].output_filename = output;
 
 	#ifndef USE_SAME_KNOWLEDGE
 		Knowledge* knowledge = factory->createKnowledge();
@@ -172,8 +186,8 @@ int main(int argc, char* argv[])
 	}
 	
 	while(true)	{
-		int _done = 0;
-		for(int i = 0; i < NUM_THREADS; i++)	{
+		unsigned int _done = 0;
+		for(unsigned int i = 0; i < NUM_THREADS; i++)	{
 			_done += done[i];
 		}
 		

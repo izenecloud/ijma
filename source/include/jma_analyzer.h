@@ -102,13 +102,19 @@ private:
 	inline void setBaseForm(const string& origForm, const char* feature, string& retVal);
 
 private:
+    /**
+     * Release the resources owned by \e JMA_Analyzer itself.
+     */
+    void clear();
+
+private:
 	/**
 	 * hold the JMA_Knowledge Object
 	 */
 	JMA_Knowledge* knowledge_;
 
 	/**
-	 * The Tagger from the Mecab (returned by the JMA_Knowledge)
+	 * The Tagger from the Mecab (created by JMA_Knowledge, owned by JMA_Analyzer)
 	 */
 	MeCab::Tagger* tagger_;
 

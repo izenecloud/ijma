@@ -109,18 +109,19 @@ public:
     EncodeType getEncodeType() const;
 
     /**
-     * Invoked when the encode type is changed (except for the initialization)
-     * \param type the new EncodeType
-     */
-    virtual void onEncodeTypeChange(EncodeType type) = 0;
-
-    /**
      * Get the encode type from the encode type string
      *
      * \param encodeStr encode type string
      * \return the encoding type, note that \e Knowledge::ENCODE_TYPE_NUM would be returned if the encoding type is unkown.
      */
     static EncodeType decodeEncodeType(const char* encodeStr);
+
+protected:
+    /**
+     * Invoked when the encode type is changed (except for the initialization)
+     * \param type the new EncodeType
+     */
+    virtual void onEncodeTypeChange(EncodeType type) = 0;
 
 protected:
     /** the directory path of system dictionary files */

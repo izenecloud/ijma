@@ -86,10 +86,10 @@ public:
     virtual int encodeSystemDict(const char* txtDirPath, const char* binDirPath);
 
     /**
-     * Get the tagger for analysis.
-     * \return pointer to tagger
+     * Create tagger by loading dictionary files.
+     * \return pointer to tagger. 0 for fail, otherwise the life cycle of the tagger should be maintained by the caller.
      */
-    MeCab::Tagger* getTagger() const;
+    MeCab::Tagger* createTagger() const;
 
     /**
 	 * Whether the specific word is stop word
@@ -135,12 +135,6 @@ public:
     bool addSentenceSeparator(unsigned int val);
 
     /**
-     * Invoked when the encode type is changed (except for the initialization)
-     * \param type the new EncodeType
-     */
-    virtual void onEncodeTypeChange(EncodeType type);
-
-    /**
      * Get the current JMA_CType
      * \param the current JMA_CType
      */
@@ -154,17 +148,28 @@ public:
 	 */
 	virtual int loadSentenceSeparatorConfig(const char* fileName);
 
+protected:
+    /**
+     * Invoked when the encode type is changed (except for the initialization)
+     * \param type the new EncodeType
+     */
+    virtual void onEncodeTypeChange(EncodeType type);
+
 private:
     /**
-     * Remove the tagger and temporary dictionary file if exists.
+     * Whether any user dictionary is added by \e Knowledge::addUserDict().
+     * \return true for user dictionary is added, false for no user dictionary is added.
      */
-    void clear();
+    bool hasUserDict() const;
 
     /**
-     * Create tagger by loading dictionary files.
-     * \return the tagger created. 0 is returned when failure.
+     * Compile the user dictionary file from text to binary format.
+     * \return true for success, false for fail.
+     * \pre \e systemDictPath_ is assumed as the directory path of system dictionary.
+     * \pre \e userDictNames_ is assumed as file names of user dictionaries in text format.
+     * \post as the compilation result, \e tempUserDic_ is the file name of the temporary user dictionary in binary format.
      */
-    MeCab::Tagger* createTagger();
+    bool compileUserDict();
 
     /**
      * Load "pos-id.def" to get POS category number.
@@ -192,7 +197,6 @@ private:
      */
     bool loadPOSFeatureMapping();
 
-
     /**
      * Convert the User's txt file to CSV format, also change POS to feature
      * \param userDicFile user dictionary file
@@ -214,6 +218,13 @@ private:
      * \return true for success and \e tempName is set as the temporary file name. false for fail and \e tempName is not modified.
      */
     static bool createTempFile(std::string& tempName);
+
+    /**
+     * Delete the file on disk.
+     * \param fileName the name of the file to be deleted
+     * \return true for success and false for fail.
+     */
+    static bool removeFile(const std::string& fileName);
 
     /**
      * Check whether the directory exists.
@@ -248,14 +259,8 @@ private:
 	unsigned int getOccupiedBytes(unsigned int val);
 
 private:
-    /** tagger for analysis */
-    MeCab::Tagger* tagger_;
-
     /** temporary file name for binary user dictionary */
     std::string tempUserDic_;
-
-    /** temporary csv file for user dictionary */
-    std::string tempUserDicCSVFile_;
 
     /** stop words set */
     set<string> stopWords_;

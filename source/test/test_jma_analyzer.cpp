@@ -54,13 +54,15 @@ int main()
         exit(1);
     }
 
+    // comment lines below as JMA_Knowledge::getTagger() is replaced with createTagger(),
+    // which MeCab::Tagger life cycle is managed by the caller.
     // get tagger
-    MeCab::Tagger* tagger = knowledge->getTagger();
-    if(! tagger)
-    {
-        cerr << "MeCab::Tagger is not accessible after dictionary is loaded" << endl;
-        exit(1);
-    }
+    //MeCab::Tagger* tagger = knowledge->getTagger();
+    //if(! tagger)
+    //{
+        //cerr << "MeCab::Tagger is not accessible after dictionary is loaded" << endl;
+        //exit(1);
+    //}
 
     JMA_Analyzer* analyzer = new JMA_Analyzer;
     analyzer->setKnowledge(knowledge);

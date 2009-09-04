@@ -69,16 +69,25 @@ JMA_Analyzer::JMA_Analyzer()
 
 JMA_Analyzer::~JMA_Analyzer()
 {
+    clear();
+}
+
+void JMA_Analyzer::clear()
+{
+    delete tagger_;
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
 {
     assert(pKnowledge);
 
+    // release the resources before allocating new ones
+    clear();
+
     knowledge_ = dynamic_cast<JMA_Knowledge*>(pKnowledge);
     assert(knowledge_);
 
-    tagger_ = knowledge_->getTagger();
+    tagger_ = knowledge_->createTagger();
     // if runWith*() would be called, tagger_ should not be NULL,
     // if only splitSentence() would be called, tagger_ could be NULL as no dictionary needs to be loaded.
     if(tagger_)
