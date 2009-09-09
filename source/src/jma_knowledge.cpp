@@ -120,7 +120,7 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
-    // remove the temporary use binary file if exists
+    // remove the temporary user binary file if exists
     if(! tempUserDic_.empty())
     {
         if(! removeFile(tempUserDic_))

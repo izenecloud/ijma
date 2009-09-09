@@ -10,9 +10,21 @@
 
 if [ "$1" = "" ] && [ "$2" = "" ]
 then
-    echo Usage: $0 inputFile outputFile
+    echo "Usage: $0 inputFile outputFile [ja|zh]"
+    echo "The last option is languate code, which could be:"
+    echo "- ja: Japanese (the default option)"
+    echo "- zh: Chinese"
     exit 1
 fi
+
+CODE=ja
+
+if [ "$3" != "" ]
+then
+    CODE=$3
+fi
+
+echo "Language code: $CODE" 
 
 EXE_NAME=rlp_pos
 BT_ROOT=/usr/local/BasisTech/BT_RLP ; export BT_ROOT
@@ -25,7 +37,7 @@ echo Running rlp_sample C++ sample - output in rlp_sample.out
 echo ---------------------------------------
 echo
 #./rlp_sample $BT_ROOT ja "$BT_ROOT/rlp/etc/rlp-global.xml" "$BT_ROOT/rlp/samples/data/ja-text.txt" rlp_sample.out
-`dirname $0`/$EXE_NAME $BT_ROOT ja "$BT_ROOT/rlp/etc/rlp-global.xml" $1 $2
+`dirname $0`/$EXE_NAME $BT_ROOT $CODE "$BT_ROOT/rlp/etc/rlp-global.xml" $1 $2
 
 if [ "$?" -ne "0" ]; then
   echo "Trouble running $EXE_NAME.  Please check your installation and try again."
