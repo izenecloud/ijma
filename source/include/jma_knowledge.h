@@ -13,6 +13,7 @@
 #include "generic_array.h"
 #include "jma_ctype.h"
 #include "strutil.h"
+#include "pos_table.h"
 
 #include <string>
 #include <set>
@@ -90,6 +91,12 @@ public:
      * \return pointer to tagger. 0 for fail, otherwise the life cycle of the tagger should be maintained by the caller.
      */
     MeCab::Tagger* createTagger() const;
+
+    /**
+     * Get the part-of-speech tags table.
+     * \return pointer to the table instance.
+     */
+    const POSTable* getPOSTable() const;
 
     /**
 	 * Whether the specific word is stop word
@@ -172,7 +179,7 @@ private:
     bool compileUserDict();
 
     /**
-     * Load "pos-id.def" to get POS category number.
+     * Load "pos-id.def" to get POS category number, and also POS table.
      * \return true for success, false for failure.
      */
     bool loadPOSDef();
@@ -259,6 +266,9 @@ private:
 	unsigned int getOccupiedBytes(unsigned int val);
 
 private:
+    /** the table of part-of-speech tags */
+    POSTable posTable_;
+
     /** temporary file name for binary user dictionary */
     std::string tempUserDic_;
 

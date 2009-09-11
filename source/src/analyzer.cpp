@@ -29,6 +29,7 @@ Analyzer::Analyzer()
 {
     options_[OPTION_TYPE_POS_TAGGING] = 1; // tag part-of-speech tags defaultly
     options_[OPTION_TYPE_NBEST] = 1; // set the default number of candidate results of runWithSentence()
+    options_[OPTION_TYPE_POS_FORMAT_ALPHABET] = 0; // disable output part-of-speech tags in alphabet format defaultly, use Japanese format instead.
 }
 
 Analyzer::~Analyzer()

@@ -132,6 +132,7 @@ public:
     {
 	OPTION_TYPE_POS_TAGGING, ///< the value zero for not to tag part-of-speech tags in the result of \e runWithSentence(), \e runWithString() and \e runWithStream(), which value is 1 defaultly.
 	OPTION_TYPE_NBEST, ///< a positive value to set the number of candidate results of \e runWithSentence(), which value is 1 defaultly.
+	OPTION_TYPE_POS_FORMAT_ALPHABET, ///< the value zero to output part-of-speech tags in Japanese format, such like "名詞,固有名詞,人名,姓", otherwise, a non-zero value would output part-of-speech tags in alphabet format, such like "NP-S", this option is valid for \e runWithSentence(), \e runWithString() and \e runWithStream(), which value is 0 defaultly.
 	OPTION_TYPE_NUM ///< the count of option types
     };
 

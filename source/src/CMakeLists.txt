@@ -11,6 +11,7 @@ set(objs_jma
 ./jma_ctype_sjis
 ./jma_ctype_utf8
 ./tokenizer
+./pos_table
 )
 
 add_library(jma ${objs_jma})

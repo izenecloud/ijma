@@ -15,6 +15,7 @@
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
 #include "tokenizer.h"
+#include "pos_table.h"
 
 
 namespace jma
@@ -63,7 +64,9 @@ inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* l
 }
 
 JMA_Analyzer::JMA_Analyzer()
-    : knowledge_(0), tagger_(0)
+    : knowledge_(0), tagger_(0),
+    maxPosCateOffset_(0), preBaseFormOffset_(0),
+    posTable_(0)
 {
 }
 
@@ -75,6 +78,11 @@ JMA_Analyzer::~JMA_Analyzer()
 void JMA_Analyzer::clear()
 {
     delete tagger_;
+}
+
+bool JMA_Analyzer::isPOSFormatAlphabet() const
+{
+    return (getOption(OPTION_TYPE_POS_FORMAT_ALPHABET) != 0);
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
@@ -97,6 +105,8 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
 
     maxPosCateOffset_ = knowledge_->getPOSCatNum() - 1;
     preBaseFormOffset_ = knowledge_->getBaseFormOffset();
+
+    posTable_ = knowledge_->getPOSTable();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -109,6 +119,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
+    bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
 	const char* strPtr =  retStr.data();
@@ -130,7 +141,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			if(printPOS)
 			{
 				morp.posCode_ = (int)node->posid;
-				morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
+				morp.posStr_ = isPOSAlphabet ? posTable_->getAlphabetPOS(morp.posCode_) : string(node->feature, getPOSOffset(node->feature));
 			}
 		}
 		sentence.addList(list, 1.0);
@@ -166,7 +177,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				if(printPOS)
 				{
 					morp.posCode_ = (int)node->posid;
-					morp.posStr_ = string(node->feature, getPOSOffset(node->feature));
+                    morp.posStr_ = isPOSAlphabet ? posTable_->getAlphabetPOS(morp.posCode_) : string(node->feature, getPOSOffset(node->feature));
 				}
 			}
 
@@ -218,6 +229,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
     }
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
+    bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
 	const char* strPtr =  retStr.data();
@@ -231,8 +243,16 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 			if(knowledge_->isStopWord(seg))
 				continue;
 
-			strBuf_.append(node->surface, node->length).append(posDelimiter_).
-				append(node->feature, getPOSOffset(node->feature) ).append(wordDelimiter_);
+			strBuf_.append(node->surface, node->length).append(posDelimiter_);
+            if(isPOSAlphabet)
+            {
+                strBuf_.append(posTable_->getAlphabetPOS(static_cast<int>(node->posid)));
+            }
+            else
+            {
+                strBuf_.append(node->feature, getPOSOffset(node->feature));
+            }
+			strBuf_.append(wordDelimiter_);
 		}
 
 	} else {
@@ -260,6 +280,7 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
     }
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
+    bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	ifstream in(inFileName);
 	if(!in)
@@ -298,7 +319,15 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 					continue;
 
 				out.write(node->surface, node->length) << posDelimiter_;
-				out.write(node->feature, getPOSOffset(node->feature) ) << wordDelimiter_;
+                if(isPOSAlphabet)
+                {
+                    out << posTable_->getAlphabetPOS(static_cast<int>(node->posid));
+                }
+                else
+                {
+                    out.write(node->feature, getPOSOffset(node->feature));
+                }
+				out << wordDelimiter_;
 			}
 
             if (remains)

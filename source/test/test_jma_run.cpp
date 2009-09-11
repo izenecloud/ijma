@@ -79,13 +79,10 @@ void testWithSentence(Analyzer* analyzer)
             cout << "n-best result:" << endl;
             for(int i=0; i<s.getListSize(); ++i)
             {
+                cout << "\t" << i << ": ";
                 for(int j=0; j<s.getCount(i); ++j)
                 {
-                    if(j == 0)
-                        cout << "\t" << i << ": ";
-
-                    const char* pLexicon = s.getLexicon(i, j);
-                    cout << pLexicon << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
+                    cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
                 }
                 cout << "\t" << s.getScore(i) << "\t#words: " << s.getCount(i) << endl;
             }
@@ -101,13 +98,10 @@ void testWithSentence(Analyzer* analyzer)
         else
         {
             cout << "one-best result:" << endl;
+            cout << "\t" << i << ": ";
             for(int j=0; j<s.getCount(i); ++j)
             {
-                if(j == 0)
-                    cout << "\t" << i << ": ";
-
-                const char* pLexicon = s.getLexicon(i, j);
-                cout << pLexicon << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
+                cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
             }
             cout << "\t" << s.getScore(i) << endl;
         }
@@ -270,6 +264,9 @@ int main(int argc, char* argv[])
 
     // no POS output
     analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+
+    // output POS in alphabet format
+    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
 
     switch(optionIndex)
     {

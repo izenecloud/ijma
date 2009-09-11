@@ -25,6 +25,7 @@ namespace jma
 
 class JMA_Knowledge;
 class JMA_CType;
+class POSTable;
 
 /**
  * JMA_Analyzer executes the Japanese morphological analysis based on conditional random field.
@@ -83,7 +84,6 @@ public:
     virtual void splitSentence(const char* paragraph, std::vector<Sentence>& sentences);
 
 private:
-
 	/**
 	 * If the feature is aa,bb,*,*,v1,v2,* (the POS locates the first four sections which
 	 * was separated by comma).<br>
@@ -101,12 +101,17 @@ private:
 	 */
 	inline void setBaseForm(const string& origForm, const char* feature, string& retVal);
 
-private:
     /**
      * Release the resources owned by \e JMA_Analyzer itself.
      */
     void clear();
 
+    /**
+     * Check whether output POS in the format of alphabet.
+     * \return true for alphabet format such like "NP-S", false for Japanese format such like "名詞,固有名詞,人名,姓"
+     */
+    bool isPOSFormatAlphabet() const;
+    
 private:
 	/**
 	 * hold the JMA_Knowledge Object
@@ -129,6 +134,9 @@ private:
 	 * Previous comma index of the base form offset
 	 */
 	int preBaseFormOffset_;
+
+    /** POS table for POS string and index code */
+    const POSTable* posTable_;
 };
 
 } // namespace jma

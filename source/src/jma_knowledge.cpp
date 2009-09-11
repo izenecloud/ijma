@@ -48,8 +48,7 @@ const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
 const string DEFAULT_POS_DEFAULT("n");
 
 /** Dictionary configure and definition files */
-const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def",
-		"right-id.def", "pos-feature.def"};
+const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
 
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
@@ -225,14 +224,27 @@ MeCab::Tagger* JMA_Knowledge::createTagger() const
     return MeCab::createTagger(taggerParam.c_str());
 }
 
+const POSTable* JMA_Knowledge::getPOSTable() const
+{
+    return &posTable_;
+}
+
 bool JMA_Knowledge::loadPOSDef()
 {
-    // get POS category number from "pos-id.def"
+    // file "pos-id.def"
     string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
-    ifstream posFile(posFileName.c_str());
 
+    // load POS table
+    if(! posTable_.loadConfig(posFileName.c_str()))
+    {
+        cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
+    }
+
+    // get POS category number
+    ifstream posFile(posFileName.c_str());
     if(! posFile)
     {
+        cerr << "fail in JMA_Knowledge::loadPOSDef() to load " << posFileName << endl;
         return false;
     }
 
@@ -244,7 +256,7 @@ bool JMA_Knowledge::loadPOSDef()
     if(! line.empty())
     {
         // remove characters starting from space
-        line.erase(line.find(' '));
+        line.erase(line.find_first_of(" \t"));
 
         // count the number of separator ','
         int count = 0;
@@ -310,7 +322,7 @@ bool JMA_Knowledge::loadDictConfig()
 
 bool JMA_Knowledge::loadPOSFeatureMapping()
 {
-	string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[4]);
+	string configFile = createFilePath(systemDictPath_.c_str(), POS_FEATURE_DEF_FILE);
 	posFeatureMap_.clear();
 	return loadConfig0( configFile.c_str(), posFeatureMap_ );
 }
