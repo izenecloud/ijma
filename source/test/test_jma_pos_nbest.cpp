@@ -8,7 +8,7 @@
  * DICT_PATH: ../db/ipadic/bin_eucjp
  * INPUT: ../db/test/asahi_test_raw_eucjp.txt
  * )
- * $ ./jma_pos_nbest --dict DICT_PATH --config CONFIG_PATH --nbest N INPUT OUTPUT
+ * $ ./jma_pos_nbest --dict DICT_PATH --nbest N INPUT OUTPUT
  *
  * The output format for each sentence is defined below:
  * k (int, the number of candidates for the sentence)
