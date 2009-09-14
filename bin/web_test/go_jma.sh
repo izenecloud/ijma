@@ -58,7 +58,7 @@ then
 fi
 
 echo ">>>>> iJMA start" >> $LOG
-$JMA_PATH/bin/jma_pos_nbest --dict $JMA_PATH/db/ipadic/bin_utf8 --config $JMA_PATH/db/config/pos-ipadic.config --nbest 4 $RAW_SENTENCE $JMA_OUTPUT >>$LOG 2>&1
+$JMA_PATH/bin/jma_pos_nbest --dict $JMA_PATH/db/ipadic/bin_utf8 --nbest 4 $RAW_SENTENCE $JMA_OUTPUT >>$LOG 2>&1
 RET=$?
 if [ "$RET" != "0" ]
 then
