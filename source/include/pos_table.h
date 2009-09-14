@@ -27,6 +27,7 @@ public:
      * This file contains the part-of-speech configuration, which format is "JapanesePOS index AlphabetPOS".
      * \param fileName the file name
      * \return 0 for fail, 1 for success
+     * \attention if this function is already called before, the table previously loaded would be removed.
      */
     bool loadConfig(const char* fileName);
 

@@ -25,6 +25,9 @@ bool POSTable::loadConfig(const char* fileName)
 {
     assert(fileName);
 
+    // remove the previous table if exists
+    posAlphabetTable_.clear();
+
     // open file
     ifstream from(fileName);
     if(! from)
