@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         sysdict = "../../db/ipadic/bin_utf8";
     }
 
-    userdict = "../../db/userdic/eucjp.csv";
+    userdict = "../../db/userdic/ipa_eucjp.csv";
 #else
     if(encode == Knowledge::ENCODE_TYPE_EUCJP)
     {
@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
         sysdict = "../db/ipadic/bin_utf8";
     }
 
-    userdict = "../db/userdic/eucjp.csv";
+    userdict = "../db/userdic/ipa_eucjp.csv";
 #endif
 
     // load dictioanry files

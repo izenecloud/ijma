@@ -35,10 +35,10 @@ int main()
     const char* userdict;
 #if defined(_WIN32) && !defined(__CYGWIN__)
     sysdict = "../../db/ipadic/bin_eucjp";
-    userdict = "../../db/userdic/eucjp.csv";
+    userdict = "../../db/userdic/ipa_eucjp.csv";
 #else
     sysdict = "../db/ipadic/bin_eucjp";
-    userdict = "../db/userdic/eucjp.csv";
+    userdict = "../db/userdic/ipa_eucjp.csv";
 #endif
 
     // load dictioanry files
