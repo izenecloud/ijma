@@ -12,7 +12,6 @@
 #include "knowledge.h"
 #include "generic_array.h"
 #include "jma_ctype.h"
-#include "strutil.h"
 #include "pos_table.h"
 
 #include <string>
@@ -208,8 +207,9 @@ private:
      * Convert the User's txt file to CSV format, also change POS to feature
      * \param userDicFile user dictionary file
      * \param ostream csv output stream
+     * \return how many entries are written into \e ostream
      */
-    void convertTxtToCSV(const char* userDicFile, ofstream& ostream);
+    unsigned int convertTxtToCSV(const char* userDicFile, ofstream& ostream);
 
     /**
      * Whether the str is the dictionary feature, if it is, do not convert

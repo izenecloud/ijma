@@ -9,6 +9,7 @@
 #include "jma_knowledge.h"
 #include "sentence.h"
 #include "dictionary.h"
+#include "strutil.h"
 
 #include "mecab.h" // MeCab::Tagger
 #include "param.h" // MeCab::Param
@@ -128,6 +129,35 @@ bool JMA_Knowledge::compileUserDict()
         }
     }
 
+    // temporary csv file for user dictionary
+    string tempUserCSVFile;
+
+    // convert user dictionaries to a csv file
+    if(! createTempFile(tempUserCSVFile))
+    {
+        cerr << "fail to create a temporary user dictionary csv file" << endl;
+        return false;
+    }
+#if JMA_DEBUG_PRINT
+    cout << "temporary file name of user csv file: " << tempUserCSVFile << endl;
+#endif
+
+    ofstream ostream(tempUserCSVFile.c_str());
+
+    // append source files of user dictionary
+    unsigned int entryCount = 0;
+    for(size_t i=0; i<userDictNum; ++i)
+        entryCount += convertTxtToCSV(userDictNames_[i].c_str(), ostream);
+
+#if JMA_DEBUG_PRINT
+    cout << entryCount << " entries in user dictionaries altogether." << endl;
+#endif
+    if(entryCount == 0)
+    {
+        cerr << "fail to compile the empty user dictionary." << endl;
+        return false;
+    }
+
     // create a unique temporary file for user dictionary in binary type
     bool tempResult = createTempFile(tempUserDic_);
     if(! tempResult)
@@ -152,25 +182,6 @@ bool JMA_Knowledge::compileUserDict()
     // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
     compileParam.push_back((char*)"-t");
     compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
-
-    // temporary csv file for user dictionary
-    string tempUserCSVFile;
-
-    // convert user dictionaries to a csv file
-    if(! createTempFile(tempUserCSVFile))
-    {
-        cerr << "fail to create a temporary user dictionary csv file" << endl;
-        return false;
-    }
-#if JMA_DEBUG_PRINT
-    cout << "temporary file name of user csv file: " << tempUserCSVFile << endl;
-#endif
-
-    ofstream ostream(tempUserCSVFile.c_str());
-
-    // append source files of user dictionary
-    for(size_t i=0; i<userDictNum; ++i)
-        convertTxtToCSV(userDictNames_[i].c_str(), ostream);
 
     compileParam.push_back(const_cast<char*>(tempUserCSVFile.c_str()));
 
@@ -853,13 +864,15 @@ bool JMA_Knowledge::isDictFeature( const char* str, bool includeWord )
 	return tokenSize == featureTokenSize_;
 }
 
-void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
+unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
 {
+    unsigned int count = 0;
+
 	ifstream in(userDicFile);
 	if( !in )
 	{
 		cerr << "Can't Find User Dictionary " << userDicFile << ", and IGNORE this file." << endl;
-		return;
+		return count;
 	}
 
 	cout<<"Converting User Dictionary " << userDicFile << " ..." << endl;
@@ -885,6 +898,7 @@ void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
 				ostream << word << endl;
 			else if( defaultFeature_ )
 				ostream << vec[0] << "," << *defaultFeature_ << endl;
+            ++count;
 			continue;
 		}
 
@@ -899,6 +913,7 @@ void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
 				if( usedFeatures.find(posOrFec) == usedFeatures.end() )
 				{
 					ostream << word << "," << posOrFec << endl;
+                    ++count;
 					usedFeatures.insert(posOrFec);
 				}
 			}
@@ -911,6 +926,7 @@ void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
 					if( usedFeatures.find( *fec ) == usedFeatures.end() )
 					{
 						ostream << word << "," << *fec << endl;
+                        ++count;
 						usedFeatures.insert( *fec );
 					}
 				}
@@ -922,9 +938,11 @@ void JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
 		if( usedFeatures.empty() && defaultFeature_ )
 		{
 			ostream << vec[0] << "," << *defaultFeature_ << endl;
+            ++count;
 		}
 	}
 
+    return count;
 }
 
 } // namespace jma
