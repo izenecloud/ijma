@@ -38,15 +38,17 @@ int main()
     userdict = "../../db/userdic/ipa_eucjp.csv";
     userdict1 = "../../db/userdic/ipa_eucjp.txt";
 #else
-    sysdict = "../db/ipadic/bin_eucjp";
-    userdict = "../db/userdic/ipa_eucjp.csv";
-    userdict1 = "../db/userdic/ipa_eucjp.txt";
+    //sysdict = "../db/ipadic/bin_eucjp";
+    //userdict = "../db/userdic/ipa_eucjp.csv";
+    sysdict = "../db/jumandic/bin_eucjp";
+    userdict = "../db/userdic/juman_eucjp.csv";
+    //userdict1 = "../db/userdic/ipa_eucjp.txt";
 #endif
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
     knowledge->addUserDict(userdict);
-    knowledge->addUserDict(userdict1);
+    //knowledge->addUserDict(userdict1);
     int result = knowledge->loadDict();
     if(result == 0)
     {
@@ -66,7 +68,8 @@ int main()
 
     JMA_Analyzer* analyzer = new JMA_Analyzer;
     analyzer->setKnowledge(knowledge);
-    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 5);
+    //analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 5);
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 1);
     analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 1);
 
 //#define TEST_CMD_STR
@@ -95,10 +98,12 @@ int main()
 		analyzer->runWithSentence(s);
 		for(int i=0; i<s.getListSize(); ++i)
 		{
-			cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
+            //cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
+			cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<", #words " << s.getCount(i) << ": ";
 			for(int j=0; j<s.getCount(i); ++j)
 			{
-				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
+				//cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
+				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
 				//cout<< s.getLexicon(i, j) << "/" << s.getPOS(i, j) << " ";
 			}
 			cout<<endl;
