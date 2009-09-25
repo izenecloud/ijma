@@ -324,8 +324,10 @@ bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) 
 
   std::string line;
   while (std::getline(ifs, line)) {
-    if (!line.size() ||
-        (line.size() && (line[0] == ';' || line[0] == '#'))) continue;
+    // remove carriage return character
+    line = line.substr(0, line.find('\r'));
+
+    if (line.empty() || line[0] == ';' || line[0] == '#') continue;
 
     size_t pos = line.find('=');
     if(pos == std::string::npos)
