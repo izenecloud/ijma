@@ -82,8 +82,7 @@ void testWithSentence(Analyzer* analyzer)
                 cout << "\t" << i << ": ";
                 for(int j=0; j<s.getCount(i); ++j)
                 {
-                    //cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
-                    cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
+                    cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
                 }
                 cout << "\t" << s.getScore(i) << "\t#words: " << s.getCount(i) << endl;
             }
@@ -102,8 +101,7 @@ void testWithSentence(Analyzer* analyzer)
             cout << "\t" << i << ": ";
             for(int j=0; j<s.getCount(i); ++j)
             {
-                //cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
-                cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
+                cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
             }
             cout << "\t" << s.getScore(i) << endl;
         }
@@ -265,7 +263,7 @@ int main(int argc, char* argv[])
     analyzer->setKnowledge(knowledge);
 
     // no POS output
-    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
 
     // output POS in alphabet format
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
