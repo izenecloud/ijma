@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
+#include <sstream> // stringstream
 #include <cstdlib> // mkstemp, atoi
 #include <cassert>
 
@@ -46,7 +47,7 @@ const int BASE_FORM_OFFSET_DEFAULT = 6;
 const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
 
 /** default pos in the user dictionary if not set or set to wrong (not exists) */
-const string DEFAULT_POS_DEFAULT("n");
+const char* DEFAULT_POS_DEFAULT = "n";
 
 /** Dictionary configure and definition files */
 const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
@@ -56,6 +57,27 @@ const char* POS_ID_DEF_FILE = "pos-id.def";
 
 /** POS feature mapping file name */
 const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
+
+/**
+ * Convert string to the value of type \e Target.
+ * \param str source string
+ * \return target value of type \e Target
+ * \attention if the convertion failed, the default value of type \e Target would be returned instead.
+ */
+template<class Target> Target convertFromStr(const string& str)
+{
+    stringstream convertor;
+    Target result;
+
+    if(!(convertor << str) || !(convertor >> result) || !(convertor >> ws).eof())
+    {
+        cerr << "error in converting value from " << str << ", use default value instead." << endl;
+        return Target();
+    }
+
+    return result;
+}
+
 }
 
 namespace jma
@@ -143,6 +165,11 @@ bool JMA_Knowledge::compileUserDict()
 #endif
 
     ofstream ostream(tempUserCSVFile.c_str());
+    if(! ostream)
+    {
+        cerr << "fail to open temporary user CSV file: " << tempUserCSVFile << endl;
+        return false;
+    }
 
     // append source files of user dictionary
     unsigned int entryCount = 0;
@@ -289,7 +316,11 @@ bool JMA_Knowledge::loadPOSDef()
 
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
   std::ifstream ifs(filename);
-  assert(ifs);
+  if(!ifs)
+  {
+      cerr << "cannot open configuration file: " << filename << endl;
+      return false;
+  }
 
   std::string line;
   while (std::getline(ifs, line)) {
@@ -297,7 +328,11 @@ bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) 
         (line.size() && (line[0] == ';' || line[0] == '#'))) continue;
 
     size_t pos = line.find('=');
-    assert(pos != std::string::npos && "format error: ");
+    if(pos == std::string::npos)
+    {
+        cerr << "format error in configuration file: " << filename << ", line: " << line << endl;
+        return false;
+    }
 
     size_t s1, s2;
     for (s1 = pos+1; s1 < line.size() && isspace(line[s1]); s1++);
@@ -313,19 +348,26 @@ bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) 
 bool JMA_Knowledge::loadDictConfig()
 {
     string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[0]);
-    MeCab::Param param;
+    map<string, string> configMap;
 
-    if(! param.load(configFile.c_str()))
+    if(! loadConfig0(configFile.c_str(), configMap))
     {
         return false;
     }
 
-    baseFormOffset_ = param.get<size_t>("base-form-feature-offset");
-    featureTokenSize_ = param.get<size_t>("feature-token-size");
-    defaultPOS_ = param.get<string>("default-pos");
+    string* value = getMapValue(configMap, "base-form-feature-offset");
+    baseFormOffset_ = value ? convertFromStr<int>(*value) : BASE_FORM_OFFSET_DEFAULT;
+
+    value = getMapValue(configMap, "feature-token-size");
+    featureTokenSize_ = value ? convertFromStr<size_t>(*value) : FEATURE_TOKEN_SIZE_DEFAULT;
+
+    value = getMapValue(configMap, "default-pos");
+    defaultPOS_ = value ? *value : DEFAULT_POS_DEFAULT;
 
 #if JMA_DEBUG_PRINT
-    cout << "base form feature offset is " << baseFormOffset_ << " in " << configFile << endl;
+    cout << "JMA_Knowledge::loadDictConfig(), configFile: " << configFile << ", base form feature offset: " << baseFormOffset_
+         << ", feature token size: " << featureTokenSize_
+         << ", defaut POS: " << defaultPOS_ << endl;
 #endif
 
     return true;
@@ -349,7 +391,7 @@ int JMA_Knowledge::loadDict()
 
     if(! loadDictConfig())
     {
-        // if no "dicrc" exists,
+        // if "dicrc" loading failed,
         // the default value of base form feature offset would be used.
         baseFormOffset_ = BASE_FORM_OFFSET_DEFAULT;
         // also set other default value
@@ -371,6 +413,7 @@ int JMA_Knowledge::loadDict()
     {
         if(! compileUserDict())
         {
+            cerr << "fail to compile user dictionary in JMA_Knowledge::loadDict()" << endl;
             return 0;
         }
     }
@@ -379,6 +422,7 @@ int JMA_Knowledge::loadDict()
     MeCab::Tagger* tagger = createTagger();
     if(! tagger)
     {
+        cerr << "fail to create MeCab::Tagger in JMA_Knowledge::loadDict()" << endl;
         return 0;
     }
 

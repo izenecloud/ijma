@@ -192,7 +192,7 @@ private:
     bool loadConfig0(const char *filename, map<string, string>& map);
 
     /**
-     * Load dictionary config file "dicrc" to get base form feature offset value from entry "base-form-feature-offset".
+     * Load dictionary config file "dicrc" to get the values of entry defined by iJMA, such as "base-form-feature-offset" entry.
      * \return true for success, false for failure.
      */
     bool loadDictConfig();
