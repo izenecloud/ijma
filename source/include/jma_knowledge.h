@@ -142,7 +142,7 @@ public:
 
     /**
      * Get the current JMA_CType
-     * \param the current JMA_CType
+     * \return the current JMA_CType
      */
     JMA_CType* getCType();
 

@@ -1,4 +1,4 @@
-/** \file tokenizer.h
+/** \file source/include/tokenizer.h
  * \brief Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters.
  * \author Vernkin
  * \version 0.1

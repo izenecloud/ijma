@@ -1,5 +1,5 @@
 /**
- * \file jma_ctype_eucjp.h
+ * \file jma_ctype_sjis.cpp
  * \brief encoding for the SHIFT-JIS
  *
  * \date Jun 25, 2009

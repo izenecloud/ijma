@@ -1,5 +1,5 @@
 /**
- * \file jma_ctype_eucjp.h
+ * \file jma_ctype_eucjp.cpp
  * \brief encoding for the EUC-JP
  *
  * \date Jun 25, 2009

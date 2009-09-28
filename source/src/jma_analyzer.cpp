@@ -1,5 +1,5 @@
-/** \file crf_analyzer.cpp
- * Implementation of class CRF_Analyzer.
+/** \file jma_analyzer.cpp
+ * Implementation of class JMA_Analyzer.
  *
  * \author Jun Jiang
  * \version 0.1
@@ -25,6 +25,8 @@ namespace jma
  * Whether the two MorphemeLists is the same
  * \param list1 the MorphemeList 1
  * \param list2 the MorphemeList 2
+ * \param printPOS whether also compare POS result
+ * \return true for the same, false for not the same
  */
 inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* list2, bool printPOS )
 {

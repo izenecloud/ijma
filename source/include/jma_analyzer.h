@@ -1,5 +1,5 @@
-/** \file crf_analyzer.h
- * Definition of class CRF_Analyzer.
+/** \file jma_analyzer.h
+ * Definition of class JMA_Analyzer.
  *
  * \author Jun Jiang
  * \version 0.1

@@ -1,5 +1,6 @@
-/** \file t_cmac_run2.cpp
- * \author HyunWoo Lee
+/** \file test_jma_multithread.cpp
+ * Test JMA in multithread environment.
+ * \author Vernkin
  * \version 0.1
  * \date Sep 1, 2009
  */

@@ -149,9 +149,10 @@ string::size_type findSeparator(const string& str, size_t n)
 
 /**
  * Extract POS string from "*.csv" files.
- * \param dicts the file names of "*.csv"
+ * \param dics the file names of "*.csv"
  * \param posSet the extraction result
  * \param posColumn the number of POS columns in "*.csv"
+ * \return true for succeed in POS string extraction, false for failure.
  */
 bool extractPOS(const vector<string>& dics, set<string>& posSet, size_t posColumn)
 {
