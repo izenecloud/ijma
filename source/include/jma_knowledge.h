@@ -68,15 +68,6 @@ public:
     virtual int loadStopWordDict(const char* fileName);
 
     /**
-     * Load the configuration file, which is in text format.
-     * This file contains the configuration used in morphological analysis, such as part-of-speech configuration, etc.
-     * \param fileName the file name
-     * \return 0 for fail, 1 for success
-     */
-    virtual int loadConfig(const char* fileName);
-
-
-    /**
      * Encode the system dictionary files from text to binary format.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files
@@ -104,13 +95,6 @@ public:
 	 * \return whether the word is in the stop word list
 	 */
 	bool isStopWord(const string& word) const;
-
-    /**
-     * Whether POS result is in the format of full category.
-     * \return true for full category format, which might includes asterisk symbol, such like "名詞,数,*,*";
-     *         false for effective category format, which excludes asterisk symbol, such like "名詞,数";
-     */
-    bool isOutputFullPOS() const;
 
     /**
      * Get POS category number.

@@ -54,20 +54,6 @@ int main()
         exit(1);
     }
 
-    // load configuration file
-    const char* config;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    config = "../../db/config/jma.config";
-#else
-    config = "../db/config/jma.config";
-#endif
-    result = knowledge->loadConfig(config);
-    if(result == 0)
-    {
-        cerr << "fail to load configuration file" << endl;
-        exit(1);
-    }
-
     // set knowledge
     analyzer->setKnowledge(knowledge);
 

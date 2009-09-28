@@ -455,96 +455,6 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
 	return 1;
 }
 
-int JMA_Knowledge::loadConfig(const char* fileName)
-{
-    // open file
-    assert(fileName);
-    ifstream from(fileName);
-    if(!from) {
-        cerr << "cannot open file: " << fileName << endl;
-        return 0;
-    }
-
-#if JMA_DEBUG_PRINT
-    cout << "load configuration: " << fileName << endl;
-    cout << "tag\t\tvalue\t\tflag" << endl;
-#endif
-
-    // read file, which consists of lines in the format "tag = value"
-    string line, tag, value;
-    string::size_type i, j, k;
-    const char* whitespaces = " \t";
-
-    while(getline(from, line))
-    {
-        // remove carriage return character
-        line = line.substr(0, line.find('\r'));
-
-        // ignore the comment start with '#'
-        if(!line.empty() && line[0] != '#')
-        {
-            // set k as the position of '='
-            i = line.find_first_not_of(whitespaces);
-            if(i == string::npos)
-            {
-                break;
-            }
-
-            k = line.find_first_of('=', i);
-            if(k == string::npos || k == 0)
-            {
-                break;
-            }
-
-            // set tag
-            j = line.find_last_not_of(whitespaces, k-1);
-            if(j == string::npos)
-            {
-                break;
-            }
-            tag = line.substr(i, j-i+1);
-
-            // set value
-            i = line.find_first_not_of(whitespaces, k+1);
-            if(i == string::npos)
-            {
-                break;
-            }
-
-            j = line.find_last_not_of(whitespaces);
-            if(j == string::npos)
-            {
-                value = line.substr(i);
-            }
-            else
-            {
-                value = line.substr(i, j-i+1);
-            }
-
-            if(tag == CONFIG_TAG_OUTPUT_FULL_POS)
-            {
-                if(atoi(value.c_str()) == 0)
-                {
-                    isOutputFullPOS_ = false;
-                }
-                else
-                {
-                    isOutputFullPOS_ = true;
-                }
-            }
-#if JMA_DEBUG_PRINT
-            cout << tag << "\t" << value << "\t" << isOutputFullPOS_ << endl;
-#endif
-        }
-    }
-
-#if JMA_DEBUG_PRINT
-    cout << endl;
-#endif
-
-    return 1;
-}
-
 int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath)
 {
     assert(txtDirPath && binDirPath);
@@ -634,11 +544,6 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 bool JMA_Knowledge::isStopWord(const string& word) const
 {
 	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
-}
-
-bool JMA_Knowledge::isOutputFullPOS() const
-{
-    return isOutputFullPOS_;
 }
 
 int JMA_Knowledge::getPOSCatNum() const

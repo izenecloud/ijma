@@ -409,7 +409,7 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
 
 int JMA_Analyzer::getPOSOffset(const char* feature)
 {
-	if( knowledge_->isOutputFullPOS() )
+	if( getOption(OPTION_TYPE_POS_FULL_CATEGORY) != 0 )
 	{
 		// count for the index of the fourth offset
 		int offset = 0;
