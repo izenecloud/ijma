@@ -1,11 +1,11 @@
 /** \file test_jma_pos_nbest.cpp
  * Test JMA in Japanese word segmentation with POS tagging analysis, and output the n-best result.
  * Below is the usage examples:
- * The "DICT_PATH" in below examples is the dictionary path, which is "../db/ipadic/bin_eucjp" defautly.
+ * The "DICT_PATH" in below examples is the dictionary path.
  * \code
  * To analyze the raw input file "INPUT", and print the n-best result to "OUTPUT".
  * (the example of the parameters below could be:
- * DICT_PATH: ../db/ipadic/bin_eucjp
+ * DICT_PATH: ../db/jumandic/bin_eucjp
  * INPUT: ../db/test/asahi_test_raw_eucjp.txt
  * )
  * $ ./jma_pos_nbest --dict DICT_PATH --nbest N INPUT OUTPUT

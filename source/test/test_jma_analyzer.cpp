@@ -13,6 +13,7 @@
 #include "jma_knowledge.h"
 #include "mecab.h"
 #include "jma_analyzer.h"
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV, TEST_JMA_DEFAULT_USER_DICT_TXT
 
 #include <iostream>
 #include <cassert>
@@ -30,18 +31,12 @@ int main()
     JMA_Knowledge* knowledge = new JMA_Knowledge;
 
     // set dictionary files
-    const char* sysdict;
-    const char* userdict;
-    const char* userdict1;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    sysdict = "../../db/ipadic/bin_eucjp";
-    userdict = "../../db/userdic/ipa_eucjp.csv";
-    userdict1 = "../../db/userdic/ipa_eucjp.txt";
-#else
-    sysdict = "../db/ipadic/bin_eucjp";
-    userdict = "../db/userdic/ipa_eucjp.csv";
-    userdict1 = "../db/userdic/ipa_eucjp.txt";
-#endif
+    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
+    const char* userdict = TEST_JMA_DEFAULT_USER_DICT_CSV;
+    const char* userdict1 = TEST_JMA_DEFAULT_USER_DICT_TXT;
+    cout << "system dictionary: " << sysdict << endl;
+    cout << "user dictionary 0: " << userdict << endl;
+    cout << "user dictionary 1: " << userdict1 << endl;
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);

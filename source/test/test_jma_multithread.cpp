@@ -9,6 +9,7 @@
 #include "analyzer.h"
 #include "knowledge.h"
 #include "sentence.h"
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
 #include <iostream>
 #include <sstream>
@@ -98,12 +99,7 @@ int main(int argc, char* argv[])
 	JMA_Factory* factory = JMA_Factory::instance();
 
     // set default dictionary file
-    const char* sysdict = 0;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    sysdict = "../../db/ipadic/bin_eucjp";
-#else
-    sysdict = "../db/ipadic/bin_eucjp";
-#endif
+    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
 
     // set encoding type from the dictionary path
 	string sysdictStr(sysdict);

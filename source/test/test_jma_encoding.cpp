@@ -20,8 +20,10 @@
 #include "jma_factory.h"
 #include "analyzer.h"
 #include "knowledge.h"
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV
 
 #include <iostream>
+#include <string>
 #include <cassert>
 #include <cstdlib>
 #include <string.h>
@@ -75,43 +77,26 @@ int main(int argc, char* argv[])
     knowledge->setEncodeType(encode);
 
     // set dictionary files
-    const char* sysdict = 0;
-    const char* userdict = 0;
-#if defined(_WIN32) && !defined(__CYGWIN__)
+    string sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
+    string userdict = TEST_JMA_DEFAULT_USER_DICT_CSV;
     if(encode == Knowledge::ENCODE_TYPE_EUCJP)
     {
-        sysdict = "../../db/ipadic/bin_eucjp";
+        sysdict += "/../bin_eucjp";
     }
     else if(encode == Knowledge::ENCODE_TYPE_SJIS)
     {
-        sysdict = "../../db/ipadic/bin_sjis";
+        sysdict += "/../bin_sjis";
     }
     else if(encode == Knowledge::ENCODE_TYPE_UTF8)
     {
-        sysdict = "../../db/ipadic/bin_utf8";
+        sysdict += "/../bin_utf8";
     }
-
-    userdict = "../../db/userdic/ipa_eucjp.csv";
-#else
-    if(encode == Knowledge::ENCODE_TYPE_EUCJP)
-    {
-        sysdict = "../db/ipadic/bin_eucjp";
-    }
-    else if(encode == Knowledge::ENCODE_TYPE_SJIS)
-    {
-        sysdict = "../db/ipadic/bin_sjis";
-    }
-    else if(encode == Knowledge::ENCODE_TYPE_UTF8)
-    {
-        sysdict = "../db/ipadic/bin_utf8";
-    }
-
-    userdict = "../db/userdic/ipa_eucjp.csv";
-#endif
 
     // load dictioanry files
-    knowledge->setSystemDict(sysdict);
-    knowledge->addUserDict(userdict);
+    cout << "system dictionary: " << sysdict << endl;
+    cout << "user dictionary: " << userdict << endl;
+    knowledge->setSystemDict(sysdict.c_str());
+    knowledge->addUserDict(userdict.c_str());
     int result = knowledge->loadDict();
     if(result == 0)
     {

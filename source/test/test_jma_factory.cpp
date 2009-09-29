@@ -14,6 +14,7 @@
 #include "jma_factory.h"
 #include "analyzer.h"
 #include "knowledge.h"
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
 #include <iostream>
 #include <cassert>
@@ -38,12 +39,8 @@ int main()
     Knowledge* knowledge = factory->createKnowledge();
 
     // set dictionary files
-    const char* sysdict;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    sysdict = "../../db/ipadic/bin_eucjp";
-#else
-    sysdict = "../db/ipadic/bin_eucjp";
-#endif
+    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
+    cout << "system dictionary: " << sysdict << endl;
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);

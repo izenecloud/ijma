@@ -1,7 +1,7 @@
 /** \file test_jma_run.cpp
  * Test JMA in Japanese word segmentation and POS tagging analysis.
  * Below is the usage examples:
- * The "DICT_PATH" in below examples is the dictionary path, which is "../db/ipadic/bin_eucjp" defautly.
+ * The "DICT_PATH" in below examples is the dictionary path, which is "../db/jumandic/bin_eucjp" defautly.
  * \code
  * To analyze a sentence from standard input and print 5 n-best results to standard output.
  * $ ./jma_run --sentence 5 [--dict DICT_PATH]
@@ -25,6 +25,7 @@
 #include "analyzer.h"
 #include "knowledge.h"
 #include "sentence.h"
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
 #include <iostream>
 #include <fstream>
@@ -196,12 +197,7 @@ int main(int argc, char* argv[])
     Knowledge* knowledge = factory->createKnowledge();
 
     // set default dictionary file
-    const char* sysdict = 0;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    sysdict = "../../db/ipadic/bin_eucjp";
-#else
-    sysdict = "../db/ipadic/bin_eucjp";
-#endif
+    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
 
     switch(optionIndex)
     {
@@ -246,6 +242,7 @@ int main(int argc, char* argv[])
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
+    cout << "system dictionary: " << sysdict << endl;
 
     // set encoding type from the dictionary path
     string sysdictStr(sysdict);
@@ -255,7 +252,7 @@ int main(int argc, char* argv[])
     Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
     if(encode != Knowledge::ENCODE_TYPE_NUM)
     {
-        cout << "set encoding type: " << encodeStr << endl;
+        cout << "encoding type: " << encodeStr << endl;
         knowledge->setEncodeType(encode);
     }
 
@@ -263,7 +260,7 @@ int main(int argc, char* argv[])
     analyzer->setKnowledge(knowledge);
 
     // no POS output
-    analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
 
     // output POS in alphabet format
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
