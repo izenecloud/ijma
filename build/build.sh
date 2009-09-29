@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # build path
-BUILD_PATH=./temp
-CURRENT_PATH=`pwd`
+JMA_PROJECT_HOME="`dirname $0`/.."
+BUILD_PATH="${JMA_PROJECT_HOME}/temp"
 
 # build type
 BUILD_TYPE=release
@@ -14,10 +14,10 @@ then
     fi
 
     # remove all lib files
-    rm -fr $CURRENT_PATH/../lib/lib*
+    rm -fr $JMA_PROJECT_HOME/lib/lib*
 
     # remove all executable files
-    rm -fr $CURRENT_PATH/../bin/test_* $CURRENT_PATH/../bin/mecab* $CURRENT_PATH/../bin/demo_* $CURRENT_PATH/../bin/jma_*
+    rm -fr $JMA_PROJECT_HOME/bin/test_* $JMA_PROJECT_HOME/bin/mecab* $JMA_PROJECT_HOME/bin/demo_* $JMA_PROJECT_HOME/bin/jma_*
 elif [ "$1" = "" ] || [ "$1" = "debug" ] || [ "$1" = "release" ] || [ "$1" = "profile" ]
 then
     if [ "$1" != "" ]
@@ -36,9 +36,9 @@ then
 
     cd $BUILD_PATH
     # generate Makefiles using GCC
-    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $CURRENT_PATH/../source
+    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $JMA_PROJECT_HOME/source
     # generate MSVC project
-    #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $CURRENT_PATH/../source
+    #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $JMA_PROJECT_HOME/source
     make all
 else
     echo "usage: $0 [debug|release|profile|clean]"
