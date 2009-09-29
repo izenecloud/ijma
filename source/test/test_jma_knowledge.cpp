@@ -13,7 +13,7 @@
 
 #include "jma_knowledge.h"
 #include "mecab.h"
-#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV, TEST_JMA_DEFAULT_SENTENCE_CONFIG, TEST_JMA_DEFAULT_STOPWORD_DICT
 
 #include <iostream>
 #include <cassert>
@@ -68,12 +68,7 @@ int main()
     delete tagger;
 
     cout<<"\n#Test the Sentence Separator "<<endl;
-    const char* senConfig;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    senConfig = "../../db/config/sen-eucjp.config";
-#else
-    senConfig = "../db/config/sen-eucjp.config";
-#endif
+    const char* senConfig = TEST_JMA_DEFAULT_SENTENCE_CONFIG;
     knowledge->loadSentenceSeparatorConfig(senConfig);
     // comment the line below as "." is removed from "../db/config/sen-eucjp.config"
     //assert( knowledge->isSentenceSeparator(".") );
@@ -85,12 +80,7 @@ int main()
 
 
     cout<<"\n#Test the Stop Words Dictionary "<<endl;
-    const char* stopWordDic;
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    stopWordDic = "../../db/stopworddic/test-eucjp.txt";
-#else
-    stopWordDic = "../db/stopworddic/test-eucjp.txt";
-#endif
+    const char* stopWordDic = TEST_JMA_DEFAULT_STOPWORD_DICT;
     knowledge->loadStopWordDict(stopWordDic);
     assert( knowledge->isStopWord("¶µ»Õ") );
     assert( !knowledge->isStopWord("¶»¸µ") );
