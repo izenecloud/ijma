@@ -1,4 +1,4 @@
-/** \file test_jma_knowledge.cpp
+/** \file test_jma_analyzer.cpp
  * Test to create an instance of JMA_Analyzer.
  * Below is the usage examples:
  * \code

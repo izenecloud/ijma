@@ -27,7 +27,8 @@ then
 
     echo "build type:" $BUILD_TYPE
 
-    if [ -d $BUILD_PATH ]; then
+    if [ -d $BUILD_PATH ]
+    then
         echo $BUILD_PATH directory exists
     else
         echo make directory $BUILD_PATH
@@ -35,11 +36,27 @@ then
     fi
 
     cd $BUILD_PATH
-    # generate Makefiles using GCC
-    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
-    # generate MSVC project
-    #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
-    make all
+
+    if [ "$2" = "" -o "$2" = "linux" ]
+    then
+        echo "generating Makefiles for GCC"
+        cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        make all
+    elif [ "$2" = "win32" ]
+    then
+        echo "generating MSVC project (\"Visual Studio 9 2008\" is required)"
+        cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        if [ $? = 0 ]
+        then
+            echo "MSVC project file \"temp\JMA.sln\" is generated,"
+            echo "please open and build it inside MSVC IDE."
+        fi
+    else
+        echo "unkown platform $2, please use \"linux\" or \"win32\"."
+        exit 1
+    fi
+
 else
-    echo "usage: $0 [debug|release|profile|clean]"
+    echo "usage: $0 [debug|release|profile|clean] [linux|win32]"
+    exit 1
 fi
