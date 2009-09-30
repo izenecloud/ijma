@@ -1,0 +1,10 @@
+<area shape="rect" href="$jma__analyzer_8h.html" title="Definition of class JMA_Analyzer." alt="" coords="208,80,403,107">
+<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="427,80,627,107">
+<area shape="rect" href="$sentence_8cpp.html" title="Implementation of class Sentence." alt="" coords="651,80,813,107">
+<area shape="rect" href="$test__jma__multithread_8cpp.html" title="Test JMA in multithread environment." alt="" coords="837,80,1072,107">
+<area shape="rect" href="$test__jma__pos__nbest_8cpp.html" title="Test JMA in Japanese word segmentation with POS tagging analysis, and output the..." alt="" coords="1096,80,1328,107">
+<area shape="rect" href="$test__jma__run_8cpp.html" title="Test JMA in Japanese word segmentation and POS tagging analysis." alt="" coords="1352,80,1541,107">
+<area shape="rect" href="$test__jma__split__sentence_8cpp.html" title="Test sentence split in JMA analysis." alt="" coords="1565,80,1821,107">
+<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="5,155,192,181">
+<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="216,155,395,181">
+<area shape="rect" href="$test__jma__analyzer_8cpp.html" title="Test to create an instance of JMA_Analyzer." alt="" coords="419,155,637,181">

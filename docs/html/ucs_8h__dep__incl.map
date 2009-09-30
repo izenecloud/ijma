@@ -1,0 +1,20 @@
+<area shape="rect" href="$char__property_8h.html" title="source/libmecab/char_property.h" alt="" coords="632,80,840,107">
+<area shape="rect" href="$char__property_8cpp.html" title="source/libmecab/char_property.cpp" alt="" coords="279,155,503,181">
+<area shape="rect" href="$dictionary_8h.html" title="source/libmecab/dictionary.h" alt="" coords="577,155,764,181">
+<area shape="rect" href="$dictionary__compiler_8cpp.html" title="source/libmecab/dictionary_compiler.cpp" alt="" coords="5,229,261,256">
+<area shape="rect" href="$dictionary__generator_8cpp.html" title="source/libmecab/dictionary_generator.cpp" alt="" coords="733,229,995,256">
+<area shape="rect" href="$libmecab_2tokenizer_8h.html" title="source/libmecab/tokenizer.h" alt="" coords="1019,229,1203,256">
+<area shape="rect" href="$iconv__utils_8cpp.html" title="source/libmecab/iconv_utils.cpp" alt="" coords="889,155,1097,181">
+<area shape="rect" href="$dictionary_8cpp.html" title="source/libmecab/dictionary.cpp" alt="" coords="509,229,709,256">
+<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="285,229,485,256">
+<area shape="rect" href="$learner__tagger_8h.html" title="source/libmecab/learner_tagger.h" alt="" coords="581,304,792,331">
+<area shape="rect" href="$libmecab_8cpp.html" title="source/libmecab/libmecab.cpp" alt="" coords="816,304,1013,331">
+<area shape="rect" href="$viterbi_8h.html" title="source/libmecab/viterbi.h" alt="" coords="1088,304,1253,331">
+<area shape="rect" href="$libmecab_2tokenizer_8cpp.html" title="source/libmecab/tokenizer.cpp" alt="" coords="860,379,1057,405">
+<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="1277,304,1464,331">
+<area shape="rect" href="$src_2tokenizer_8cpp.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="1488,304,1651,331">
+<area shape="rect" href="$learner_8cpp.html" title="source/libmecab/learner.cpp" alt="" coords="384,379,568,405">
+<area shape="rect" href="$learner__tagger_8cpp.html" title="source/libmecab/learner_tagger.cpp" alt="" coords="592,379,819,405">
+<area shape="rect" href="$tagger_8cpp.html" title="source/libmecab/tagger.cpp" alt="" coords="1081,379,1260,405">
+<area shape="rect" href="$viterbi_8cpp.html" title="source/libmecab/viterbi.cpp" alt="" coords="1273,453,1452,480">
+<area shape="rect" href="$viterbisub_8h.html" title="source/libmecab/viterbisub.h" alt="" coords="1335,379,1521,405">

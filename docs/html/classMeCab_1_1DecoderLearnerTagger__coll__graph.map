@@ -1,0 +1,24 @@
+<area shape="rect" href="$classMeCab_1_1LearnerTagger.html" title="MeCab::LearnerTagger" alt="" coords="2909,355,3061,381">
+<area shape="rect" href="$classMeCab_1_1FeatureIndex.html" title="MeCab::FeatureIndex" alt="" coords="2521,192,2668,219">
+<area shape="rect" href="$classMeCab_1_1scoped__ptr.html" title="MeCab::scoped_ptr\&lt; FeatureIndex \&gt;" alt="" coords="2868,244,3103,271">
+<area shape="rect" href="$classMeCab_1_1DictionaryRewriter.html" title="MeCab::DictionaryRewriter" alt="" coords="2061,40,2237,67">
+<area shape="rect" href="$classMeCab_1_1RewriteRules.html" title="MeCab::RewriteRules" alt="" coords="1359,40,1505,67">
+<area shape="rect" href="$classMeCab_1_1ChunkFreeList.html" title="MeCab::ChunkFreeList\&lt; char \&gt;" alt="" coords="2048,91,2251,117">
+<area shape="rect" href="$classMeCab_1_1ChunkFreeList.html" title="MeCab::ChunkFreeList\&lt; int \&gt;" alt="" coords="2053,141,2245,168">
+<area shape="rect" href="$structMeCab_1_1whatlog.html" title="MeCab::whatlog" alt="" coords="463,691,577,717">
+<area shape="rect" href="$classMeCab_1_1TokenizerImpl.html" title="MeCab::TokenizerImpl\&lt; N, P \&gt;" alt="" coords="2495,524,2695,551">
+<area shape="rect" href="$classMeCab_1_1Dictionary.html" title="MeCab::Dictionary" alt="" coords="2085,816,2213,843">
+<area shape="rect" href="$classMeCab_1_1Mmap.html" title="MeCab::Mmap\&lt; char \&gt;" alt="" coords="1355,816,1509,843">
+<area shape="rect" href="$classMeCab_1_1CharProperty.html" title="MeCab::CharProperty" alt="" coords="2076,691,2223,717">
+<area shape="rect" href="$classMeCab_1_1StringBuffer.html" title="MeCab::StringBuffer" alt="" coords="2080,243,2219,269">
+<area shape="rect" href="$classMeCab_1_1scoped__string.html" title="MeCab::scoped_string" alt="" coords="2073,293,2225,320">
+<area shape="rect" href="$classMeCab_1_1scoped__array.html" title="MeCab::scoped_array\&lt; char \&gt;" alt="" coords="1333,293,1531,320">
+<area shape="rect" href="$classMeCab_1_1FreeList.html" title="MeCab::FreeList\&lt; LearnerPath \&gt;" alt="" coords="2489,413,2700,440">
+<area shape="rect" href="$classMeCab_1_1scoped__ptr.html" title="MeCab::scoped_ptr\&lt; FreeList\&lt; LearnerPath \&gt; \&gt;" alt="" coords="2836,421,3135,448">
+<area shape="rect" href="$classMeCab_1_1scoped__ptr.html" title="MeCab::scoped_ptr\&lt; LearnerTokenizer \&gt;" alt="" coords="2857,493,3113,520">
+<area shape="rect" href="$classMeCab_1_1scoped__array.html" title="MeCab::scoped_array\&lt; Dictionary::result_type \&gt;" alt="" coords="1999,475,2300,501">
+<area shape="rect" href="$structMeCab_1_1Darts_1_1DoubleArrayImpl_1_1result__pair__type.html" title="MeCab::Darts::DoubleArrayImpl\&lt; node_type_, node_u_type_, array_type_, array_u_type_, length_func_ \&gt;::DoubleArrayImpl::result_pair_type" alt="" coords="1013,475,1851,501">
+<area shape="rect" href="$classMeCab_1_1FreeList.html" title="MeCab::FreeList\&lt; DictionaryInfo \&gt;" alt="" coords="2039,525,2260,552">
+<area shape="rect" href="$classMeCab_1_1FreeList.html" title="MeCab::FreeList\&lt; N \&gt;" alt="" coords="2075,576,2224,603">
+<area shape="rect" href="$classMeCab_1_1Darts_1_1DoubleArrayImpl.html" title="MeCab::Darts::DoubleArrayImpl\&lt; char, unsigned char, int, unsigned int \&gt;" alt="" coords="1212,928,1652,955">
+<area shape="rect" href="$structMeCab_1_1CharInfo.html" title="MeCab::CharInfo" alt="" coords="1372,624,1492,651">

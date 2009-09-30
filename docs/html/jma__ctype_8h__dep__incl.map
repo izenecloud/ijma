@@ -1,0 +1,16 @@
+<area shape="rect" href="$jma__ctype__eucjp_8h.html" title="encoding for the EUC&#45;JP" alt="" coords="644,80,863,107">
+<area shape="rect" href="$jma__ctype_8cpp.html" title="JMA_CType gives the character type information." alt="" coords="227,155,397,181">
+<area shape="rect" href="$jma__ctype__sjis_8h.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="129,80,337,107">
+<area shape="rect" href="$jma__ctype__utf8_8h.html" title="Definition of class JMA_CType_UTF8." alt="" coords="412,80,620,107">
+<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="887,80,1095,107">
+<area shape="rect" href="$include_2tokenizer_8h.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="1119,80,1289,107">
+<area shape="rect" href="$src_2tokenizer_8cpp.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="1313,80,1476,107">
+<area shape="rect" href="$test__jma__ctype_8cpp.html" title="Test JMA_CType in processing EUC&#45;JP, Shift&#45;JIS, UTF&#45;8 characters." alt="" coords="1500,80,1703,107">
+<area shape="rect" href="$jma__ctype__eucjp_8cpp.html" title="encoding for the EUC&#45;JP" alt="" coords="645,155,853,181">
+<area shape="rect" href="$jma__ctype__sjis_8cpp.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="5,155,203,181">
+<area shape="rect" href="$jma__ctype__utf8_8cpp.html" title="Implementation of class JMA_CType_UTF8." alt="" coords="421,155,621,181">
+<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="1600,155,1787,181">
+<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="1811,155,1989,181">
+<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="877,155,1077,181">
+<area shape="rect" href="$test__jma__analyzer_8cpp.html" title="Test to create an instance of JMA_Analyzer." alt="" coords="1101,155,1320,181">
+<area shape="rect" href="$test__jma__knowledge_8cpp.html" title="Test to create an instance of JMA_Knowledge." alt="" coords="1344,155,1576,181">
