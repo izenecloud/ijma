@@ -74,6 +74,7 @@ typedef std::vector<Morpheme> MorphemeList;
  *      {
  *          const char* pLexicon = s.getLexicon(i, j);
  *          const char* strPOS = s.getStrPOS(i, j);
+ *          const char* baseForm = s.getBaseForm(i, j);
  *          ...
  *      }
  *      double score = s.getScore(i);
@@ -86,9 +87,9 @@ typedef std::vector<Morpheme> MorphemeList;
  * {
  *      const char* pLexicon = s.getLexicon(i, j);
  *      const char* strPOS = s.getStrPOS(i, j);
+ *      const char* baseForm = s.getBaseForm(i, j);
  *      ...
  * }
- * double score = s.getScore(i);
  * ...
  * \endcode
  */

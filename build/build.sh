@@ -2,7 +2,7 @@
 
 # build path
 JMA_PROJECT_HOME="`dirname $0`/.."
-BUILD_PATH="${JMA_PROJECT_HOME}/temp"
+BUILD_PATH="${JMA_PROJECT_HOME}/build/temp"
 
 # build type
 BUILD_TYPE=release
@@ -36,9 +36,9 @@ then
 
     cd $BUILD_PATH
     # generate Makefiles using GCC
-    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $JMA_PROJECT_HOME/source
+    cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
     # generate MSVC project
-    #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 $JMA_PROJECT_HOME/source
+    #cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
     make all
 else
     echo "usage: $0 [debug|release|profile|clean]"

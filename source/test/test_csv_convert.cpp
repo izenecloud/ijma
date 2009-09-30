@@ -71,7 +71,6 @@ void append_rewrite_rule(RewriteRules *r, char* str)
     }
     r->back().set_pattern(col[0], col[1]);
 }
-}
 
 /**
  * Rewrite dictionary CSV file.
@@ -132,6 +131,8 @@ bool CSVRewriter::rewrite(const string& src, string& dest) const
     size_t n = tokenizeCSV(buf, col, sizeof(col));
     CHECK_DIE(n < sizeof(col)) << "too many columns in CSV entry";
     return rules_.rewrite(n, const_cast<const char **>(col), &dest);
+}
+
 }
 
 /**
