@@ -7,6 +7,9 @@ BUILD_PATH="${JMA_PROJECT_HOME}/build/temp"
 # build type
 BUILD_TYPE=release
 
+# build system under win32 platform
+WIN32_BUILD_SYSTEM="Visual Studio 9 2008"
+
 if [ "$1" = "clean" ]
 then 
     if test -d $BUILD_PATH
@@ -44,8 +47,8 @@ then
         make all
     elif [ "$2" = "win32" ]
     then
-        echo "generating MSVC project (\"Visual Studio 9 2008\" is required)"
-        cmake -G "Visual Studio 9 2008" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        echo "generating MSVC project (\"$WIN32_BUILD_SYSTEM\" is required)"
+        cmake -G "$WIN32_BUILD_SYSTEM" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
         if [ $? = 0 ]
         then
             echo "MSVC project file \"temp\JMA.sln\" is generated,"

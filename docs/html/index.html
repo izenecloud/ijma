@@ -163,10 +163,11 @@ $ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/
 </pre></div><p>
 <h4><a class="anchor" name="build_win32"></a>Under Win32 platform</h4>
 <p>
-Use script <code>build.sh</code> in directory <code>build</code> like below. <div class="fragment"><pre class="fragment">$ cd build
+Please check that whether <code>Visual Studio 9 2008</code> exists on your Win32 platform. If it does not exist, please install it beforehand. You could also use other Visual Studio version, in which case you need to revise the script <code>build/build.sh</code> to set the value of flag <code>WIN32_BUILD_SYSTEM</code> to your own Visual Studio version.<p>
+Then use script <code>build.sh</code> in directory <code>build</code> like below. <div class="fragment"><pre class="fragment">$ cd build
 $ ./build.sh release win32
 </pre></div><p>
-After the project is built, the library targets <code>jma.lib</code>, <code>mecab.lib</code> and <code>mecab.dll</code> are created in directory <code>lib/Release</code>, and the executables in directory <code>bin/Release</code> are created for demo and test.<p>
+Then the MSVC project file <code>build/temp/JMA.sln</code> is generated, please open and build it inside MSVC IDE. After the project is built, the library targets <code>jma.lib</code>, <code>mecab.lib</code> and <code>mecab.dll</code> are created in directory <code>lib/Release</code>, and the executables in directory <code>bin/Release</code> are created for demo and test.<p>
 To link with the library, the user application needs to include header files in directory <code>include</code>, and link the library files <code>jma.lib</code>, <code>mecab.lib</code> in directory <code>lib</code>.<p>
 To run the user application, it is also necessary to put <code>mecab.dll</code> in the search path used by Windows to locate it.<p>
 <h2><a class="anchor" name="demo"></a>How to run the demo</h2>
@@ -227,7 +228,7 @@ knowledge-&gt;addUserDict(<span class="stringliteral">"db/userdic/juman_eucjp.tx
  Version: 1.0.0 <br>
  Date: 2009-09-30 <br>
  </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:20:47 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 9 09:58:23 2009 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

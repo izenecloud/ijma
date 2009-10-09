@@ -160,13 +160,15 @@ $ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/
 \endcode
 
 <H4><a name="build_win32">Under Win32 platform</a></H4>
-Use script <CODE>build.sh</CODE> in directory <CODE>build</CODE> like below.
+Please check that whether <CODE>Visual Studio 9 2008</CODE> exists on your Win32 platform. If it does not exist, please install it beforehand. You could also use other Visual Studio version, in which case you need to revise the script <CODE>build/build.sh</CODE> to set the value of flag <CODE>WIN32_BUILD_SYSTEM</CODE> to your own Visual Studio version.
+
+Then use script <CODE>build.sh</CODE> in directory <CODE>build</CODE> like below.
 \code
 $ cd build
 $ ./build.sh release win32
 \endcode
 
-After the project is built, the library targets <CODE>jma.lib</CODE>, <CODE>mecab.lib</CODE> and <CODE>mecab.dll</CODE> are created in directory <CODE>lib/Release</CODE>, and the executables in directory <CODE>bin/Release</CODE> are created for demo and test.
+Then the MSVC project file <CODE>build/temp/JMA.sln</CODE> is generated, please open and build it inside MSVC IDE. After the project is built, the library targets <CODE>jma.lib</CODE>, <CODE>mecab.lib</CODE> and <CODE>mecab.dll</CODE> are created in directory <CODE>lib/Release</CODE>, and the executables in directory <CODE>bin/Release</CODE> are created for demo and test.
 
 To link with the library, the user application needs to include header files in directory <CODE>include</CODE>, and link the library files <CODE>jma.lib</CODE>, <CODE>mecab.lib</CODE> in directory <CODE>lib</CODE>.
 
