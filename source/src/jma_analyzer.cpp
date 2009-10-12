@@ -17,6 +17,16 @@
 #include "tokenizer.h"
 #include "pos_table.h"
 
+namespace
+{
+/** The scale factor for the limitation count of nbest.
+ * As the NBest candidates of \e JMA_Analyzer::runWithSentence() is requred to be unique on segmentation/POS,
+ * while \e MeCab::Tagger::nextNode() gives results differing in segementation, POS, base form, reading, etc,
+ * so that those results duplicated on segmentation/POS would be removed, and \e MeCab::Tagger::nextNode() would be called continuously until it gives the unique result.
+ * To avoid calling it forever, limit the maximum count to be (N * NBEST_LIMIT_SCALE_FACTOR).
+ */
+const int NBEST_LIMIT_SCALE_FACTOR = 100;
+}
 
 namespace jma
 {
@@ -121,6 +131,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
+    const int maxCount = N * NBEST_LIMIT_SCALE_FACTOR;
     bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
@@ -161,7 +172,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 
 		long base = 0;
 		int i = 0;
-		for ( ; i < N;  )
+		for (int j=0; i<N && j<maxCount; ++j)
 		{
 			const MeCab::Node* bosNode = tagger_->nextNode();
 			if( !bosNode )
