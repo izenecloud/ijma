@@ -4,8 +4,6 @@
 TOMCAT_APP_PATH=/usr/share/tomcat5.5/webapps
 # the deployment package
 WAR_NAME=jmacomp.war
-# the deployment configuration file
-CONFIG_NAME=jmacomp.xml
 
 if [ -d $TOMCAT_APP_PATH ]; then
     echo ">>>>> $TOMCAT_APP_PATH exists."
@@ -14,7 +12,6 @@ if [ -d $TOMCAT_APP_PATH ]; then
 
     echo ">>>>> removing deployment files."
     sudo rm $TOMCAT_APP_PATH/$WAR_NAME
-    sudo rm $TOMCAT_APP_PATH/../conf/Catalina/localhost/$CONFIG_NAME
 
     echo ">>>>> building."
     ant
@@ -23,7 +20,7 @@ if [ -d $TOMCAT_APP_PATH ]; then
     ant run
 else
     echo "$TOMCAT_APP_PATH not exists."
-    TOMCAT_APP_PATH=/home/wisenut/tomcat/apache-tomcat-5.5.27
+    TOMCAT_APP_PATH=/home/wisenut/tomcat/apache-tomcat-5.5.27/webapps
     if [ -d $TOMCAT_APP_PATH ]; then
         echo "$TOMCAT_APP_PATH exists."
         echo ">>>>> cleaning build files."
