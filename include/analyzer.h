@@ -30,9 +30,6 @@ class Sentence;
  * Analyzer* analyzer = factory->createAnalyzer();
  * Knowledge* knowledge = factory->createKnowledge();
  *
- * // load configuration file
- * knowledge->loadConfig("...");
- *
  * // load dictionaries (optional)
  * knowledge->setSystemDict("...");
  * knowledge->addUserDict("...");
