@@ -2,9 +2,10 @@
  * Executable to convert dictionary CSV file from source pattern to destination pattern, which conversion rule is defined in a configuration file, such as "csv-convert-ipa-juman-eucjp.def".
  * Below is the usage examples:
  * \code
- * The encoding type of those CSV files in source directory is predefined by the "dictionary-charset" entry of "dicrc" file.
- * While the encoding type of binary files in destination directory could be set to "eucjp", "sjis" or "utf8" like below, which is "eucjp" defaultly.
- * $ ./jma_csv_convert --config ../db/config/csv-convert-ipa-juman-eucjp.def --output ipa_proper.csv ../db/ipadic/src/Noun.proper.csv ../db/ipadic/src/Noun.name.csv ../db/ipadic/src/Noun.org.csv ../db/ipadic/src/Noun.place.csv
+ * The configuration file defining conversion rules is "../db/config/csv-convert-ipa-juman-eucjp.def",
+ * the source CSV files are "Noun.proper.csv", "Noun.name.csv", "Noun.org.csv" and "Noun.place.csv" in IPA dictionary,
+ * the destination CSV file is "ipa_proper_noun.csv".
+ * $ ./jma_csv_convert --config ../db/config/csv-convert-ipa-juman-eucjp.def --output ipa_proper_noun.csv ../db/ipadic/src/Noun.proper.csv ../db/ipadic/src/Noun.name.csv ../db/ipadic/src/Noun.org.csv ../db/ipadic/src/Noun.place.csv
  * \endcode
  *
  * \author Jun Jiang
