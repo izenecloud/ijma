@@ -190,9 +190,14 @@ string JMA_CType_UTF8::replaceSpaces(const char* str, char replacement)
 		int bytesCount = getByteCount((const char*)uc);
 
 		//full-width space in UTF-8
-		if(bytesCount == 3 && uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80)
-			c2[0] = c2[1] = c2[2] = replace;
-
+		if(bytesCount == 3)
+        {
+            if((uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80) ||
+               (uc[0] == 0xEF && uc[1] == 0xBB && uc[2] == 0xBF))
+            {
+                c2[0] = c2[1] = c2[2] = replace;
+            }
+        }
 		uc += bytesCount;
 		c2 += bytesCount;
 

@@ -47,6 +47,7 @@ public:
 	 * \param str the input string
 	 * \param replacement the character to replace the space characters
 	 * \return the output string
+     * \attention This function is also used to replace UTF-8 byte-order mark (0xEF 0xBB 0xBF), which mark is often used to identify the text as UTF-8 encoding in many Windows programs, while this mark would be replaced and ignored by this function in iJMA.
 	 */
 	virtual string replaceSpaces(const char* str, char replacement);
 
