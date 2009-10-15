@@ -67,24 +67,23 @@ string JMA_CType_SJIS::replaceSpaces(const char* str, char replacement)
 	string ret(str);
 	unsigned char* c2 = (unsigned char*)ret.data();
 
-	while(*uc)
+    const unsigned int length = ret.size();
+    for(unsigned int i=0; i<length;)
 	{
-		if(uc[0] < 0x80)
+		if(uc[i] < 0x80)
 		{
-			if(isspace(uc[0]))
-				*c2 = replace;
-			++uc;
-			++c2;
+			if(isspace(uc[i]))
+				c2[i] = replace;
+			++i;
 		}
 		else
 		{
 			//full-width space in SHIFT-JIS
-			if(uc[0] == 0x81 && uc[1] == 0x40)
+			if(uc[i] == 0x81 && uc[i+1] == 0x40)
 			{
-				c2[0] = c2[1] = replace;
+				c2[i] = c2[i+1] = replace;
 			}
-			uc += 2;
-			c2 += 2;
+			i += 2;
 		}
 	}
 

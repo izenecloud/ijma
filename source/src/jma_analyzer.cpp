@@ -135,7 +135,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
     bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
-	const char* strPtr =  retStr.data();
+	const char* strPtr =  retStr.c_str();
 
 	//one best
 	if(N <= 1)
@@ -245,7 +245,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
     bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
-	const char* strPtr =  retStr.data();
+	const char* strPtr =  retStr.c_str();
 
 	const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
@@ -310,18 +310,9 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 	}
 
     string line;
-    bool remains = !in.eof();
-    while (remains) {
-        getline(in, line);
-        remains = !in.eof();
-        if (!line.length()) {
-            if( remains )
-				out << endl;
-            continue;
-        }
-
+    while (getline(in, line)) {
         string retStr = knowledge_->getCType()->replaceSpaces(line.c_str(), ' ');
-        const char* strPtr =  retStr.data();
+        const char* strPtr =  retStr.c_str();
 
         const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
@@ -342,12 +333,6 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
                 }
 				out << wordDelimiter_;
 			}
-
-            if (remains)
-                out << endl;
-            else
-                break;
-
         } else {
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
 				string seg(node->surface, node->length);
@@ -356,12 +341,9 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
 				out.write(node->surface, node->length) << wordDelimiter_;
 			}
-
-			if (remains)
-				out << endl;
-			else
-				break;
         }
+
+        out << endl;
     }
 
     in.close();

@@ -177,30 +177,32 @@ string JMA_CType_UTF8::replaceSpaces(const char* str, char replacement)
 	string ret(str);
 	unsigned char* c2 = (unsigned char*)ret.data();
 
-	while(*uc)
+    const unsigned int length = ret.size();
+    for(unsigned int i=0; i<length;)
 	{
-		if(uc[0] < 0x80)
+		if(uc[i] < 0x80)
 		{
-			if(isspace(uc[0]))
-				*c2 = replace;
-			++uc;
-			++c2;
+			if(isspace(uc[i]))
+				c2[i] = replace;
+
+			++i;
 		}
-
-		int bytesCount = getByteCount((const char*)uc);
-
-		//full-width space in UTF-8
-		if(bytesCount == 3)
+        else
         {
-            if((uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80) ||
-               (uc[0] == 0xEF && uc[1] == 0xBB && uc[2] == 0xBF))
-            {
-                c2[0] = c2[1] = c2[2] = replace;
-            }
-        }
-		uc += bytesCount;
-		c2 += bytesCount;
+            int bytesCount = getByteCount((const char*)uc);
 
+            //full-width space in UTF-8
+            if(bytesCount == 3)
+            {
+                if((uc[i] == 0xE3 && uc[i+1] == 0x80 && uc[i+2] == 0x80) ||
+                        (uc[i] == 0xEF && uc[i+1] == 0xBB && uc[i+2] == 0xBF))
+                {
+                    c2[i] = c2[i+1] = c2[i+2] = replace;
+                }
+            }
+
+            i += bytesCount;
+        }
 	}
 
 	return ret;
