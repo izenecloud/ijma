@@ -30,7 +30,7 @@ using namespace jma;
  */
 void printUsage()
 {
-    cerr << "Usage: ./test_encode_sysdict [--encode [eucjp,sjis,utf8]] SOURCE_DIR DEST_DIR" << endl;
+    cerr << "Usage: ./jma_encode_sysdict [--encode [eucjp,sjis,utf8]] SOURCE_DIR DEST_DIR" << endl;
     cerr << "       (please ensure that both 'SOURCE_DIR' and 'DEST_DIR' exists.)" << endl;
 }
 
