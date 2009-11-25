@@ -37,9 +37,9 @@ CHECK_INCLUDE_FILES (fcntl.h HAVE_FCNTL_H)
 CHECK_INCLUDE_FILES (ctype.h HAVE_CTYPE_H)
 CHECK_INCLUDE_FILES (dirent.h HAVE_DIRENT_H)
 CHECK_INCLUDE_FILES (dlfcn.h HAVE_DLFCN_H)
+CHECK_INCLUDE_FILES (iconv.h HAVE_ICONV)
 CHECK_FUNCTION_EXISTS (getenv HAVE_GETENV)
 CHECK_FUNCTION_EXISTS (getpagesize HAVE_GETPAGESIZE)
-CHECK_FUNCTION_EXISTS (iconv HAVE_ICONV)
 CHECK_INCLUDE_FILES (inttypes.h HAVE_INTTYPES_H)
 CHECK_INCLUDE_FILES (io.h HAVE_IO_H)
 CHECK_LIBRARY_EXISTS (iconv iconv_open "" HAVE_LIBICONV)
@@ -85,6 +85,11 @@ ENDIF (UNIX)
 
 # output definitions
 add_library(mecab SHARED ${objs_mecab})
+
+IF (CMAKE_COMPILER_IS_XLC)
+# link libmecab.so with libiconv.a
+target_link_libraries(mecab iconv)
+ENDIF (CMAKE_COMPILER_IS_XLC)
 
 add_executable(mecab-exe mecab.cpp)
 target_link_libraries(mecab-exe ${LIBS_MECAB})

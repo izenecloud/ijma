@@ -54,12 +54,22 @@ then
             echo "MSVC project file \"temp\JMA.sln\" is generated,"
             echo "please open and build it inside MSVC IDE."
         fi
+    elif [ "$2" = "aix" ]
+    then
+        echo "generating Makefiles for AIX (\"xlC_r\" is required)"
+        CC=xlC_r
+        CXX=xlC_r
+        OBJECT_MODE=64
+        export CC CXX OBJECT_MODE
+        echo "CC: $CC, CXX: $CXX, OBJECT_MODE: $OBJECT_MODE"
+        cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_XLC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        make all
     else
-        echo "unkown platform $2, please use \"linux\" or \"win32\"."
+        echo "unkown platform $2, please use \"linux\", \"win32\" or \"aix\"."
         exit 1
     fi
 
 else
-    echo "usage: $0 [debug|release|profile|clean] [linux|win32]"
+    echo "usage: $0 [debug|release|profile|clean] [linux|win32|aix]"
     exit 1
 fi

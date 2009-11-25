@@ -18,6 +18,7 @@
 #include <fstream> // ifstream, ofstream
 #include <sstream> // stringstream
 #include <cstdlib> // mkstemp, atoi
+#include <unistd.h> // unlink
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)

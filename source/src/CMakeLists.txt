@@ -14,5 +14,5 @@ set(objs_jma
 ./pos_table
 )
 
-add_library(jma ${objs_jma})
+add_library(jma STATIC ${objs_jma})
 target_link_libraries(jma ${LIBS_MECAB})
