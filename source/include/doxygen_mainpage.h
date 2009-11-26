@@ -156,7 +156,7 @@ To link with the library, the user application needs to include header files in 
 An example of compiling user application <CODE>test.cpp</CODE> looks like:
 \code
 $ export JMA_PATH=path_of_jma_project
-$ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/libmecab.so -Wl,-rpath,$JMA_PATH/lib
+$ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/libmecab.so -lpthread -Wl,-rpath,$JMA_PATH/lib
 \endcode
 
 <H4><a name="build_win32">Under Win32 platform</a></H4>

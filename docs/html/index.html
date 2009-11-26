@@ -159,7 +159,7 @@ $ ./build.sh
 After the project is built, the library targets <code>libjma.a</code> and <code>libmecab.so</code> are created in directory <code>lib</code>, and the executables in directory <code>bin</code> are created for demo and test.<p>
 To link with the library, the user application needs to include header files in directory <code>include</code>, and link the library files <code>libjma.a</code>, <code>libmecab.so</code> in directory <code>lib</code>.<p>
 An example of compiling user application <code>test.cpp</code> looks like: <div class="fragment"><pre class="fragment">$ export JMA_PATH=path_of_jma_project
-$ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/libmecab.so -Wl,-rpath,$JMA_PATH/lib
+$ g++ -I$JMA_PATH/include -o test test.cpp $JMA_PATH/lib/libjma.a $JMA_PATH/lib/libmecab.so -lpthread -Wl,-rpath,$JMA_PATH/lib
 </pre></div><p>
 <h4><a class="anchor" name="build_win32"></a>Under Win32 platform</h4>
 <p>
