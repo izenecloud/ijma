@@ -84,6 +84,11 @@ set(LIBS_JMA jma)
 # set compile flag for whether to print debug information
 add_definitions(-DJMA_DEBUG_PRINT=${CMAKE_JMA_DEBUG_PRINT})
 
+# set compile flag for AIX platform
+IF (CMAKE_PLATFORM_IS_AIX)
+    add_definitions(-DPLATFORM_IS_AIX=${CMAKE_PLATFORM_IS_AIX})
+ENDIF (CMAKE_PLATFORM_IS_AIX)
+
 add_subdirectory(src)
 add_subdirectory(libmecab)
 #add_subdirectory(corpus)
