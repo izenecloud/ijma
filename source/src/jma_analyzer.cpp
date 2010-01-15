@@ -409,8 +409,12 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
 
     result.lexicon_.assign(node->surface, node->length);
     setBaseForm(result.lexicon_, node->feature, result.baseForm_);
-    result.posCode_ = (int)node->posid;
-    result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
+
+    if(isOutputPOS())
+    {
+        result.posCode_ = (int)node->posid;
+        result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
+    }
 
     return result;
 }
