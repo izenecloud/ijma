@@ -38,9 +38,6 @@ namespace
 /** Tag string in JMA config file for whether output POS result in full category */
 const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
 
-/** Default value of POS category number */
-const int POS_CAT_NUM_DEFAULT = 4;
-
 /** Default value of base form feature offset */
 const int BASE_FORM_OFFSET_DEFAULT = 6;
 
@@ -58,6 +55,9 @@ const char* POS_ID_DEF_FILE = "pos-id.def";
 
 /** POS feature mapping file name */
 const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
+
+/** default character encode type of dictionary config files */
+jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
 /**
  * Convert string to the value of type \e Target.
@@ -93,8 +93,8 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 }
 
 JMA_Knowledge::JMA_Knowledge()
-    : isOutputFullPOS_(false), posCatNum_(0), baseFormOffset_(0),
-    defaultFeature_(0), ctype_(0)
+    : isOutputFullPOS_(false), baseFormOffset_(0),
+    defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE)
 {
     onEncodeTypeChange( getEncodeType() );
 }
@@ -268,53 +268,6 @@ const POSTable* JMA_Knowledge::getPOSTable() const
     return &posTable_;
 }
 
-bool JMA_Knowledge::loadPOSDef()
-{
-    // file "pos-id.def"
-    string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
-
-    // load POS table
-    if(! posTable_.loadConfig(posFileName.c_str()))
-    {
-        cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
-    }
-
-    // get POS category number
-    ifstream posFile(posFileName.c_str());
-    if(! posFile)
-    {
-        cerr << "fail in JMA_Knowledge::loadPOSDef() to load " << posFileName << endl;
-        return false;
-    }
-
-    // read in a non-emtpy line
-    string line;
-    while(getline(posFile, line) && line.empty()) ;
-
-    // the format of the line is assumed such like "その他,間投,*,* 0"
-    if(! line.empty())
-    {
-        // remove characters starting from space
-        line.erase(line.find_first_of(" \t"));
-
-        // count the number of separator ','
-        int count = 0;
-        for(size_t i=0; i<line.size(); ++i)
-        {
-            if(line[i] == ',')
-            {
-                ++count;
-            }
-        }
-        posCatNum_ = count + 1;
-    }
-#if JMA_DEBUG_PRINT
-    cout << posCatNum_ << " POS categories in " << posFileName << endl;
-#endif
-
-    return true;
-}
-
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
   std::ifstream ifs(filename);
   if(!ifs)
@@ -367,10 +320,24 @@ bool JMA_Knowledge::loadDictConfig()
     value = getMapValue(configMap, "default-pos");
     defaultPOS_ = value ? *value : DEFAULT_POS_DEFAULT;
 
+    value = getMapValue(configMap, "config-charset");
+    configEncodeType_ = Knowledge::ENCODE_TYPE_NUM; // reset
+    if(value)
+        configEncodeType_ = Knowledge::decodeEncodeType(value->c_str());
+
+    if(configEncodeType_ == Knowledge::ENCODE_TYPE_NUM)
+    {
+        configEncodeType_ = DEFAULT_CONFIG_ENCODE_TYPE;
+        cerr << "unknown dictionary config charset, use default charset " << DEFAULT_CONFIG_ENCODE_TYPE << endl;
+    }
+
 #if JMA_DEBUG_PRINT
-    cout << "JMA_Knowledge::loadDictConfig(), configFile: " << configFile << ", base form feature offset: " << baseFormOffset_
-         << ", feature token size: " << featureTokenSize_
-         << ", defaut POS: " << defaultPOS_ << endl;
+    cout << "JMA_Knowledge::loadDictConfig() loads:" << endl;
+    cout << "configFile: " << configFile << endl;
+    cout << "base form feature offset: " << baseFormOffset_ << endl;
+    cout << "feature token size: " << featureTokenSize_ << endl;
+    cout << "defaut POS: " << defaultPOS_ << endl;
+    cout << "config charset: " << configEncodeType_ << endl;
 #endif
 
     return true;
@@ -385,13 +352,6 @@ bool JMA_Knowledge::loadPOSFeatureMapping()
 
 int JMA_Knowledge::loadDict()
 {
-    if(! loadPOSDef())
-    {
-        // if no "pos-id.def" exists,
-        // the default value of POS category number would be used.
-        posCatNum_ = POS_CAT_NUM_DEFAULT;
-    }
-
     if(! loadDictConfig())
     {
         // if "dicrc" loading failed,
@@ -400,6 +360,15 @@ int JMA_Knowledge::loadDict()
         // also set other default value
         featureTokenSize_ = FEATURE_TOKEN_SIZE_DEFAULT;
         defaultPOS_ = DEFAULT_POS_DEFAULT;
+    }
+
+    // file "pos-id.def"
+    string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
+    // load POS table
+    if(! posTable_.loadConfig(posFileName.c_str(), configEncodeType_, getEncodeType()))
+    {
+        cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
+        return 0;
     }
 
     if(! loadPOSFeatureMapping() )
@@ -545,11 +514,6 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 bool JMA_Knowledge::isStopWord(const string& word) const
 {
 	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
-}
-
-int JMA_Knowledge::getPOSCatNum() const
-{
-    return posCatNum_;
 }
 
 int JMA_Knowledge::getBaseFormOffset() const

@@ -97,13 +97,6 @@ public:
 	bool isStopWord(const string& word) const;
 
     /**
-     * Get POS category number.
-     * For example, if dictionary file contains POS like "名詞,固有名詞,人名,名", the POS category number would be 4.
-     * \return POS category number.
-     */
-    int getPOSCatNum() const;
-
-    /**
      * Get the feature offset of base form.
      * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of base form "見る" would be 6.
      * \return POS category number.
@@ -160,12 +153,6 @@ private:
      * \post as the compilation result, \e tempUserDic_ is the file name of the temporary user dictionary in binary format.
      */
     bool compileUserDict();
-
-    /**
-     * Load "pos-id.def" to get POS category number, and also POS table.
-     * \return true for success, false for failure.
-     */
-    bool loadPOSDef();
 
     /**
      * Load property config file, with format key = value
@@ -288,6 +275,11 @@ private:
 	 * character with 1 ~ 4 bytes separately.
 	 */
 	SepArray seps_[5];
+
+    /** character encode type of dictionary config files.
+     * It is set by "config_charset" item in "dicrc" file.
+     */
+    EncodeType configEncodeType_;
 };
 
 } // namespace jma

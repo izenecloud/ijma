@@ -77,7 +77,7 @@ inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* l
 
 JMA_Analyzer::JMA_Analyzer()
     : knowledge_(0), tagger_(0),
-    maxPosCateOffset_(0), preBaseFormOffset_(0),
+    preBaseFormOffset_(0),
     posTable_(0)
 {
 }
@@ -95,6 +95,27 @@ void JMA_Analyzer::clear()
 bool JMA_Analyzer::isPOSFormatAlphabet() const
 {
     return (getOption(OPTION_TYPE_POS_FORMAT_ALPHABET) != 0);
+}
+
+bool JMA_Analyzer::isOutputPOS() const
+{
+    return (getOption(OPTION_TYPE_POS_TAGGING) != 0);
+}
+
+POSTable::POSFormat JMA_Analyzer::getPOSFormat() const
+{
+    POSTable::POSFormat type = POSTable::POS_FORMAT_DEFAULT;
+
+    if(getOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET) != 0)
+    {
+        type = POSTable::POS_FORMAT_ALPHABET;
+    }
+    else if(getOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY) != 0)
+    {
+        type = POSTable::POS_FORMAT_FULL_CATEGORY;
+    }
+
+    return type;
 }
 
 void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
@@ -115,7 +136,6 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
         tagger_->set_lattice_level(1);
     }
 
-    maxPosCateOffset_ = knowledge_->getPOSCatNum() - 1;
     preBaseFormOffset_ = knowledge_->getBaseFormOffset();
 
     posTable_ = knowledge_->getPOSTable();
@@ -129,10 +149,9 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
         return 0;
     }
 
-	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
+	bool printPOS = isOutputPOS();
 	int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
     const int maxCount = N * NBEST_LIMIT_SCALE_FACTOR;
-    bool isPOSAlphabet = isPOSFormatAlphabet();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
 	const char* strPtr =  retStr.c_str();
@@ -144,18 +163,10 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 		MorphemeList list;
 		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
 		{
-			string seg(node->surface, node->length);
-			if(knowledge_->isStopWord(seg))
+            Morpheme morp = getMorpheme(node);
+			if(knowledge_->isStopWord(morp.lexicon_))
 				continue;
-			list.push_back(Morpheme());
-			Morpheme& morp = list.back();
-			morp.lexicon_ = seg;
-			setBaseForm(seg, node->feature, morp.baseForm_);
-			if(printPOS)
-			{
-				morp.posCode_ = (int)node->posid;
-				morp.posStr_ = isPOSAlphabet ? posTable_->getAlphabetPOS(morp.posCode_) : string(node->feature, getPOSOffset(node->feature));
-			}
+			list.push_back(morp);
 		}
 		sentence.addList(list, 1.0);
 	}
@@ -180,18 +191,10 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			MorphemeList list;
 			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
 			{
-				string seg(node->surface, node->length);
-				if(knowledge_->isStopWord(seg))
-					continue;
-				list.push_back(Morpheme());
-				Morpheme& morp = list.back();
-				morp.lexicon_ = seg;
-				setBaseForm(seg, node->feature, morp.baseForm_);
-				if(printPOS)
-				{
-					morp.posCode_ = (int)node->posid;
-                    morp.posStr_ = isPOSAlphabet ? posTable_->getAlphabetPOS(morp.posCode_) : string(node->feature, getPOSOffset(node->feature));
-				}
+                Morpheme morp = getMorpheme(node);
+                if(knowledge_->isStopWord(morp.lexicon_))
+                    continue;
+				list.push_back(morp);
 			}
 
 			bool isDupl = false;
@@ -241,8 +244,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
         return 0;
     }
 
-	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
-    bool isPOSAlphabet = isPOSFormatAlphabet();
+	bool printPOS = isOutputPOS();
 
 	string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
 	const char* strPtr =  retStr.c_str();
@@ -250,33 +252,18 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 	const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
 	strBuf_.clear();
-	if (printPOS) {
-		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-			string seg(node->surface, node->length);
-			if(knowledge_->isStopWord(seg))
-				continue;
+    for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+        Morpheme morp = getMorpheme(node);
+        if(knowledge_->isStopWord(morp.lexicon_))
+            continue;
 
-			strBuf_.append(node->surface, node->length).append(posDelimiter_);
-            if(isPOSAlphabet)
-            {
-                strBuf_.append(posTable_->getAlphabetPOS(static_cast<int>(node->posid)));
-            }
-            else
-            {
-                strBuf_.append(node->feature, getPOSOffset(node->feature));
-            }
-			strBuf_.append(wordDelimiter_);
-		}
-
-	} else {
-		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-			string seg(node->surface, node->length);
-			if(knowledge_->isStopWord(seg))
-				continue;
-
-			strBuf_.append(node->surface, node->length).append(wordDelimiter_);
-		}
-	}
+        strBuf_ += morp.lexicon_;
+        if(printPOS) {
+            strBuf_ += posDelimiter_;
+            strBuf_ += morp.posStr_;
+        }
+        strBuf_ += wordDelimiter_;
+    }
 
 	return strBuf_.c_str();
 }
@@ -292,8 +279,7 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
         return 0;
     }
 
-	bool printPOS = getOption(OPTION_TYPE_POS_TAGGING) > 0;
-    bool isPOSAlphabet = isPOSFormatAlphabet();
+	bool printPOS = isOutputPOS();
 
 	ifstream in(inFileName);
 	if(!in)
@@ -316,31 +302,15 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
         const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
-        if (printPOS) {
-			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-				string seg(node->surface, node->length);
-				if(knowledge_->isStopWord(seg))
-					continue;
+        for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
+            Morpheme morp = getMorpheme(node);
+            if(knowledge_->isStopWord(morp.lexicon_))
+                continue;
 
-				out.write(node->surface, node->length) << posDelimiter_;
-                if(isPOSAlphabet)
-                {
-                    out << posTable_->getAlphabetPOS(static_cast<int>(node->posid));
-                }
-                else
-                {
-                    out.write(node->feature, getPOSOffset(node->feature));
-                }
-				out << wordDelimiter_;
-			}
-        } else {
-			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-				string seg(node->surface, node->length);
-				if(knowledge_->isStopWord(seg))
-					continue;
-
-				out.write(node->surface, node->length) << wordDelimiter_;
-			}
+            out << morp.lexicon_;
+            if(printPOS)
+                out << posDelimiter_ << morp.posStr_;
+            out << wordDelimiter_;
         }
 
         out << endl;
@@ -399,48 +369,7 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
     }
 }
 
-
-int JMA_Analyzer::getPOSOffset(const char* feature)
-{
-	if( getOption(OPTION_TYPE_POS_FULL_CATEGORY) != 0 )
-	{
-		// count for the index of the fourth offset
-		int offset = 0;
-		int commaCount = 0;
-		for( ; feature[offset]; ++offset )
-		{
-			if(feature[offset] == ',')
-			{
-				++commaCount;
-				if( commaCount > maxPosCateOffset_ )
-					break;
-			}
-		}
-		return offset;
-	}
-
-	 //count for the index of the comma that after non-star pos sections
-	int offset = 0;
-	int commaCount = 0;
-	for( ; feature[offset]; ++offset )
-	{
-		if(feature[offset] == ',')
-		{
-			++commaCount;
-			if( commaCount > maxPosCateOffset_ )
-				break;
-		}
-		else if(feature[offset] == '*')
-		{
-			//if offset is 0, contains nothing
-			return offset ? offset - 1 : 0 ;
-		}
-	}
-
-	return offset;
-}
-
-void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, string& retVal)
+void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, string& retVal) const
 {
 	int offset = 0;
 	int commaCount = 0;
@@ -470,6 +399,20 @@ void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, stri
 
 	if(!retVal.size() || retVal == "*")
 		retVal = origForm;
+}
+
+Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
+{
+    assert(node);
+
+    Morpheme result;
+
+    result.lexicon_.assign(node->surface, node->length);
+    setBaseForm(result.lexicon_, node->feature, result.baseForm_);
+    result.posCode_ = (int)node->posid;
+    result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
+
+    return result;
 }
 
 } // namespace jma
