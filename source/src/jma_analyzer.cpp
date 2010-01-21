@@ -17,6 +17,13 @@
 #include "tokenizer.h"
 #include "pos_table.h"
 
+#ifndef JMA_DEBUG_PRINT
+    #define JMA_DEBUG_PRINT 1
+#endif
+
+#define JMA_DEBUG_PRINT_COMBINE 0
+#define JMA_DEBUG_PRINT_SEPARATE 0
+
 namespace
 {
 /** The scale factor for the limitation count of nbest.
@@ -102,6 +109,11 @@ bool JMA_Analyzer::isOutputPOS() const
     return (getOption(OPTION_TYPE_POS_TAGGING) != 0);
 }
 
+bool JMA_Analyzer::isCombineNounAffix() const
+{
+    return (getOption(OPTION_TYPE_COMBINE_NOUN_AFFIX) != 0);
+}
+
 POSTable::POSFormat JMA_Analyzer::getPOSFormat() const
 {
     POSTable::POSFormat type = POSTable::POS_FORMAT_DEFAULT;
@@ -161,9 +173,10 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	{
 		const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 		MorphemeList list;
-		for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
+        Morpheme morp;
+		for (const MeCab::Node *node = bosNode->next; node->next;)
 		{
-            Morpheme morp = getMorpheme(node);
+            node = combineNode(node, morp);
 			if(knowledge_->isStopWord(morp.lexicon_))
 				continue;
 			list.push_back(morp);
@@ -189,9 +202,10 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			if( !bosNode )
 				break;
 			MorphemeList list;
-			for (const MeCab::Node *node = bosNode->next; node->next; node = node->next)
+            Morpheme morp;
+			for (const MeCab::Node *node = bosNode->next; node->next;)
 			{
-                Morpheme morp = getMorpheme(node);
+                node = combineNode(node, morp);
                 if(knowledge_->isStopWord(morp.lexicon_))
                     continue;
 				list.push_back(morp);
@@ -252,8 +266,9 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 	const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
 	strBuf_.clear();
-    for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-        Morpheme morp = getMorpheme(node);
+    Morpheme morp;
+    for (const MeCab::Node *node = bosNode->next; node->next;){
+        node = combineNode(node, morp);
         if(knowledge_->isStopWord(morp.lexicon_))
             continue;
 
@@ -296,14 +311,15 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 	}
 
     string line;
+    Morpheme morp;
     while (getline(in, line)) {
         string retStr = knowledge_->getCType()->replaceSpaces(line.c_str(), ' ');
         const char* strPtr =  retStr.c_str();
 
         const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
-        for (const MeCab::Node *node = bosNode->next; node->next; node = node->next){
-            Morpheme morp = getMorpheme(node);
+        for (const MeCab::Node *node = bosNode->next; node->next;){
+            node = combineNode(node, morp);
             if(knowledge_->isStopWord(morp.lexicon_))
                 continue;
 
@@ -409,14 +425,64 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
 
     result.lexicon_.assign(node->surface, node->length);
     setBaseForm(result.lexicon_, node->feature, result.baseForm_);
-
-    if(isOutputPOS())
-    {
-        result.posCode_ = (int)node->posid;
-        result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
-    }
+    result.posCode_ = (int)node->posid;
+    result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
 
     return result;
+}
+
+MeCab::Node* JMA_Analyzer::combineNode(const MeCab::Node* startNode, Morpheme& result) const
+{
+    assert(startNode && "it is invalid to combine NULL node");
+
+    MeCab::Node* nextNode = startNode->next;
+    assert(nextNode && "it is invalid to combine EOS node.");
+
+    result = getMorpheme(startNode);
+
+    // check option
+    if(! isCombineNounAffix())
+    {
+        return nextNode;
+    }
+
+    for(; nextNode->next; nextNode=nextNode->next)
+    {
+        int combineID = posTable_->combinePOS(result.posCode_, (int)nextNode->posid);
+        if(combineID == -1)
+        {
+#if JMA_DEBUG_PRINT_SEPARATE
+            if(!strcmp(posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET), "P-N")
+                    && !strcmp(posTable_->getPOS((int)nextNode->posid, POSTable::POS_FORMAT_ALPHABET), "NP-C"))
+                    //if(!strcmp(posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET), "P-N"))
+            //if(!strcmp(posTable_->getPOS((int)nextNode->posid, POSTable::POS_FORMAT_ALPHABET), "NS-D"))
+            {
+                Morpheme nextMorph = getMorpheme(nextNode);
+#if JMA_DEBUG_PRINT_SEPARATE
+                cerr << result.lexicon_ << "/" << result.posStr_ << "/" << posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET);
+                cerr << "\t\t" << nextMorph.lexicon_ << "/" << nextMorph.posStr_ << "/" << posTable_->getPOS(nextMorph.posCode_, POSTable::POS_FORMAT_ALPHABET);
+                cerr << endl;
+#endif
+            }
+#endif
+            break;
+        }
+
+        Morpheme nextMorph = getMorpheme(nextNode);
+#if JMA_DEBUG_PRINT_COMBINE
+        cerr << result.lexicon_ << "/" << result.posStr_;
+        cerr << "\t+\t" << nextMorph.lexicon_ << "/" << nextMorph.posStr_;
+#endif
+        result.lexicon_ += nextMorph.lexicon_;
+        result.baseForm_ += nextMorph.baseForm_;
+        result.posCode_ = combineID;
+        result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
+#if JMA_DEBUG_PRINT_COMBINE
+        cerr << "\t=>\t" << result.lexicon_ << "/" << result.posStr_ << endl;
+#endif
+    }
+
+    return nextNode;
 }
 
 } // namespace jma

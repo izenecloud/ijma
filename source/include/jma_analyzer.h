@@ -117,11 +117,25 @@ private:
     POSTable::POSFormat getPOSFormat() const;
 
     /**
+     * Check whether combine affix into noun.
+     * \return true to combine, false for not to combine.
+     */
+    bool isCombineNounAffix() const;
+
+    /**
      * Convert from \e MeCab::Node to \e Morpheme.
      * \param node mecab node to convert from
      * \return morpheme result
      */
     Morpheme getMorpheme(const MeCab::Node* node) const;
+
+    /**
+     * Combine MeCab nodes to morpheme using combination rules based on POS.
+     * \param[in] startNode the nodes starting from \e startNode are checked whether to combine by \e POSTable::combinePOS()
+     * \param[out] result the morpheme as combination result
+     * \return MeCab node next to the combination range
+     */
+    MeCab::Node* combineNode(const MeCab::Node* startNode, Morpheme& result) const;
 
 private:
 	/**

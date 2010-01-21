@@ -31,6 +31,7 @@ Analyzer::Analyzer()
     options_[OPTION_TYPE_NBEST] = 1; // set the default number of candidate results of runWithSentence()
     options_[OPTION_TYPE_POS_FORMAT_ALPHABET] = 0; // disable output part-of-speech tags in alphabet format defaultly, use Japanese format instead.
     options_[OPTION_TYPE_POS_FULL_CATEGORY] = 0; // disable output part-of-speech tags in Japanese full category format
+    options_[OPTION_TYPE_COMBINE_NOUN_AFFIX] = 1; // enable combining affix into nouns defaultly
 }
 
 Analyzer::~Analyzer()

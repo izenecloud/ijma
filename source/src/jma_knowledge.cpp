@@ -56,6 +56,9 @@ const char* POS_ID_DEF_FILE = "pos-id.def";
 /** POS feature mapping file name */
 const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 
+/** POS combination rule file name */
+const char* POS_COMBINE_DEF_FILE = "pos-combine.def";
+
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
@@ -369,6 +372,14 @@ int JMA_Knowledge::loadDict()
     {
         cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
         return 0;
+    }
+
+    // file "pos-combine.def"
+    string posCombineName = createFilePath(systemDictPath_.c_str(), POS_COMBINE_DEF_FILE);
+    // load POS combine rules
+    if(! posTable_.loadCombineRule(posCombineName.c_str()))
+    {
+        cerr << "warning: as " << posCombineName << " not exists, no rules is defined to combine tokens with specific POS tags" << endl;
     }
 
     if(! loadPOSFeatureMapping() )

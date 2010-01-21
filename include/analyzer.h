@@ -127,10 +127,11 @@ public:
      */
     enum OptionType
     {
-        OPTION_TYPE_POS_TAGGING, ///< the value zero for not to tag part-of-speech tags in the result of \e runWith*(), which value is 1 defaultly.
+        OPTION_TYPE_POS_TAGGING, ///< the value zero for not to print part-of-speech tags in the result of \e runWithString() and \e runWithStream(), which value is 1 defaultly.
         OPTION_TYPE_NBEST, ///< a positive value to set the number of candidate results of \e runWithSentence(), which value is 1 defaultly.
         OPTION_TYPE_POS_FORMAT_ALPHABET, ///< the value zero to output part-of-speech tags in Japanese format, such like "名詞,固有名詞,人名,姓", otherwise, a non-zero value would output part-of-speech tags in alphabet format, such like "NP-S", this option is valid for \e runWith*(), which value is 0 defaultly.
         OPTION_TYPE_POS_FULL_CATEGORY, ///< the non-zero value to output part-of-speech tags in the Japanese format of full category, which might includes asterisk symbol, such like "名詞,数,*,*", otherwise, the value zero would output part-of-speech tags in effective category format, which excludes asterisk symbol, such like "名詞,数", this option for \e runWith*() is only valid when the value of option \e OPTION_TYPE_POS_FORMAT_ALPHABET is zero, this option value is 0 defaultly.
+        OPTION_TYPE_COMBINE_NOUN_AFFIX, ///< the non-zero value to combine affix (including prefix and suffix) into noun (e.g., adjacent tokens "長野" and "県" are combined into one token "長野県"), the default value is 1, and this combination option could be enabled if only "pos-combine.def" exists in system dictionary path.
         OPTION_TYPE_NUM ///< the count of option types
     };
 
