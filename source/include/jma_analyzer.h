@@ -11,6 +11,7 @@
 
 #include "analyzer.h"
 #include "sentence.h"
+#include "pos_table.h"
 #include "mecab.h"
 
 #include <string>
@@ -25,7 +26,6 @@ namespace jma
 
 class JMA_Knowledge;
 class JMA_CType;
-class POSTable;
 
 /**
  * JMA_Analyzer executes the Japanese morphological analysis based on conditional random field.
@@ -85,21 +85,13 @@ public:
 
 private:
 	/**
-	 * If the feature is aa,bb,*,*,v1,v2,* (the POS locates the first four sections which
-	 * was separated by comma).<br>
-	 * If Length is true, return 10 (the index of the fourth comma, include the * sections),<br>
-	 * else, return 6 (the index of the second comma, exclude the * sections).
-	 */
-	inline int getPOSOffset(const char* feature);
-
-	/**
 	 * Set the base form of a string, the return value is stored into retVal
 	 *
 	 * \param origForm the original form of the word
 	 * \param feature the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
 	 * \param retVal to store the base form
 	 */
-	inline void setBaseForm(const string& origForm, const char* feature, string& retVal);
+	inline void setBaseForm(const string& origForm, const char* feature, string& retVal) const;
 
     /**
      * Release the resources owned by \e JMA_Analyzer itself.
@@ -111,7 +103,40 @@ private:
      * \return true for alphabet format such like "NP-S", false for Japanese format such like "名詞,固有名詞,人名,姓"
      */
     bool isPOSFormatAlphabet() const;
-    
+
+    /**
+     * Check whether output POS.
+     * \return true for output POS, false for not to output POS.
+     */
+    bool isOutputPOS() const;
+
+    /**
+     * Get POS output format, such as "名詞,一般", "NC-G", "名詞,一般,*,*", which format type is configured by \e Analyzer::setOption().
+     * \return POS output format
+     */
+    POSTable::POSFormat getPOSFormat() const;
+
+    /**
+     * Check whether combine affix into noun.
+     * \return true to combine, false for not to combine.
+     */
+    bool isCombineNounAffix() const;
+
+    /**
+     * Convert from \e MeCab::Node to \e Morpheme.
+     * \param node mecab node to convert from
+     * \return morpheme result
+     */
+    Morpheme getMorpheme(const MeCab::Node* node) const;
+
+    /**
+     * Combine MeCab nodes to morpheme using combination rules based on POS.
+     * \param[in] startNode the nodes starting from \e startNode are checked whether to combine by \e POSTable::combinePOS()
+     * \param[out] result the morpheme as combination result
+     * \return MeCab node next to the combination range
+     */
+    MeCab::Node* combineNode(const MeCab::Node* startNode, Morpheme& result) const;
+
 private:
 	/**
 	 * hold the JMA_Knowledge Object
@@ -124,11 +149,6 @@ private:
 	MeCab::Tagger* tagger_;
 
 	string strBuf_;
-
-	/**
-	 * The max index(begin with 0) of the POS Category Levels
-	 */
-	int maxPosCateOffset_;
 
 	/**
 	 * Previous comma index of the base form offset

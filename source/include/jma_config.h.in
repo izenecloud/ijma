@@ -1,0 +1,4 @@
+/* jma_config.h.in. */
+
+/* Define if you have the <iconv.h> header file. */
+#cmakedefine HAVE_ICONV 1
