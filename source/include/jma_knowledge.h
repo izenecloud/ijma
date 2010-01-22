@@ -97,11 +97,20 @@ public:
 	bool isStopWord(const string& word) const;
 
     /**
-     * Get the feature offset of base form.
-     * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of base form "見る" would be 6.
+     * Get the feature offset of base form indexed from zero.
+     * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ",
+     * the feature offset of base form "見る" would be 6.
      * \return POS category number.
      */
     int getBaseFormOffset() const;
+
+    /**
+     * Get the feature offset of reading form indexed from zero.
+     * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ",
+     * the feature offset of reading form "ミ" would be 7.
+     * \return POS category number.
+     */
+    int getReadFormOffset() const;
 
     /**
      * Check whether is a seperator of sentence.
@@ -164,9 +173,9 @@ private:
 
     /**
      * Load dictionary config file "dicrc" to get the values of entry defined by iJMA, such as "base-form-feature-offset" entry.
-     * \return true for success, false for failure.
+     * \attention if "dicrc" not exists, default configuration value would be used.
      */
-    bool loadDictConfig();
+    void loadDictConfig();
 
     /**
      * Load the POS to feature mapping
@@ -257,6 +266,9 @@ private:
 
     /** the feature offset (starting from zero) of base form, which value is got from entry "base-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
     int baseFormOffset_;
+
+    /** the feature offset (starting from zero) of reading form, which value is got from entry "read-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
+    int readFormOffset_;
 
     /** the tokens size in a feature */
     size_t featureTokenSize_;

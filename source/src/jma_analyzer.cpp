@@ -84,7 +84,6 @@ inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* l
 
 JMA_Analyzer::JMA_Analyzer()
     : knowledge_(0), tagger_(0),
-    preBaseFormOffset_(0),
     posTable_(0)
 {
 }
@@ -147,8 +146,6 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     {
         tagger_->set_lattice_level(1);
     }
-
-    preBaseFormOffset_ = knowledge_->getBaseFormOffset();
 
     posTable_ = knowledge_->getPOSTable();
 }
@@ -385,20 +382,22 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
     }
 }
 
-void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, string& retVal) const
+void JMA_Analyzer::getFeatureStr(const char* featureList, int featureOffset, string& retVal) const
 {
+    assert(featureList && featureOffset >= 0);
+
 	int offset = 0;
 	int commaCount = 0;
 	int begin = -1;
 	int end = -1;
-	for( ; feature[offset]; ++offset )
+	for( ; featureList[offset]; ++offset )
 	{
-		if(feature[offset] == ',')
+		if(featureList[offset] == ',')
 		{
 			++commaCount;
-			if(commaCount == preBaseFormOffset_)
+			if(commaCount == featureOffset)
 				begin = offset + 1;
-			else if(commaCount == preBaseFormOffset_ + 1)
+			else if(commaCount == featureOffset + 1)
 			{
 				end = offset;
 				break;
@@ -410,11 +409,11 @@ void JMA_Analyzer::setBaseForm(const string& origForm, const char* feature, stri
 	{
 		if(end < 0)
 			end = offset;
-		retVal = string(feature + begin, end - begin);
+		retVal = string(featureList + begin, end - begin);
 	}
 
-	if(!retVal.size() || retVal == "*")
-		retVal = origForm;
+	if(retVal == "*")
+		retVal = "";
 }
 
 Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
@@ -424,7 +423,13 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
     Morpheme result;
 
     result.lexicon_.assign(node->surface, node->length);
-    setBaseForm(result.lexicon_, node->feature, result.baseForm_);
+
+    getFeatureStr(node->feature, knowledge_->getBaseFormOffset(), result.baseForm_);
+    if(result.baseForm_.empty())
+        result.baseForm_ = result.lexicon_;
+
+    getFeatureStr(node->feature, knowledge_->getReadFormOffset(), result.readForm_);
+
     result.posCode_ = (int)node->posid;
     result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
 

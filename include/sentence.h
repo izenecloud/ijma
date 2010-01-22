@@ -37,8 +37,14 @@ struct Morpheme
     std::string baseForm_;
 
     /**
+     * the reading form string value.
+     * As an example in Japanese, "クル" is the reading form of lexicon "来る".
+     */
+    std::string readForm_;
+
+    /**
      * Constructor.
-     * The lexicon string value and POS string value are initialized with empty string,
+     * The string value of lexicon, POS, base form, and reading form are initialized with empty string,
      * and the index code of part-of-speech tag is initialized with -1, meaning that no part-of-speech tag is available.
      */
     Morpheme();
@@ -48,9 +54,10 @@ struct Morpheme
 	 * \param lexicon the lexicon string value
 	 * \param posCode the index code of part-of-speech tag
 	 * \param posStr the POS string value
-	 * \param baseForm the base form string value.
+	 * \param baseForm the base form string value
+     * \param readForm the reading form string value
 	 */
-	Morpheme(std::string& lexicon, int posCode, std::string& posStr, std::string& baseForm);
+	Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm);
 };
 
 /** A list of morphemes. */
@@ -75,6 +82,7 @@ typedef std::vector<Morpheme> MorphemeList;
  *          const char* pLexicon = s.getLexicon(i, j);
  *          const char* strPOS = s.getStrPOS(i, j);
  *          const char* baseForm = s.getBaseForm(i, j);
+ *          const char* readForm = s.getReadForm(i, j);
  *          ...
  *      }
  *      double score = s.getScore(i);
@@ -88,6 +96,7 @@ typedef std::vector<Morpheme> MorphemeList;
  *      const char* pLexicon = s.getLexicon(i, j);
  *      const char* strPOS = s.getStrPOS(i, j);
  *      const char* baseForm = s.getBaseForm(i, j);
+ *      const char* readForm = s.getReadForm(i, j);
  *      ...
  * }
  * ...
@@ -166,6 +175,15 @@ public:
      * \return base form string
      */
     const char* getBaseForm(int nPos, int nIdx) const;
+
+    /**
+     * Get the reading form string of morpheme \e nIdx in candidate result \e nPos.
+     * For example in Japanese, "クル" is returned as the reading form of morpheme "来る".
+     * \param nPos candidate result index
+     * \param nIdx morpheme index
+     * \return reading form string, if no reading form exists, empty string "" is returned
+     */
+    const char* getReadForm(int nPos, int nIdx) const;
 
     /**
      * Get the MorphemeList of candidate result \e nPos.

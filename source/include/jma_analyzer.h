@@ -85,13 +85,12 @@ public:
 
 private:
 	/**
-	 * Set the base form of a string, the return value is stored into retVal
-	 *
-	 * \param origForm the original form of the word
-	 * \param feature the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
-	 * \param retVal to store the base form
+	 * Get feature string from list.
+	 * \param featureList the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
+     * \param featureOffset the feature offset indexed from zero, each feature is delimited by comma ","
+	 * \param retVal to store the feature string
 	 */
-	inline void setBaseForm(const string& origForm, const char* feature, string& retVal) const;
+    void getFeatureStr(const char* featureList, int featureOffset, string& retVal) const;
 
     /**
      * Release the resources owned by \e JMA_Analyzer itself.
@@ -149,11 +148,6 @@ private:
 	MeCab::Tagger* tagger_;
 
 	string strBuf_;
-
-	/**
-	 * Previous comma index of the base form offset
-	 */
-	int preBaseFormOffset_;
 
     /** POS table for POS string and index code */
     const POSTable* posTable_;

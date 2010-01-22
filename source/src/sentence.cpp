@@ -19,8 +19,8 @@ Morpheme::Morpheme()
 {
 }
 
-Morpheme::Morpheme(std::string& lexicon, int posCode, std::string& posStr, std::string& baseForm)
-	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm)
+Morpheme::Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm)
+	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm), readForm_(readForm)
 {
 
 }
@@ -74,6 +74,11 @@ const char* Sentence::getStrPOS(int nPos, int nIdx) const
 const char* Sentence::getBaseForm(int nPos, int nIdx) const
 {
     return candidates_[nPos][nIdx].baseForm_.c_str();
+}
+
+const char* Sentence::getReadForm(int nPos, int nIdx) const
+{
+    return candidates_[nPos][nIdx].readForm_.c_str();
 }
 
 const MorphemeList* Sentence::getMorphemeList(int nPos) const

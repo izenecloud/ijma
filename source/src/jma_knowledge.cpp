@@ -41,6 +41,9 @@ const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
 /** Default value of base form feature offset */
 const int BASE_FORM_OFFSET_DEFAULT = 6;
 
+/** Default value of read form feature offset */
+const int READ_FORM_OFFSET_DEFAULT = 7;
+
 /** Default tokens size in a feature */
 const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
 
@@ -96,7 +99,7 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 }
 
 JMA_Knowledge::JMA_Knowledge()
-    : isOutputFullPOS_(false), baseFormOffset_(0),
+    : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0),
     defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE)
 {
     onEncodeTypeChange( getEncodeType() );
@@ -304,18 +307,22 @@ bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) 
   return true;
 }
 
-bool JMA_Knowledge::loadDictConfig()
+void JMA_Knowledge::loadDictConfig()
 {
     string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[0]);
     map<string, string> configMap;
 
     if(! loadConfig0(configFile.c_str(), configMap))
     {
-        return false;
+        cerr << "warning: " << configFile << " not exists," << endl;
+        cerr << "default configuration value is used." << endl;
     }
 
     string* value = getMapValue(configMap, "base-form-feature-offset");
     baseFormOffset_ = value ? convertFromStr<int>(*value) : BASE_FORM_OFFSET_DEFAULT;
+
+    value = getMapValue(configMap, "read-form-feature-offset");
+    readFormOffset_ = value ? convertFromStr<int>(*value) : READ_FORM_OFFSET_DEFAULT;
 
     value = getMapValue(configMap, "feature-token-size");
     featureTokenSize_ = value ? convertFromStr<size_t>(*value) : FEATURE_TOKEN_SIZE_DEFAULT;
@@ -338,12 +345,11 @@ bool JMA_Knowledge::loadDictConfig()
     cout << "JMA_Knowledge::loadDictConfig() loads:" << endl;
     cout << "configFile: " << configFile << endl;
     cout << "base form feature offset: " << baseFormOffset_ << endl;
+    cout << "read form feature offset: " << readFormOffset_ << endl;
     cout << "feature token size: " << featureTokenSize_ << endl;
     cout << "defaut POS: " << defaultPOS_ << endl;
     cout << "config charset: " << configEncodeType_ << endl;
 #endif
-
-    return true;
 }
 
 bool JMA_Knowledge::loadPOSFeatureMapping()
@@ -355,15 +361,8 @@ bool JMA_Knowledge::loadPOSFeatureMapping()
 
 int JMA_Knowledge::loadDict()
 {
-    if(! loadDictConfig())
-    {
-        // if "dicrc" loading failed,
-        // the default value of base form feature offset would be used.
-        baseFormOffset_ = BASE_FORM_OFFSET_DEFAULT;
-        // also set other default value
-        featureTokenSize_ = FEATURE_TOKEN_SIZE_DEFAULT;
-        defaultPOS_ = DEFAULT_POS_DEFAULT;
-    }
+    // file "dicrc"
+    loadDictConfig();
 
     // file "pos-id.def"
     string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
@@ -530,6 +529,11 @@ bool JMA_Knowledge::isStopWord(const string& word) const
 int JMA_Knowledge::getBaseFormOffset() const
 {
     return baseFormOffset_;
+}
+
+int JMA_Knowledge::getReadFormOffset() const
+{
+    return readFormOffset_;
 }
 
 bool JMA_Knowledge::createTempFile(std::string& tempName)

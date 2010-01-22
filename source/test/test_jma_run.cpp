@@ -83,7 +83,7 @@ void testWithSentence(Analyzer* analyzer)
                 cout << "\t" << i << ": ";
                 for(int j=0; j<s.getCount(i); ++j)
                 {
-                    cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
+                    cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << "," << s.getReadForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
                 }
                 cout << "\t" << s.getScore(i) << "\t#words: " << s.getCount(i) << endl;
             }
@@ -102,7 +102,7 @@ void testWithSentence(Analyzer* analyzer)
             cout << "\t" << i << ": ";
             for(int j=0; j<s.getCount(i); ++j)
             {
-                cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
+                cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << "," << s.getReadForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
             }
             cout << "\t" << s.getScore(i) << endl;
         }
