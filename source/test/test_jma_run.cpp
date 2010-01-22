@@ -265,6 +265,12 @@ int main(int argc, char* argv[])
     // output POS in alphabet format
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
 
+    // output POS in Japanese format of full category
+    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY, 1);
+
+    // disable noun affix combination
+    //analyzer->setOption(Analyzer::OPTION_TYPE_COMBINE_NOUN_AFFIX, 0);
+
     switch(optionIndex)
     {
     case 0:
