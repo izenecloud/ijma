@@ -518,6 +518,14 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
         cout << POS_FEATURE_DEF_FILE << " is not found in " << txtDirPath << ", no default feature is defined for those words in user dictionary." << endl;
     }
 
+    // if pos-combine.def exists, copy it to the destination directory
+    src = createFilePath(txtDirPath, POS_COMBINE_DEF_FILE);
+    dest = createFilePath(binDirPath, POS_COMBINE_DEF_FILE);
+    if(copyFile(src.c_str(), dest.c_str()) == false)
+    {
+        cout << POS_COMBINE_DEF_FILE << " is not found in " << txtDirPath << ", no rule is defined to combine tokens with specific POS." << endl;
+    }
+
     return 1;
 }
 
