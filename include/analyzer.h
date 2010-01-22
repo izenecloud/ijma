@@ -127,11 +127,77 @@ public:
      */
     enum OptionType
     {
-        OPTION_TYPE_POS_TAGGING, ///< the value zero for not to print part-of-speech tags in the result of \e runWithString() and \e runWithStream(), which value is 1 defaultly.
-        OPTION_TYPE_NBEST, ///< a positive value to set the number of candidate results of \e runWithSentence(), which value is 1 defaultly.
-        OPTION_TYPE_POS_FORMAT_ALPHABET, ///< the value zero to output part-of-speech tags in Japanese format, such like "名詞,固有名詞,人名,姓", otherwise, a non-zero value would output part-of-speech tags in alphabet format, such like "NP-S", this option is valid for \e runWith*(), which value is 0 defaultly.
-        OPTION_TYPE_POS_FULL_CATEGORY, ///< the non-zero value to output part-of-speech tags in the Japanese format of full category, which might includes asterisk symbol, such like "名詞,数,*,*", otherwise, the value zero would output part-of-speech tags in effective category format, which excludes asterisk symbol, such like "名詞,数", this option for \e runWith*() is only valid when the value of option \e OPTION_TYPE_POS_FORMAT_ALPHABET is zero, this option value is 0 defaultly.
-        OPTION_TYPE_COMBINE_NOUN_AFFIX, ///< the non-zero value to combine affix (including prefix and suffix) into noun (e.g., adjacent tokens "長野" and "県" are combined into one token "長野県"), the default value is 1, and this combination option could be enabled if only "pos-combine.def" exists in system dictionary path.
+        /** Configure whether to print part-of-speech tags.
+         * If a non-zero value is configured, part-of-speech tags are printed in below APIs:
+         * \e runWithString(), \e runWithStream(),
+         * output example: "通常/名詞,一般  は/助詞,係助詞  ".
+         *
+         * If a zero value is configured, part-of-speech tags are not printed in above APIS,
+         * output example: "通常  は  ".
+         *
+         * Default value: 1
+         */
+        OPTION_TYPE_POS_TAGGING,
+
+        /** Configure the number of n-best results.
+         * If a positive value is configured, the maximum number of n-best results are got in below APIs:
+         * \e runWithSentence().
+         *
+         * If non-positive value is configured, it is ignored as invalid value.
+         *
+         * If the value of option \e OPTION_TYPE_POS_TAGGING is zero,
+         * the n-best results are different on \e Morpheme::lexicon_,
+         * otherwise, they are different on either \e Morpheme::lexicon_ or \e Morpheme::posStr_.
+         *
+         * Default value: 1
+         */
+        OPTION_TYPE_NBEST,
+
+        /** Configure whether to print part-of-speech tags in alphabet format.
+         * If a non-zero value is configured, part-of-speech tags are in alphabet format in below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "通常/NC-G  は/PL-A  ".
+         *
+         * If a zero value is configured, part-of-speech tags are in Japanese format in above APIS,
+         * output example: "通常/名詞,一般  は/助詞,係助詞  ".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_POS_FORMAT_ALPHABET,
+
+        /** Configure whether to print part-of-speech tags in Japanese format of full category.
+         * If a non-zero value is configured, part-of-speech tags are in Japanese format of full category,
+         * which might includes asterisk symbol, it is valid for below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "通常/名詞,一般,*,*  は/助詞,係助詞,*,*  ".
+         *
+         * If a zero value is configured, part-of-speech tags are in effective category format,
+         * which excludes asterisk symbol,
+         * output example: "通常/名詞,一般  は/助詞,係助詞  ".
+         *
+         * If the value of option \e OPTION_TYPE_POS_FORMAT_ALPHABET is non-zero,
+         * this option would take no effect.
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_POS_FULL_CATEGORY,
+
+        /** Configure whether to combine affix into noun.
+         * If a non-zero value is configured, affix (including prefix and suffix) is combined with adjacent noun,
+         * it is valid for below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "長野県/名詞,固有名詞,地域,一般  ".
+         *
+         * If a zero value is configured, affix is not combined in above APIS,
+         * output example: "長野/名詞,固有名詞,地域,一般  県/名詞,接尾,地域  ".
+         *
+         * If the configuration file "pos-combine.def" does not exist in system dictionary path,
+         * no affix would be combined.
+         *
+         * Default value: 1
+         */
+        OPTION_TYPE_COMBINE_NOUN_AFFIX,
+
         OPTION_TYPE_NUM ///< the count of option types
     };
 
