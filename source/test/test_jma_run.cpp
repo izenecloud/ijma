@@ -234,16 +234,6 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    // load dictioanry files
-    knowledge->setSystemDict(sysdict);
-    int result = knowledge->loadDict();
-    if(result == 0)
-    {
-        cerr << "fail to load dictionary files" << endl;
-        exit(1);
-    }
-    cout << "system dictionary: " << sysdict << endl;
-
     // set encoding type from the dictionary path
     string sysdictStr(sysdict);
     size_t first = sysdictStr.find_last_of('_');
@@ -255,6 +245,16 @@ int main(int argc, char* argv[])
         cout << "encoding type: " << encodeStr << endl;
         knowledge->setEncodeType(encode);
     }
+
+    // load dictioanry files
+    knowledge->setSystemDict(sysdict);
+    int result = knowledge->loadDict();
+    if(result == 0)
+    {
+        cerr << "fail to load dictionary files" << endl;
+        exit(1);
+    }
+    cout << "system dictionary: " << sysdict << endl;
 
     // set knowledge
     analyzer->setKnowledge(knowledge);

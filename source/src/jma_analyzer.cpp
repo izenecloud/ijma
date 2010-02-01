@@ -480,6 +480,7 @@ MeCab::Node* JMA_Analyzer::combineNode(const MeCab::Node* startNode, Morpheme& r
 #endif
         result.lexicon_ += nextMorph.lexicon_;
         result.baseForm_ += nextMorph.baseForm_;
+        result.readForm_ += nextMorph.readForm_;
         result.posCode_ = combineID;
         result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
 #if JMA_DEBUG_PRINT_COMBINE
