@@ -131,6 +131,8 @@ for(<span class="keywordtype">int</span> i=0; i&lt;s.getListSize(); ++i)
         <span class="keyword">const</span> <span class="keywordtype">char</span>* strPOS = s.getStrPOS(i, j);
         <span class="comment">// get the base form of the specific Japanese word</span>
         <span class="keyword">const</span> <span class="keywordtype">char</span>* baseForm = s.getBaseForm(i, j);
+        <span class="comment">// get the reading form</span>
+        <span class="keyword">const</span> <span class="keywordtype">char</span>* readForm = s.getReadForm(i, j);
         ...
     }
     <span class="keywordtype">double</span> score = s.getScore(i);
@@ -228,7 +230,7 @@ knowledge-&gt;addUserDict(<span class="stringliteral">"db/userdic/juman_eucjp.tx
  Version: 1.0.0 <br>
  Date: 2009-09-30 <br>
  </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Oct 9 09:58:23 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:23 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

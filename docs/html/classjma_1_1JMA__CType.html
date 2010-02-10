@@ -120,7 +120,7 @@ Get the byte count of the first character pointed by <em>p</em>, which character
 
 <p>Implemented in <a class="el" href="classjma_1_1JMA__CType__EUCJP.html#c87c77043c1e7a4eb61a75614794f0f7">jma::JMA_CType_EUCJP</a>, <a class="el" href="classjma_1_1JMA__CType__SJIS.html#142e30d7d2333a2ac4b13881649f7f5e">jma::JMA_CType_SJIS</a>, and <a class="el" href="classjma_1_1JMA__CType__UTF8.html#fcb55997361093a3ae28056a9edecdbe">jma::JMA_CType_UTF8</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00724">jma::JMA_Knowledge::isSentenceSeparator()</a>, <a class="el" href="jma__ctype_8cpp-source.html#l00043">length()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00763">jma::JMA_Knowledge::loadSentenceSeparatorConfig()</a>, <a class="el" href="src_2tokenizer_8cpp-source.html#l00040">jma::CTypeTokenizer::next()</a>, and <a class="el" href="test__jma__ctype_8cpp-source.html#l00035">testGetByteCount()</a>.</p>
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00736">jma::JMA_Knowledge::isSentenceSeparator()</a>, <a class="el" href="jma__ctype_8cpp-source.html#l00043">length()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00775">jma::JMA_Knowledge::loadSentenceSeparatorConfig()</a>, <a class="el" href="src_2tokenizer_8cpp-source.html#l00040">jma::CTypeTokenizer::next()</a>, and <a class="el" href="test__jma__ctype_8cpp-source.html#l00035">testGetByteCount()</a>.</p>
 
 </div>
 </div><p>
@@ -154,8 +154,6 @@ Create an instance of <em>CMA_CType</em> based on the character encode type.
 
 <p>References <a class="el" href="knowledge_8h-source.html#l00084">jma::Knowledge::ENCODE_TYPE_EUCJP</a>, <a class="el" href="knowledge_8h-source.html#l00085">jma::Knowledge::ENCODE_TYPE_SJIS</a>, and <a class="el" href="knowledge_8h-source.html#l00086">jma::Knowledge::ENCODE_TYPE_UTF8</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00718">jma::JMA_Knowledge::onEncodeTypeChange()</a>.</p>
-
 </div>
 </div><p>
 <a class="anchor" name="81fa180bc015fbbf9f7038c7a09469eb"></a><!-- doxytag: member="jma::JMA_CType::isSpace" ref="81fa180bc015fbbf9f7038c7a09469eb" args="(const char *p) const =0" -->
@@ -186,7 +184,7 @@ White-space characters are " \t\n\v\f\r", and also space character in specific e
 
 <p>Implemented in <a class="el" href="classjma_1_1JMA__CType__EUCJP.html#f1fe3b823bb8dc340c4ea31f2e7706d0">jma::JMA_CType_EUCJP</a>, <a class="el" href="classjma_1_1JMA__CType__SJIS.html#2c2ea5e94095be12d7883096edf7119a">jma::JMA_CType_SJIS</a>, and <a class="el" href="classjma_1_1JMA__CType__UTF8.html#df0eb6f57a853246b0fecda469b5b556">jma::JMA_CType_UTF8</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00544">jma::JMA_Knowledge::isStopWord()</a>.</p>
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00556">jma::JMA_Knowledge::isStopWord()</a>.</p>
 
 </div>
 </div><p>
@@ -220,7 +218,7 @@ Get the number of the characters in the p.
 
 <p>References <a class="el" href="classjma_1_1JMA__CType.html#0b1e9b97251f7f390178f3e7badce59f">getByteCount()</a>.</p>
 
-<p>Referenced by <a class="el" href="test__jma__ctype_8cpp-source.html#l00035">testGetByteCount()</a>.</p>
+<p>Referenced by <a class="el" href="jma__ctype__utf8_8cpp-source.html#l00173">jma::JMA_CType_UTF8::replaceSpaces()</a>, <a class="el" href="jma__ctype__sjis_8cpp-source.html#l00063">jma::JMA_CType_SJIS::replaceSpaces()</a>, <a class="el" href="jma__ctype__eucjp_8cpp-source.html#l00063">jma::JMA_CType_EUCJP::replaceSpaces()</a>, and <a class="el" href="test__jma__ctype_8cpp-source.html#l00035">testGetByteCount()</a>.</p>
 
 </div>
 </div><p>
@@ -262,14 +260,14 @@ Replace space characters with replacement character.
 
 <p>Implemented in <a class="el" href="classjma_1_1JMA__CType__EUCJP.html#08f81086db58a99807a821d550de5a50">jma::JMA_CType_EUCJP</a>, <a class="el" href="classjma_1_1JMA__CType__SJIS.html#a0fa604d1a1fa8f801c93aaa08e55482">jma::JMA_CType_SJIS</a>, and <a class="el" href="classjma_1_1JMA__CType__UTF8.html#627c6f775a9379bcda005a395fe09743">jma::JMA_CType_UTF8</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00114">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00273">jma::JMA_Analyzer::runWithStream()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00225">jma::JMA_Analyzer::runWithString()</a>.</p>
+<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00155">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00285">jma::JMA_Analyzer::runWithStream()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00252">jma::JMA_Analyzer::runWithString()</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>source/include/<a class="el" href="jma__ctype_8h-source.html">jma_ctype.h</a><li>source/src/<a class="el" href="jma__ctype_8cpp-source.html">jma_ctype.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:21:01 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:32 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

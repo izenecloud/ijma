@@ -42,7 +42,7 @@ Collaboration diagram for jma::JMA_Analyzer:</div>
 <div class="dynsection">
 <p><center><img src="classjma_1_1JMA__Analyzer__coll__graph.png" border="0" usemap="#jma_1_1JMA__Analyzer__coll__map" alt="Collaboration graph"></center>
 <map name="jma_1_1JMA__Analyzer__coll__map">
-<area shape="rect" href="classjma_1_1Analyzer.html" title="Analyzer executes the Japanese morphological analysis." alt="" coords="600,5,701,32"><area shape="rect" href="classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,109,373,136"><area shape="rect" href="classjma_1_1JMA__Knowledge.html" title="JMA_Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="577,268,724,295"><area shape="rect" href="classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,357,375,384"><area shape="rect" href="classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,408,428,435"><area shape="rect" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,459,379,485"></map>
+<area shape="rect" href="classjma_1_1Analyzer.html" title="Analyzer executes the Japanese morphological analysis." alt="" coords="600,5,701,32"><area shape="rect" href="classjma_1_1KanaTable.html" title="KanaTable stores the mapping table between Japanese Hiragana and Katakana characters..." alt="" coords="263,63,375,89"><area shape="rect" href="classjma_1_1JMA__Knowledge.html" title="JMA_Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="577,252,724,279"><area shape="rect" href="classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,116,373,143"><area shape="rect" href="classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,167,375,193"><area shape="rect" href="classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,313,428,340"><area shape="rect" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,364,379,391"></map>
 <center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center></div>
 
 <p>
@@ -70,10 +70,16 @@ Collaboration diagram for jma::JMA_Analyzer:</div>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Analyzer.html#54fb4aeb1115a76d7f285b39f362057c">splitSentence</a> (const char *paragraph, std::vector&lt; <a class="el" href="classjma_1_1Sentence.html">Sentence</a> &gt; &amp;sentences)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Split a paragraph string into sentences.  <a href="#54fb4aeb1115a76d7f285b39f362057c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual std::string&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Analyzer.html#f6cd5195361a73d179acccaef3d4eb52">convertToHiragana</a> (const char *str) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Convert all Japanese Katakana characters to their Hiragana equivalents, other characters are kept as original.  <a href="#f6cd5195361a73d179acccaef3d4eb52"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual std::string&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Analyzer.html#ffc556640aa13575157726cc708881fe">convertToKatakana</a> (const char *str) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Convert all Japanese Hiragana characters to their Katakana equivalents, other characters are kept as original.  <a href="#ffc556640aa13575157726cc708881fe"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <a class="el" href="classjma_1_1JMA__Analyzer.html" title="JMA_Analyzer executes the Japanese morphological analysis based on conditional random...">JMA_Analyzer</a> executes the Japanese morphological analysis based on conditional random field. 
-<p>Definition at line <a class="el" href="jma__analyzer_8h-source.html#l00033">33</a> of file <a class="el" href="jma__analyzer_8h-source.html">jma_analyzer.h</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8h-source.html#l00034">34</a> of file <a class="el" href="jma__analyzer_8h-source.html">jma_analyzer.h</a>.</p>
 <hr><h2>Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" name="7f28525075de10f5949de22253c04950"></a><!-- doxytag: member="jma::JMA_Analyzer::JMA_Analyzer" ref="7f28525075de10f5949de22253c04950" args="()" -->
 <div class="memitem">
@@ -94,7 +100,7 @@ Collaboration diagram for jma::JMA_Analyzer:</div>
 Constructor. 
 <p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00068">68</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00086">86</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
 </div>
 </div><p>
@@ -117,11 +123,79 @@ Constructor.
 Destructor. 
 <p>
 Delete the knowledge in this function. 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00075">75</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00092">92</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
 </div>
 </div><p>
 <hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="f6cd5195361a73d179acccaef3d4eb52"></a><!-- doxytag: member="jma::JMA_Analyzer::convertToHiragana" ref="f6cd5195361a73d179acccaef3d4eb52" args="(const char *str) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string jma::JMA_Analyzer::convertToHiragana           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>str</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Convert all Japanese Katakana characters to their Hiragana equivalents, other characters are kept as original. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>str</em>&nbsp;</td><td>string to convert from </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>the conversion result </dd></dl>
+
+<p>Implements <a class="el" href="classjma_1_1Analyzer.html#4d3e6e00e5347f902814b0387fdeeb17">jma::Analyzer</a>.</p>
+
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00502">502</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, and <a class="el" href="kana__table_8cpp-source.html#l00107">jma::KanaTable::toHiragana()</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="ffc556640aa13575157726cc708881fe"></a><!-- doxytag: member="jma::JMA_Analyzer::convertToKatakana" ref="ffc556640aa13575157726cc708881fe" args="(const char *str) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string jma::JMA_Analyzer::convertToKatakana           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>str</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const<code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Convert all Japanese Hiragana characters to their Katakana equivalents, other characters are kept as original. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>str</em>&nbsp;</td><td>string to convert from </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>the conversion result </dd></dl>
+
+<p>Implements <a class="el" href="classjma_1_1Analyzer.html#dc0e019224eddc717e29019f5bf76f67">jma::Analyzer</a>.</p>
+
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00522">522</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, and <a class="el" href="kana__table_8cpp-source.html#l00116">jma::KanaTable::toKatakana()</a>.</p>
+
+</div>
+</div><p>
 <a class="anchor" name="276534365d7474088564fe7d79d41473"></a><!-- doxytag: member="jma::JMA_Analyzer::runWithSentence" ref="276534365d7474088564fe7d79d41473" args="(Sentence &amp;sentence)" -->
 <div class="memitem">
 <div class="memproto">
@@ -153,9 +227,9 @@ Execute the morphological analysis based on a sentence.
 
 <p>Implements <a class="el" href="classjma_1_1Analyzer.html#527108d534248d76ada9747ef4eb40e1">jma::Analyzer</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00114">114</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00155">155</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
-<p>References <a class="el" href="sentence_8cpp-source.html#l00104">jma::Sentence::addList()</a>, <a class="el" href="jma__analyzer_8h-source.html#l00019">BASE_NBEST_SCORE</a>, <a class="el" href="sentence_8h-source.html#l00037">jma::Morpheme::baseForm_</a>, <a class="el" href="pos__table_8cpp-source.html#l00116">jma::POSTable::getAlphabetPOS()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00713">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="sentence_8cpp-source.html#l00049">jma::Sentence::getListSize()</a>, <a class="el" href="sentence_8cpp-source.html#l00079">jma::Sentence::getMorphemeList()</a>, <a class="el" href="analyzer_8cpp-source.html#l00050">jma::Analyzer::getOption()</a>, <a class="el" href="sentence_8cpp-source.html#l00084">jma::Sentence::getScore()</a>, <a class="el" href="sentence_8cpp-source.html#l00044">jma::Sentence::getString()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00031">jma::isSameMorphemeList()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00544">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="sentence_8h-source.html#l00025">jma::Morpheme::lexicon_</a>, <a class="el" href="analyzer_8h-source.html#l00134">jma::Analyzer::OPTION_TYPE_NBEST</a>, <a class="el" href="analyzer_8h-source.html#l00133">jma::Analyzer::OPTION_TYPE_POS_TAGGING</a>, <a class="el" href="sentence_8h-source.html#l00028">jma::Morpheme::posCode_</a>, <a class="el" href="sentence_8h-source.html#l00031">jma::Morpheme::posStr_</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="sentence_8cpp-source.html#l00089">jma::Sentence::setScore()</a>.</p>
+<p>References <a class="el" href="sentence_8cpp-source.html#l00109">jma::Sentence::addList()</a>, <a class="el" href="jma__analyzer_8h-source.html#l00020">BASE_NBEST_SCORE</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="sentence_8cpp-source.html#l00049">jma::Sentence::getListSize()</a>, <a class="el" href="sentence_8cpp-source.html#l00084">jma::Sentence::getMorphemeList()</a>, <a class="el" href="analyzer_8cpp-source.html#l00052">jma::Analyzer::getOption()</a>, <a class="el" href="sentence_8cpp-source.html#l00089">jma::Sentence::getScore()</a>, <a class="el" href="sentence_8cpp-source.html#l00044">jma::Sentence::getString()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00049">jma::isSameMorphemeList()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00556">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="sentence_8h-source.html#l00025">jma::Morpheme::lexicon_</a>, <a class="el" href="analyzer_8h-source.html#l00168">jma::Analyzer::OPTION_TYPE_NBEST</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="sentence_8cpp-source.html#l00094">jma::Sentence::setScore()</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__analyzer_8cpp-source.html#l00028">main()</a>.</p>
 
@@ -200,9 +274,9 @@ Execute the morphological analysis based on a file.
 
 <p>Implements <a class="el" href="classjma_1_1Analyzer.html#c20ba2e8484a5309a0d1880a41d7883f">jma::Analyzer</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00273">273</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00285">285</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
-<p>References <a class="el" href="pos__table_8cpp-source.html#l00116">jma::POSTable::getAlphabetPOS()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00713">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="analyzer_8cpp-source.html#l00050">jma::Analyzer::getOption()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00544">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="analyzer_8h-source.html#l00133">jma::Analyzer::OPTION_TYPE_POS_TAGGING</a>, <a class="el" href="analyzer_8h-source.html#l00185">jma::Analyzer::posDelimiter_</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="analyzer_8h-source.html#l00188">jma::Analyzer::wordDelimiter_</a>.</p>
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00556">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="sentence_8h-source.html#l00025">jma::Morpheme::lexicon_</a>, <a class="el" href="analyzer_8h-source.html#l00289">jma::Analyzer::posDelimiter_</a>, <a class="el" href="sentence_8h-source.html#l00031">jma::Morpheme::posStr_</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="analyzer_8h-source.html#l00292">jma::Analyzer::wordDelimiter_</a>.</p>
 
 </div>
 </div><p>
@@ -234,9 +308,9 @@ Execute the morphological analysis based on a paragraph string.
 
 <p>Implements <a class="el" href="classjma_1_1Analyzer.html#19d9684030ae4049742e52c29f6eff8e">jma::Analyzer</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00225">225</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00252">252</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
-<p>References <a class="el" href="pos__table_8cpp-source.html#l00116">jma::POSTable::getAlphabetPOS()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00713">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="analyzer_8cpp-source.html#l00050">jma::Analyzer::getOption()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00544">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="analyzer_8h-source.html#l00133">jma::Analyzer::OPTION_TYPE_POS_TAGGING</a>, <a class="el" href="analyzer_8h-source.html#l00185">jma::Analyzer::posDelimiter_</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="analyzer_8h-source.html#l00188">jma::Analyzer::wordDelimiter_</a>.</p>
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00556">jma::JMA_Knowledge::isStopWord()</a>, <a class="el" href="sentence_8h-source.html#l00025">jma::Morpheme::lexicon_</a>, <a class="el" href="analyzer_8h-source.html#l00289">jma::Analyzer::posDelimiter_</a>, <a class="el" href="sentence_8h-source.html#l00031">jma::Morpheme::posStr_</a>, <a class="el" href="classjma_1_1JMA__CType.html#bdf380eaf1be3a971870da8d37091572">jma::JMA_CType::replaceSpaces()</a>, and <a class="el" href="analyzer_8h-source.html#l00292">jma::Analyzer::wordDelimiter_</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__analyzer_8cpp-source.html#l00028">main()</a>.</p>
 
@@ -269,9 +343,9 @@ Set the <em><a class="el" href="classjma_1_1Knowledge.html" title="Knowledge man
 
 <p>Implements <a class="el" href="classjma_1_1Analyzer.html#0e5ccd2aec21ec510847fd2d3e9e67b3">jma::Analyzer</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00090">90</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00133">133</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
-<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00242">jma::JMA_Knowledge::createTagger()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00554">jma::JMA_Knowledge::getBaseFormOffset()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00549">jma::JMA_Knowledge::getPOSCatNum()</a>, and <a class="el" href="jma__knowledge_8cpp-source.html#l00265">jma::JMA_Knowledge::getPOSTable()</a>.</p>
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00252">jma::JMA_Knowledge::createTagger()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00280">jma::JMA_Knowledge::getKanaTable()</a>, and <a class="el" href="jma__knowledge_8cpp-source.html#l00275">jma::JMA_Knowledge::getPOSTable()</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__analyzer_8cpp-source.html#l00028">main()</a>.</p>
 
@@ -315,16 +389,16 @@ Split a paragraph string into sentences.
 
 <p>Implements <a class="el" href="classjma_1_1Analyzer.html#886602986e9ca0b308cb17f55a0564da">jma::Analyzer</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00361">361</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__analyzer_8cpp-source.html#l00339">339</a> of file <a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a>.</p>
 
-<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00713">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00724">jma::JMA_Knowledge::isSentenceSeparator()</a>, and <a class="el" href="sentence_8cpp-source.html#l00037">jma::Sentence::setString()</a>.</p>
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00725">jma::JMA_Knowledge::getCType()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00736">jma::JMA_Knowledge::isSentenceSeparator()</a>, and <a class="el" href="sentence_8cpp-source.html#l00037">jma::Sentence::setString()</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>source/include/<a class="el" href="jma__analyzer_8h-source.html">jma_analyzer.h</a><li>source/src/<a class="el" href="jma__analyzer_8cpp-source.html">jma_analyzer.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:21:01 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:32 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

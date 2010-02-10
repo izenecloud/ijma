@@ -54,9 +54,10 @@ Include dependency graph for test_csv_convert.cpp:</div>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 Executable to convert dictionary CSV file from source pattern to destination pattern, which conversion rule is defined in a configuration file, such as "csv-convert-ipa-juman-eucjp.def". 
 <p>
-Below is the usage examples: <div class="fragment"><pre class="fragment"> The encoding type of those CSV files in source directory is predefined by the <span class="stringliteral">"dictionary-charset"</span> entry of <span class="stringliteral">"dicrc"</span> file.
- While the encoding type of binary files in destination directory could be <span class="keyword">set</span> to <span class="stringliteral">"eucjp"</span>, <span class="stringliteral">"sjis"</span> or <span class="stringliteral">"utf8"</span> like below, which is <span class="stringliteral">"eucjp"</span> defaultly.
- $ ./jma_csv_convert --config ../db/config/csv-convert-ipa-juman-eucjp.def --output ipa_proper.csv ../db/ipadic/src/Noun.proper.csv ../db/ipadic/src/Noun.name.csv ../db/ipadic/src/Noun.org.csv ../db/ipadic/src/Noun.place.csv
+Below is the usage examples: <div class="fragment"><pre class="fragment"> The configuration file defining conversion rules is <span class="stringliteral">"../db/config/csv-convert-ipa-juman-eucjp.def"</span>,
+ the source CSV files are <span class="stringliteral">"Noun.proper.csv"</span>, <span class="stringliteral">"Noun.name.csv"</span>, <span class="stringliteral">"Noun.org.csv"</span> and <span class="stringliteral">"Noun.place.csv"</span> in IPA dictionary,
+ the destination CSV file is <span class="stringliteral">"ipa_proper_noun.csv"</span>.
+ $ ./jma_csv_convert --config ../db/config/csv-convert-ipa-juman-eucjp.def --output ipa_proper_noun.csv ../db/ipadic/src/Noun.proper.csv ../db/ipadic/src/Noun.name.csv ../db/ipadic/src/Noun.org.csv ../db/ipadic/src/Noun.place.csv
 </pre></div><p>
 <dl class="author" compact><dt><b>Author:</b></dt><dd>Jun Jiang </dd></dl>
 <dl class="version" compact><dt><b>Version:</b></dt><dd>0.1 </dd></dl>
@@ -93,14 +94,14 @@ Below is the usage examples: <div class="fragment"><pre class="fragment"> The en
 Main function. 
 <p>
 
-<p>Definition at line <a class="el" href="test__csv__convert_8cpp-source.html#l00141">141</a> of file <a class="el" href="test__csv__convert_8cpp-source.html">test_csv_convert.cpp</a>.</p>
+<p>Definition at line <a class="el" href="test__csv__convert_8cpp-source.html#l00142">142</a> of file <a class="el" href="test__csv__convert_8cpp-source.html">test_csv_convert.cpp</a>.</p>
 
 <p>References <a class="el" href="test__encode__sysdict_8cpp-source.html#l00031">printUsage()</a>.</p>
 
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:20:57 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:29 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

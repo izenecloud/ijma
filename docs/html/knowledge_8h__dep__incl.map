@@ -1,25 +1,32 @@
-<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="769,80,948,107">
-<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="1589,155,1797,181">
-<area shape="rect" href="$knowledge_8cpp.html" title="Implementation of class Knowledge." alt="" coords="1375,80,1545,107">
-<area shape="rect" href="$test__encode__sysdict_8cpp.html" title="Test for encoding the system dictionary from text type to binary type." alt="" coords="1569,80,1804,107">
-<area shape="rect" href="$test__jma__encoding_8cpp.html" title="Test character encoding &quot;EUC&#45;JP&quot;, &quot;SHIFT&#45;JIS&quot; and &quot;UTF&#45;8&quot;..." alt="" coords="1828,80,2052,107">
-<area shape="rect" href="$test__jma__factory_8cpp.html" title="Test to create an instance of JMA_Factory." alt="" coords="2076,80,2287,107">
-<area shape="rect" href="$test__jma__multithread_8cpp.html" title="Test JMA in multithread environment." alt="" coords="2311,80,2545,107">
-<area shape="rect" href="$test__jma__pos__nbest_8cpp.html" title="Test JMA in Japanese word segmentation with POS tagging analysis, and output the..." alt="" coords="2569,80,2801,107">
-<area shape="rect" href="$test__jma__run_8cpp.html" title="Test JMA in Japanese word segmentation and POS tagging analysis." alt="" coords="2825,80,3015,107">
-<area shape="rect" href="$test__jma__split__sentence_8cpp.html" title="Test sentence split in JMA analysis." alt="" coords="3039,80,3295,107">
-<area shape="rect" href="$jma__ctype__eucjp_8h.html" title="encoding for the EUC&#45;JP" alt="" coords="1128,155,1347,181">
-<area shape="rect" href="$jma__ctype_8cpp.html" title="JMA_CType gives the character type information." alt="" coords="709,229,880,256">
-<area shape="rect" href="$jma__ctype__sjis_8h.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="5,155,213,181">
-<area shape="rect" href="$jma__ctype__utf8_8h.html" title="Definition of class JMA_CType_UTF8." alt="" coords="896,155,1104,181">
-<area shape="rect" href="$include_2tokenizer_8h.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="237,155,408,181">
-<area shape="rect" href="$src_2tokenizer_8cpp.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="432,155,595,181">
-<area shape="rect" href="$test__jma__ctype_8cpp.html" title="Test JMA_CType in processing EUC&#45;JP, Shift&#45;JIS, UTF&#45;8 characters." alt="" coords="619,155,821,181">
-<area shape="rect" href="$jma__ctype__eucjp_8cpp.html" title="encoding for the EUC&#45;JP" alt="" coords="1128,229,1336,256">
-<area shape="rect" href="$jma__ctype__sjis_8cpp.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="11,229,208,256">
-<area shape="rect" href="$jma__ctype__utf8_8cpp.html" title="Implementation of class JMA_CType_UTF8." alt="" coords="904,229,1104,256">
-<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="2083,229,2269,256">
-<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="2293,229,2472,256">
-<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="1360,229,1560,256">
-<area shape="rect" href="$test__jma__analyzer_8cpp.html" title="Test to create an instance of JMA_Analyzer." alt="" coords="1584,229,1803,256">
-<area shape="rect" href="$test__jma__knowledge_8cpp.html" title="Test to create an instance of JMA_Knowledge." alt="" coords="1827,229,2059,256">
+<area shape="rect" href="$include_2iconv__utils_8h.html" title="source/include/iconv_utils.h" alt="" coords="111,80,292,107">
+<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="316,80,492,107">
+<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="677,155,885,181">
+<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="1000,80,1179,107">
+<area shape="rect" href="$kana__table_8h.html" title="Definition of class KanaTable." alt="" coords="563,80,747,107">
+<area shape="rect" href="$knowledge_8cpp.html" title="Implementation of class Knowledge." alt="" coords="1203,80,1373,107">
+<area shape="rect" href="$test__encode__sysdict_8cpp.html" title="Test for encoding the system dictionary from text type to binary type." alt="" coords="1397,80,1632,107">
+<area shape="rect" href="$test__jma__convert__kana_8cpp.html" title="Test to convert Japanese Hiragana and Katakana characters." alt="" coords="1656,80,1907,107">
+<area shape="rect" href="$test__jma__encoding_8cpp.html" title="Test character encoding &quot;EUC&#45;JP&quot;, &quot;SHIFT&#45;JIS&quot; and &quot;UTF&#45;8&quot;..." alt="" coords="1931,80,2155,107">
+<area shape="rect" href="$test__jma__factory_8cpp.html" title="Test to create an instance of JMA_Factory." alt="" coords="2179,80,2389,107">
+<area shape="rect" href="$test__jma__multithread_8cpp.html" title="Test JMA in multithread environment." alt="" coords="2413,80,2648,107">
+<area shape="rect" href="$test__jma__pos__nbest_8cpp.html" title="Test JMA in Japanese word segmentation with POS tagging analysis, and output the..." alt="" coords="2672,80,2904,107">
+<area shape="rect" href="$test__jma__run_8cpp.html" title="Test JMA in Japanese word segmentation and POS tagging analysis." alt="" coords="2928,80,3117,107">
+<area shape="rect" href="$test__jma__split__sentence_8cpp.html" title="Test sentence split in JMA analysis." alt="" coords="3141,80,3397,107">
+<area shape="rect" href="$jma__analyzer_8h.html" title="Definition of class JMA_Analyzer." alt="" coords="261,155,456,181">
+<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="95,229,281,256">
+<area shape="rect" href="$pos__table_8cpp.html" title="Implementation of class POSTable." alt="" coords="19,155,187,181">
+<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="305,229,484,256">
+<area shape="rect" href="$test__jma__analyzer_8cpp.html" title="Test to create an instance of JMA_Analyzer." alt="" coords="508,229,727,256">
+<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="1007,229,1207,256">
+<area shape="rect" href="$test__jma__knowledge_8cpp.html" title="Test to create an instance of JMA_Knowledge." alt="" coords="751,229,983,256">
+<area shape="rect" href="$jma__ctype__eucjp_8h.html" title="encoding for the EUC&#45;JP" alt="" coords="2032,155,2251,181">
+<area shape="rect" href="$jma__ctype_8cpp.html" title="JMA_CType gives the character type information." alt="" coords="1677,229,1848,256">
+<area shape="rect" href="$jma__ctype__sjis_8h.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="1517,155,1725,181">
+<area shape="rect" href="$jma__ctype__utf8_8h.html" title="Definition of class JMA_CType_UTF8." alt="" coords="1800,155,2008,181">
+<area shape="rect" href="$include_2tokenizer_8h.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="909,155,1080,181">
+<area shape="rect" href="$src_2tokenizer_8cpp.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="1104,155,1267,181">
+<area shape="rect" href="$test__jma__ctype_8cpp.html" title="Test JMA_CType in processing EUC&#45;JP, Shift&#45;JIS, UTF&#45;8 characters." alt="" coords="1291,155,1493,181">
+<area shape="rect" href="$jma__ctype__eucjp_8cpp.html" title="encoding for the EUC&#45;JP" alt="" coords="2096,229,2304,256">
+<area shape="rect" href="$jma__ctype__sjis_8cpp.html" title="encoding for the SHIFT&#45;JIS" alt="" coords="1456,229,1653,256">
+<area shape="rect" href="$jma__ctype__utf8_8cpp.html" title="Implementation of class JMA_CType_UTF8." alt="" coords="1872,229,2072,256">
+<area shape="rect" href="$kana__table_8cpp.html" title="Implementation of class KanaTable." alt="" coords="480,155,653,181">

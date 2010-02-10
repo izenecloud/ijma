@@ -34,58 +34,180 @@
 <p>
 <a href="classjma_1_1POSTable-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Types</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">enum &nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f">POSFormat</a> { <a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f40a85b9fde22c42672ef63f00aa1de52">POS_FORMAT_DEFAULT</a>, 
+<a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8fd39e581e8cb66ac4cb5ade67f0f7d0c0">POS_FORMAT_ALPHABET</a>, 
+<a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f5b465b20a13bdfb406e98d9f2508782c">POS_FORMAT_FULL_CATEGORY</a>, 
+<a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8fe86057657037304c4528259f54068ece">POS_FORMAT_NUM</a>
+ }</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">POS format type.  <a href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#abf7b2873fbdf5af3f0e6cfed48c8c31">loadConfig</a> (const char *fileName)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#512f828cb47f3d4abc399c97bec38878">POSTable</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Load the configuration file "pos-id.def", which is in text format.  <a href="#abf7b2873fbdf5af3f0e6cfed48c8c31"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#1d3d9515671a029c093bffffa137b2fc">getAlphabetPOS</a> (int index) const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Constructor.  <a href="#512f828cb47f3d4abc399c97bec38878"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#7eda2cc0fee7b3a5d38fa37a8e8cc818">loadConfig</a> (const char *fileName, <a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">Knowledge::EncodeType</a> src, <a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">Knowledge::EncodeType</a> dest)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the POS string from the POS index code in the part-of-speech table.  <a href="#1d3d9515671a029c093bffffa137b2fc"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Load the configuration file "pos-id.def", which is in text format.  <a href="#7eda2cc0fee7b3a5d38fa37a8e8cc818"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#7868618bd7d8c97c6cd0cb566bca41b7">loadCombineRule</a> (const char *fileName)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Load the combination rule file "pos-combine.def", which is in text format.  <a href="#7868618bd7d8c97c6cd0cb566bca41b7"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">const char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#abc5b317737cd255bb74a47d07562171">getPOS</a> (int index, <a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f">POSFormat</a> format=POS_FORMAT_DEFAULT) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">From POS index code, get POS string in specific format.  <a href="#abc5b317737cd255bb74a47d07562171"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1POSTable.html#1fcbb669109c4da1ab281bf3df207537">combinePOS</a> (int pos1, int pos2) const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Combine tokens using rules on POS, which rules are loaded by <em><a class="el" href="classjma_1_1POSTable.html#7868618bd7d8c97c6cd0cb566bca41b7" title="Load the combination rule file &quot;pos-combine.def&quot;, which is in text format...">loadCombineRule()</a></em>.  <a href="#1fcbb669109c4da1ab281bf3df207537"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <a class="el" href="classjma_1_1POSTable.html" title="POSTable stores the table of part-of-speech tags, each tag includes a string value...">POSTable</a> stores the table of part-of-speech tags, each tag includes a string value and its index code. 
 <p>
 Note that the string value of part-of-speech tag is in Alphabet format such like "NP-S". 
-<p>Definition at line <a class="el" href="pos__table_8h-source.html#l00022">22</a> of file <a class="el" href="pos__table_8h-source.html">pos_table.h</a>.</p>
-<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="1d3d9515671a029c093bffffa137b2fc"></a><!-- doxytag: member="jma::POSTable::getAlphabetPOS" ref="1d3d9515671a029c093bffffa137b2fc" args="(int index) const " -->
+<p>Definition at line <a class="el" href="pos__table_8h-source.html#l00037">37</a> of file <a class="el" href="pos__table_8h-source.html">pos_table.h</a>.</p>
+<hr><h2>Member Enumeration Documentation</h2>
+<a class="anchor" name="e96b3244f0f3bb07bf257e11fb4b8e8f"></a><!-- doxytag: member="jma::POSTable::POSFormat" ref="e96b3244f0f3bb07bf257e11fb4b8e8f" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const char * jma::POSTable::getAlphabetPOS           </td>
-          <td>(</td>
-          <td class="paramtype">int&nbsp;</td>
-          <td class="paramname"> <em>index</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td> const</td>
+          <td class="memname">enum <a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f">jma::POSTable::POSFormat</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Get the POS string from the POS index code in the part-of-speech table. 
+POS format type. 
 <p>
-Note that the POS string is in Alphabet format such like "NP-S". <dl compact><dt><b>Parameters:</b></dt><dd>
+<dl compact><dt><b>Enumerator: </b></dt><dd>
+<table border="0" cellspacing="2" cellpadding="0">
+<tr><td valign="top"><em><a class="anchor" name="e96b3244f0f3bb07bf257e11fb4b8e8f40a85b9fde22c42672ef63f00aa1de52"></a><!-- doxytag: member="POS_FORMAT_DEFAULT" ref="e96b3244f0f3bb07bf257e11fb4b8e8f40a85b9fde22c42672ef63f00aa1de52" args="" -->POS_FORMAT_DEFAULT</em>&nbsp;</td><td>
+default Japanese format such like "名詞,一般". </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e96b3244f0f3bb07bf257e11fb4b8e8fd39e581e8cb66ac4cb5ade67f0f7d0c0"></a><!-- doxytag: member="POS_FORMAT_ALPHABET" ref="e96b3244f0f3bb07bf257e11fb4b8e8fd39e581e8cb66ac4cb5ade67f0f7d0c0" args="" -->POS_FORMAT_ALPHABET</em>&nbsp;</td><td>
+Alphabet format such like "NC-G". </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e96b3244f0f3bb07bf257e11fb4b8e8f5b465b20a13bdfb406e98d9f2508782c"></a><!-- doxytag: member="POS_FORMAT_FULL_CATEGORY" ref="e96b3244f0f3bb07bf257e11fb4b8e8f5b465b20a13bdfb406e98d9f2508782c" args="" -->POS_FORMAT_FULL_CATEGORY</em>&nbsp;</td><td>
+Japanese format of furl category such like "名詞,一般,*,*". </td></tr>
+<tr><td valign="top"><em><a class="anchor" name="e96b3244f0f3bb07bf257e11fb4b8e8fe86057657037304c4528259f54068ece"></a><!-- doxytag: member="POS_FORMAT_NUM" ref="e96b3244f0f3bb07bf257e11fb4b8e8fe86057657037304c4528259f54068ece" args="" -->POS_FORMAT_NUM</em>&nbsp;</td><td>
+the count of format types </td></tr>
+</table>
+</dl>
+
+<p>Definition at line <a class="el" href="pos__table_8h-source.html#l00048">48</a> of file <a class="el" href="pos__table_8h-source.html">pos_table.h</a>.</p>
+
+</div>
+</div><p>
+<hr><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" name="512f828cb47f3d4abc399c97bec38878"></a><!-- doxytag: member="jma::POSTable::POSTable" ref="512f828cb47f3d4abc399c97bec38878" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">jma::POSTable::POSTable           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Constructor. 
+<p>
+
+<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00027">27</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
+
+</div>
+</div><p>
+<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="1fcbb669109c4da1ab281bf3df207537"></a><!-- doxytag: member="jma::POSTable::combinePOS" ref="1fcbb669109c4da1ab281bf3df207537" args="(int pos1, int pos2) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int jma::POSTable::combinePOS           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>pos1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>pos2</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Combine tokens using rules on POS, which rules are loaded by <em><a class="el" href="classjma_1_1POSTable.html#7868618bd7d8c97c6cd0cb566bca41b7" title="Load the combination rule file &quot;pos-combine.def&quot;, which is in text format...">loadCombineRule()</a></em>. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>pos1</em>&nbsp;</td><td>the 1st POS </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pos2</em>&nbsp;</td><td>the 2nd POS </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>the POS of combination result, -1 for not to combine. </dd></dl>
+
+<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00226">226</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
+
+<p>References <a class="el" href="pos__table_8h-source.html#l00051">POS_FORMAT_ALPHABET</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="abc5b317737cd255bb74a47d07562171"></a><!-- doxytag: member="jma::POSTable::getPOS" ref="abc5b317737cd255bb74a47d07562171" args="(int index, POSFormat format=POS_FORMAT_DEFAULT) const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * jma::POSTable::getPOS           </td>
+          <td>(</td>
+          <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classjma_1_1POSTable.html#e96b3244f0f3bb07bf257e11fb4b8e8f">POSFormat</a>&nbsp;</td>
+          <td class="paramname"> <em>format</em> = <code>POS_FORMAT_DEFAULT</code></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+From POS index code, get POS string in specific format. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>index</em>&nbsp;</td><td>the POS index code </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>POS string, if non POS is available, the empty string is returned. </dd></dl>
 
-<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00116">116</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
-
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00114">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00273">jma::JMA_Analyzer::runWithStream()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00225">jma::JMA_Analyzer::runWithString()</a>.</p>
+<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00152">152</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="abf7b2873fbdf5af3f0e6cfed48c8c31"></a><!-- doxytag: member="jma::POSTable::loadConfig" ref="abf7b2873fbdf5af3f0e6cfed48c8c31" args="(const char *fileName)" -->
+<a class="anchor" name="7868618bd7d8c97c6cd0cb566bca41b7"></a><!-- doxytag: member="jma::POSTable::loadCombineRule" ref="7868618bd7d8c97c6cd0cb566bca41b7" args="(const char *fileName)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool jma::POSTable::loadConfig           </td>
+          <td class="memname">bool jma::POSTable::loadCombineRule           </td>
           <td>(</td>
           <td class="paramtype">const char *&nbsp;</td>
           <td class="paramname"> <em>fileName</em>          </td>
@@ -97,24 +219,80 @@ Note that the POS string is in Alphabet format such like "NP-S". <dl compact><dt
 <div class="memdoc">
 
 <p>
+Load the combination rule file "pos-combine.def", which is in text format. 
+<p>
+Each entry in this file would be like "NC-G    NS-G    NC-G", the left two columns are POS to combine from, the last column is POS as combination result. <dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fileName</em>&nbsp;</td><td>the file name </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true for success, false for fail </dd></dl>
+<dl class="attention" compact><dt><b>Attention:</b></dt><dd>if this function is already called before, the rules previously loaded would be removed. </dd></dl>
+
+<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00160">160</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
+
+<p>References <a class="el" href="pos__table_8h-source.html#l00028">jma::POSRule::src1_</a>, <a class="el" href="pos__table_8h-source.html#l00029">jma::POSRule::src2_</a>, and <a class="el" href="pos__table_8h-source.html#l00030">jma::POSRule::target_</a>.</p>
+
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00370">jma::JMA_Knowledge::loadDict()</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="7eda2cc0fee7b3a5d38fa37a8e8cc818"></a><!-- doxytag: member="jma::POSTable::loadConfig" ref="7eda2cc0fee7b3a5d38fa37a8e8cc818" args="(const char *fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool jma::POSTable::loadConfig           </td>
+          <td>(</td>
+          <td class="paramtype">const char *&nbsp;</td>
+          <td class="paramname"> <em>fileName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">Knowledge::EncodeType</a>&nbsp;</td>
+          <td class="paramname"> <em>src</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">Knowledge::EncodeType</a>&nbsp;</td>
+          <td class="paramname"> <em>dest</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
 Load the configuration file "pos-id.def", which is in text format. 
 <p>
 This file contains the part-of-speech configuration, which format is "JapanesePOS index AlphabetPOS". <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>fileName</em>&nbsp;</td><td>the file name </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>src</em>&nbsp;</td><td>source encode type of <em>fileName</em> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>dest</em>&nbsp;</td><td>destination encode type to convert </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>0 for fail, 1 for success </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true for success, false for fail </dd></dl>
 <dl class="attention" compact><dt><b>Attention:</b></dt><dd>if this function is already called before, the table previously loaded would be removed. </dd></dl>
 
-<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00024">24</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
+<p>Definition at line <a class="el" href="pos__table_8cpp-source.html#l00032">32</a> of file <a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a>.</p>
+
+<p>References <a class="el" href="src_2iconv__utils_8cpp-source.html#l00092">jma::Iconv::convert()</a>, <a class="el" href="src_2iconv__utils_8cpp-source.html#l00061">jma::Iconv::open()</a>, <a class="el" href="pos__table_8h-source.html#l00051">POS_FORMAT_ALPHABET</a>, <a class="el" href="pos__table_8h-source.html#l00050">POS_FORMAT_DEFAULT</a>, and <a class="el" href="pos__table_8h-source.html#l00052">POS_FORMAT_FULL_CATEGORY</a>.</p>
+
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00370">jma::JMA_Knowledge::loadDict()</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>source/include/<a class="el" href="pos__table_8h-source.html">pos_table.h</a><li>source/src/<a class="el" href="pos__table_8cpp-source.html">pos_table.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:21:01 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:32 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

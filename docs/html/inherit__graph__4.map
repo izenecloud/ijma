@@ -1,4 +1,1 @@
-<area shape="rect" href="$classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="7,56,127,83">
-<area shape="rect" href="$classjma_1_1JMA__CType__EUCJP.html" title="jma::JMA_CType_EUCJP" alt="" coords="177,5,348,32">
-<area shape="rect" href="$classjma_1_1JMA__CType__SJIS.html" title="jma::JMA_CType_SJIS" alt="" coords="184,56,341,83">
-<area shape="rect" href="$classjma_1_1JMA__CType__UTF8.html" title="JMA_CType_UTF8 gives the character type information in UTF&#45;8 encoding." alt="" coords="183,107,343,133">
+<area shape="rect" href="$classjma_1_1Iconv.html" title="jma::Iconv" alt="" coords="5,5,88,32">

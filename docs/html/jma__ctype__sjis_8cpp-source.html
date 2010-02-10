@@ -82,33 +82,32 @@
 <a name="l00067"></a>00067         <span class="keywordtype">string</span> ret(str);
 <a name="l00068"></a>00068         <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>* c2 = (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)ret.data();
 <a name="l00069"></a>00069 
-<a name="l00070"></a>00070         <span class="keywordflow">while</span>(*uc)
-<a name="l00071"></a>00071         {
-<a name="l00072"></a>00072                 <span class="keywordflow">if</span>(uc[0] &lt; 0x80)
-<a name="l00073"></a>00073                 {
-<a name="l00074"></a>00074                         <span class="keywordflow">if</span>(isspace(uc[0]))
-<a name="l00075"></a>00075                                 *c2 = replace;
-<a name="l00076"></a>00076                         ++uc;
-<a name="l00077"></a>00077                         ++c2;
+<a name="l00070"></a>00070     <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__CType.html#f6198c870c6a2723b616bf3084ad0299" title="Get the number of the characters in the p.">length</a> = ret.size();
+<a name="l00071"></a>00071     <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;length;)
+<a name="l00072"></a>00072         {
+<a name="l00073"></a>00073                 <span class="keywordflow">if</span>(uc[i] &lt; 0x80)
+<a name="l00074"></a>00074                 {
+<a name="l00075"></a>00075                         <span class="keywordflow">if</span>(isspace(uc[i]))
+<a name="l00076"></a>00076                                 c2[i] = replace;
+<a name="l00077"></a>00077                         ++i;
 <a name="l00078"></a>00078                 }
 <a name="l00079"></a>00079                 <span class="keywordflow">else</span>
 <a name="l00080"></a>00080                 {
 <a name="l00081"></a>00081                         <span class="comment">//full-width space in SHIFT-JIS</span>
-<a name="l00082"></a>00082                         <span class="keywordflow">if</span>(uc[0] == 0x81 &amp;&amp; uc[1] == 0x40)
+<a name="l00082"></a>00082                         <span class="keywordflow">if</span>(uc[i] == 0x81 &amp;&amp; uc[i+1] == 0x40)
 <a name="l00083"></a>00083                         {
-<a name="l00084"></a>00084                                 c2[0] = c2[1] = replace;
+<a name="l00084"></a>00084                                 c2[i] = c2[i+1] = replace;
 <a name="l00085"></a>00085                         }
-<a name="l00086"></a>00086                         uc += 2;
-<a name="l00087"></a>00087                         c2 += 2;
-<a name="l00088"></a>00088                 }
-<a name="l00089"></a>00089         }
-<a name="l00090"></a>00090 
-<a name="l00091"></a>00091         <span class="keywordflow">return</span> ret;
-<a name="l00092"></a>00092 }
-<a name="l00093"></a>00093 
-<a name="l00094"></a>00094 }
+<a name="l00086"></a>00086                         i += 2;
+<a name="l00087"></a>00087                 }
+<a name="l00088"></a>00088         }
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090         <span class="keywordflow">return</span> ret;
+<a name="l00091"></a>00091 }
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093 }
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:20:49 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:24 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

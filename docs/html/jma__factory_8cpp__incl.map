@@ -1,10 +1,11 @@
-<area shape="rect" href="$jma__factory_8h.html" title="Definition of class JMA_Factory." alt="" coords="115,80,213,107">
-<area shape="rect" href="$jma__analyzer_8h.html" title="Definition of class JMA_Analyzer." alt="" coords="519,155,625,181">
-<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="237,80,357,107">
-<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="431,229,511,256">
-<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="535,229,620,256">
-<area shape="rect" href="$mecab_8h.html" title="mecab.h" alt="" coords="644,229,716,256">
-<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="100,229,193,256">
-<area shape="rect" href="$generic__array_8h.html" title="generic_array.h" alt="" coords="385,155,495,181">
-<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="17,155,108,181">
-<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="217,229,305,256">
+<area shape="rect" href="$jma__factory_8h.html" title="Definition of class JMA_Factory." alt="" coords="155,80,253,107">
+<area shape="rect" href="$jma__analyzer_8h.html" title="Definition of class JMA_Analyzer." alt="" coords="277,80,384,107">
+<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="656,80,776,107">
+<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="88,229,168,256">
+<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="353,155,439,181">
+<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="463,155,551,181">
+<area shape="rect" href="$mecab_8h.html" title="mecab.h" alt="" coords="52,155,124,181">
+<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="699,229,792,256">
+<area shape="rect" href="$generic__array_8h.html" title="generic_array.h" alt="" coords="192,229,301,256">
+<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="796,155,887,181">
+<area shape="rect" href="$kana__table_8h.html" title="Definition of class KanaTable." alt="" coords="625,155,721,181">

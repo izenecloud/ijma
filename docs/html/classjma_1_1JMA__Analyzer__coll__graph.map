@@ -1,6 +1,7 @@
 <area shape="rect" href="$classjma_1_1Analyzer.html" title="Analyzer executes the Japanese morphological analysis." alt="" coords="600,5,701,32">
-<area shape="rect" href="$classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,109,373,136">
-<area shape="rect" href="$classjma_1_1JMA__Knowledge.html" title="JMA_Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="577,268,724,295">
-<area shape="rect" href="$classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,357,375,384">
-<area shape="rect" href="$classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,408,428,435">
-<area shape="rect" href="$classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,459,379,485">
+<area shape="rect" href="$classjma_1_1KanaTable.html" title="KanaTable stores the mapping table between Japanese Hiragana and Katakana characters..." alt="" coords="263,63,375,89">
+<area shape="rect" href="$classjma_1_1JMA__Knowledge.html" title="JMA_Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="577,252,724,279">
+<area shape="rect" href="$classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,116,373,143">
+<area shape="rect" href="$classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,167,375,193">
+<area shape="rect" href="$classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,313,428,340">
+<area shape="rect" href="$classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,364,379,391">

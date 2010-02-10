@@ -41,61 +41,65 @@
 <a name="l00032"></a>00032 
 <a name="l00037"></a><a class="code" href="structjma_1_1Morpheme.html#d38b3abfd30497edf78c74b517a18c30">00037</a>     std::string <a class="code" href="structjma_1_1Morpheme.html#d38b3abfd30497edf78c74b517a18c30" title="the base form string value.">baseForm_</a>;
 <a name="l00038"></a>00038 
-<a name="l00044"></a>00044     <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme</a>();
-<a name="l00045"></a>00045 
-<a name="l00053"></a>00053         <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme</a>(std::string&amp; lexicon, <span class="keywordtype">int</span> posCode, std::string&amp; posStr, std::string&amp; baseForm);
-<a name="l00054"></a>00054 };
-<a name="l00055"></a>00055 
-<a name="l00057"></a><a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54">00057</a> <span class="keyword">typedef</span> std::vector&lt;Morpheme&gt; <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>;
-<a name="l00058"></a>00058 
-<a name="l00096"></a><a class="code" href="classjma_1_1Sentence.html">00096</a> <span class="keyword">class </span><a class="code" href="classjma_1_1Sentence.html" title="Sentence saves the results of Japanese morphological analysis.">Sentence</a>
-<a name="l00097"></a>00097 {
-<a name="l00098"></a>00098 <span class="keyword">public</span>:
-<a name="l00099"></a>00099 
-<a name="l00103"></a>00103         <a class="code" href="classjma_1_1Sentence.html#d94ecddc3fc97ce5f932594b1fba31bc" title="Default Constructor.">Sentence</a>();
-<a name="l00104"></a>00104 
-<a name="l00108"></a>00108         <a class="code" href="classjma_1_1Sentence.html#d94ecddc3fc97ce5f932594b1fba31bc" title="Default Constructor.">Sentence</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* pString);
-<a name="l00109"></a>00109 
-<a name="l00110"></a>00110 
-<a name="l00116"></a>00116     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#0fd2ce613ffd831c069f4848ae1b3921" title="Set the raw sentence string.">setString</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* pString);
-<a name="l00117"></a>00117 
-<a name="l00122"></a>00122     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#4862afad8be7fb0b3a535530866919c5" title="Get the raw sentence string.">getString</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
-<a name="l00123"></a>00123 
-<a name="l00128"></a>00128     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#de01e7b78bdd444c8aee9f7c8811f866" title="Get the number of candidates of morphological analysis result.">getListSize</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
-<a name="l00129"></a>00129 
-<a name="l00135"></a>00135     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#e172a5c08af01b9c86303527a9f2c862" title="Get the number of morphemes in candidate result nPos.">getCount</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
-<a name="l00136"></a>00136 
-<a name="l00143"></a>00143     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#4fccc2740041dcefce9da5c495d885b9" title="Get the string of morpheme nIdx in candidate result nPos.">getLexicon</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
-<a name="l00144"></a>00144 
-<a name="l00151"></a>00151     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#e15a28b2a9aaad092d1f347b40d77be6" title="Get the POS index code of morpheme nIdx in candidate result nPos.">getPOS</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
-<a name="l00152"></a>00152 
-<a name="l00159"></a>00159     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#bc976e1653bdf36828773c44848c052c" title="Get the POS string of morpheme nIdx in candidate result nPos.">getStrPOS</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
-<a name="l00160"></a>00160 
-<a name="l00168"></a>00168     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#7f4bacbe2a91f490473103a376a875cc" title="Get the base form string of morpheme nIdx in candidate result nPos.">getBaseForm</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
+<a name="l00043"></a><a class="code" href="structjma_1_1Morpheme.html#ca86c5696b1063975f48ecd860a5c4ab">00043</a>     std::string <a class="code" href="structjma_1_1Morpheme.html#ca86c5696b1063975f48ecd860a5c4ab" title="the reading form string value.">readForm_</a>;
+<a name="l00044"></a>00044 
+<a name="l00050"></a>00050     <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme</a>();
+<a name="l00051"></a>00051 
+<a name="l00060"></a>00060         <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme</a>(<span class="keyword">const</span> std::string&amp; lexicon, <span class="keywordtype">int</span> posCode, <span class="keyword">const</span> std::string&amp; posStr, <span class="keyword">const</span> std::string&amp; baseForm, <span class="keyword">const</span> std::string&amp; readForm);
+<a name="l00061"></a>00061 };
+<a name="l00062"></a>00062 
+<a name="l00064"></a><a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54">00064</a> <span class="keyword">typedef</span> std::vector&lt;Morpheme&gt; <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>;
+<a name="l00065"></a>00065 
+<a name="l00105"></a><a class="code" href="classjma_1_1Sentence.html">00105</a> <span class="keyword">class </span><a class="code" href="classjma_1_1Sentence.html" title="Sentence saves the results of Japanese morphological analysis.">Sentence</a>
+<a name="l00106"></a>00106 {
+<a name="l00107"></a>00107 <span class="keyword">public</span>:
+<a name="l00108"></a>00108 
+<a name="l00112"></a>00112         <a class="code" href="classjma_1_1Sentence.html#d94ecddc3fc97ce5f932594b1fba31bc" title="Default Constructor.">Sentence</a>();
+<a name="l00113"></a>00113 
+<a name="l00117"></a>00117         <a class="code" href="classjma_1_1Sentence.html#d94ecddc3fc97ce5f932594b1fba31bc" title="Default Constructor.">Sentence</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* pString);
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119 
+<a name="l00125"></a>00125     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#0fd2ce613ffd831c069f4848ae1b3921" title="Set the raw sentence string.">setString</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* pString);
+<a name="l00126"></a>00126 
+<a name="l00131"></a>00131     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#4862afad8be7fb0b3a535530866919c5" title="Get the raw sentence string.">getString</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
+<a name="l00132"></a>00132 
+<a name="l00137"></a>00137     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#de01e7b78bdd444c8aee9f7c8811f866" title="Get the number of candidates of morphological analysis result.">getListSize</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
+<a name="l00138"></a>00138 
+<a name="l00144"></a>00144     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#e172a5c08af01b9c86303527a9f2c862" title="Get the number of morphemes in candidate result nPos.">getCount</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
+<a name="l00145"></a>00145 
+<a name="l00152"></a>00152     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#4fccc2740041dcefce9da5c495d885b9" title="Get the string of morpheme nIdx in candidate result nPos.">getLexicon</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
+<a name="l00153"></a>00153 
+<a name="l00160"></a>00160     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#e15a28b2a9aaad092d1f347b40d77be6" title="Get the POS index code of morpheme nIdx in candidate result nPos.">getPOS</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
+<a name="l00161"></a>00161 
+<a name="l00168"></a>00168     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#bc976e1653bdf36828773c44848c052c" title="Get the POS string of morpheme nIdx in candidate result nPos.">getStrPOS</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
 <a name="l00169"></a>00169 
-<a name="l00175"></a>00175     <span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>* <a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245" title="Get the MorphemeList of candidate result nPos.">getMorphemeList</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
-<a name="l00176"></a>00176 
-<a name="l00182"></a>00182     <span class="keywordtype">double</span> <a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800" title="Get the score of candidate result nPos.">getScore</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
-<a name="l00183"></a>00183 
-<a name="l00189"></a>00189     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0" title="Set the score of candidate result nPos.">setScore</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">double</span> nScore);
-<a name="l00190"></a>00190 
-<a name="l00195"></a>00195     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9" title="Get the index of the candidate result, which has the highest score.">getOneBestIndex</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
-<a name="l00196"></a>00196 
-<a name="l00202"></a>00202     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08" title="Add a candidate result of morphological analysis.">addList</a>(<span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>&amp; morphemeList, <span class="keywordtype">double</span> score = 0.0);
-<a name="l00203"></a>00203 
-<a name="l00204"></a>00204 <span class="keyword">private</span>:
-<a name="l00206"></a>00206     std::string raw_;
-<a name="l00207"></a>00207 
-<a name="l00209"></a>00209     std::vector&lt;MorphemeList&gt; candidates_;
-<a name="l00210"></a>00210 
-<a name="l00212"></a>00212     std::vector&lt;double&gt; scores_;
-<a name="l00213"></a>00213 };
+<a name="l00177"></a>00177     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#7f4bacbe2a91f490473103a376a875cc" title="Get the base form string of morpheme nIdx in candidate result nPos.">getBaseForm</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
+<a name="l00178"></a>00178 
+<a name="l00186"></a>00186     <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#9e817f445d9fb8b621ee55eda8607b0e" title="Get the reading form string of morpheme nIdx in candidate result nPos.">getReadForm</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx) <span class="keyword">const</span>;
+<a name="l00187"></a>00187 
+<a name="l00193"></a>00193     <span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>* <a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245" title="Get the MorphemeList of candidate result nPos.">getMorphemeList</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
+<a name="l00194"></a>00194 
+<a name="l00200"></a>00200     <span class="keywordtype">double</span> <a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800" title="Get the score of candidate result nPos.">getScore</a>(<span class="keywordtype">int</span> nPos) <span class="keyword">const</span>;
+<a name="l00201"></a>00201 
+<a name="l00207"></a>00207     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0" title="Set the score of candidate result nPos.">setScore</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">double</span> nScore);
+<a name="l00208"></a>00208 
+<a name="l00213"></a>00213     <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9" title="Get the index of the candidate result, which has the highest score.">getOneBestIndex</a>(<span class="keywordtype">void</span>) <span class="keyword">const</span>;
 <a name="l00214"></a>00214 
-<a name="l00215"></a>00215 } <span class="comment">// namespace jma</span>
-<a name="l00216"></a>00216 
-<a name="l00217"></a>00217 <span class="preprocessor">#endif // JMA_SENTENCE_H</span>
+<a name="l00220"></a>00220     <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08" title="Add a candidate result of morphological analysis.">addList</a>(<span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>&amp; morphemeList, <span class="keywordtype">double</span> score = 0.0);
+<a name="l00221"></a>00221 
+<a name="l00222"></a>00222 <span class="keyword">private</span>:
+<a name="l00224"></a>00224     std::string raw_;
+<a name="l00225"></a>00225 
+<a name="l00227"></a>00227     std::vector&lt;MorphemeList&gt; candidates_;
+<a name="l00228"></a>00228 
+<a name="l00230"></a>00230     std::vector&lt;double&gt; scores_;
+<a name="l00231"></a>00231 };
+<a name="l00232"></a>00232 
+<a name="l00233"></a>00233 } <span class="comment">// namespace jma</span>
+<a name="l00234"></a>00234 
+<a name="l00235"></a>00235 <span class="preprocessor">#endif // JMA_SENTENCE_H</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:20:47 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:23 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

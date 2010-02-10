@@ -1,3 +1,5 @@
-<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="5,80,85,107">
-<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="109,80,195,107">
-<area shape="rect" href="$mecab_8h.html" title="mecab.h" alt="" coords="269,80,341,107">
+<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="5,155,85,181">
+<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="163,80,248,107">
+<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="276,80,364,107">
+<area shape="rect" href="$mecab_8h.html" title="mecab.h" alt="" coords="549,80,621,107">
+<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="331,155,424,181">

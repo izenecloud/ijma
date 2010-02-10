@@ -34,8 +34,8 @@
 <a name="l00019"></a>00019 {
 <a name="l00020"></a>00020 }
 <a name="l00021"></a>00021 
-<a name="l00022"></a><a class="code" href="structjma_1_1Morpheme.html#b4d982e6d0b5b2500de4f209a84a5741">00022</a> <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme::Morpheme</a>(std::string&amp; lexicon, <span class="keywordtype">int</span> posCode, std::string&amp; posStr, std::string&amp; baseForm)
-<a name="l00023"></a>00023         : lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm)
+<a name="l00022"></a><a class="code" href="structjma_1_1Morpheme.html#311d5545ba1b8fe6474b32c9b75a7ebc">00022</a> <a class="code" href="structjma_1_1Morpheme.html#b2a77080894ddd14cedd722f942bfeeb" title="Constructor.">Morpheme::Morpheme</a>(<span class="keyword">const</span> std::string&amp; lexicon, <span class="keywordtype">int</span> posCode, <span class="keyword">const</span> std::string&amp; posStr, <span class="keyword">const</span> std::string&amp; baseForm, <span class="keyword">const</span> std::string&amp; readForm)
+<a name="l00023"></a>00023         : lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm), readForm_(readForm)
 <a name="l00024"></a>00024 {
 <a name="l00025"></a>00025 
 <a name="l00026"></a>00026 }
@@ -91,40 +91,45 @@
 <a name="l00076"></a>00076     <span class="keywordflow">return</span> candidates_[nPos][nIdx].baseForm_.c_str();
 <a name="l00077"></a>00077 }
 <a name="l00078"></a>00078 
-<a name="l00079"></a><a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245">00079</a> <span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>* <a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245" title="Get the MorphemeList of candidate result nPos.">Sentence::getMorphemeList</a>(<span class="keywordtype">int</span> nPos)<span class="keyword"> const</span>
+<a name="l00079"></a><a class="code" href="classjma_1_1Sentence.html#9e817f445d9fb8b621ee55eda8607b0e">00079</a> <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classjma_1_1Sentence.html#9e817f445d9fb8b621ee55eda8607b0e" title="Get the reading form string of morpheme nIdx in candidate result nPos.">Sentence::getReadForm</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">int</span> nIdx)<span class="keyword"> const</span>
 <a name="l00080"></a>00080 <span class="keyword"></span>{
-<a name="l00081"></a>00081         <span class="keywordflow">return</span> &amp;candidates_[nPos];
+<a name="l00081"></a>00081     <span class="keywordflow">return</span> candidates_[nPos][nIdx].readForm_.c_str();
 <a name="l00082"></a>00082 }
 <a name="l00083"></a>00083 
-<a name="l00084"></a><a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800">00084</a> <span class="keywordtype">double</span> <a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800" title="Get the score of candidate result nPos.">Sentence::getScore</a>(<span class="keywordtype">int</span> nPos)<span class="keyword"> const</span>
+<a name="l00084"></a><a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245">00084</a> <span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>* <a class="code" href="classjma_1_1Sentence.html#6984e3efe19bc7ebdc1d332548208245" title="Get the MorphemeList of candidate result nPos.">Sentence::getMorphemeList</a>(<span class="keywordtype">int</span> nPos)<span class="keyword"> const</span>
 <a name="l00085"></a>00085 <span class="keyword"></span>{
-<a name="l00086"></a>00086     <span class="keywordflow">return</span> scores_[nPos];
+<a name="l00086"></a>00086         <span class="keywordflow">return</span> &amp;candidates_[nPos];
 <a name="l00087"></a>00087 }
 <a name="l00088"></a>00088 
-<a name="l00089"></a><a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0">00089</a> <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0" title="Set the score of candidate result nPos.">Sentence::setScore</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">double</span> nScore)
-<a name="l00090"></a>00090 {
-<a name="l00091"></a>00091         scores_[nPos] = nScore;
+<a name="l00089"></a><a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800">00089</a> <span class="keywordtype">double</span> <a class="code" href="classjma_1_1Sentence.html#a0a95c4afc6f0cd5289a1cdb56cfd800" title="Get the score of candidate result nPos.">Sentence::getScore</a>(<span class="keywordtype">int</span> nPos)<span class="keyword"> const</span>
+<a name="l00090"></a>00090 <span class="keyword"></span>{
+<a name="l00091"></a>00091     <span class="keywordflow">return</span> scores_[nPos];
 <a name="l00092"></a>00092 }
 <a name="l00093"></a>00093 
-<a name="l00094"></a><a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9">00094</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9" title="Get the index of the candidate result, which has the highest score.">Sentence::getOneBestIndex</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span>
-<a name="l00095"></a>00095 <span class="keyword"></span>{
-<a name="l00096"></a>00096     <span class="keywordflow">if</span>(scores_.empty())
-<a name="l00097"></a>00097         <span class="keywordflow">return</span> -1;
+<a name="l00094"></a><a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0">00094</a> <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#5ddf7a0d1a52be029dcc298a0c75f8a0" title="Set the score of candidate result nPos.">Sentence::setScore</a>(<span class="keywordtype">int</span> nPos, <span class="keywordtype">double</span> nScore)
+<a name="l00095"></a>00095 {
+<a name="l00096"></a>00096         scores_[nPos] = nScore;
+<a name="l00097"></a>00097 }
 <a name="l00098"></a>00098 
-<a name="l00099"></a>00099     assert(scores_.size() &gt; 0 &amp;&amp; scores_.size() == candidates_.size());
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101     <span class="keywordflow">return</span> std::max_element(scores_.begin(), scores_.end()) - scores_.begin();
-<a name="l00102"></a>00102 }
+<a name="l00099"></a><a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9">00099</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1Sentence.html#ba988d341b198d47b75d93d93237e5d9" title="Get the index of the candidate result, which has the highest score.">Sentence::getOneBestIndex</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span>
+<a name="l00100"></a>00100 <span class="keyword"></span>{
+<a name="l00101"></a>00101     <span class="keywordflow">if</span>(scores_.empty())
+<a name="l00102"></a>00102         <span class="keywordflow">return</span> -1;
 <a name="l00103"></a>00103 
-<a name="l00104"></a><a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08">00104</a> <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08" title="Add a candidate result of morphological analysis.">Sentence::addList</a>(<span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>&amp; morphemeList, <span class="keywordtype">double</span> score)
-<a name="l00105"></a>00105 {
-<a name="l00106"></a>00106     candidates_.push_back(morphemeList);
-<a name="l00107"></a>00107     scores_.push_back(score);
-<a name="l00108"></a>00108 }
-<a name="l00109"></a>00109 
-<a name="l00110"></a>00110 } <span class="comment">// namespace jma</span>
+<a name="l00104"></a>00104     assert(scores_.size() &gt; 0 &amp;&amp; scores_.size() == candidates_.size());
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106     <span class="keywordflow">return</span> std::max_element(scores_.begin(), scores_.end()) - scores_.begin();
+<a name="l00107"></a>00107 }
+<a name="l00108"></a>00108 
+<a name="l00109"></a><a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08">00109</a> <span class="keywordtype">void</span> <a class="code" href="classjma_1_1Sentence.html#3dee10558f305324be633d54fe5f3e08" title="Add a candidate result of morphological analysis.">Sentence::addList</a>(<span class="keyword">const</span> <a class="code" href="namespacejma.html#ff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a>&amp; morphemeList, <span class="keywordtype">double</span> score)
+<a name="l00110"></a>00110 {
+<a name="l00111"></a>00111     candidates_.push_back(morphemeList);
+<a name="l00112"></a>00112     scores_.push_back(score);
+<a name="l00113"></a>00113 }
+<a name="l00114"></a>00114 
+<a name="l00115"></a>00115 } <span class="comment">// namespace jma</span>
 </pre></div></div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:20:49 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:24 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

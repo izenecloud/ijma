@@ -42,7 +42,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <div class="dynsection">
 <p><center><img src="classjma_1_1JMA__Knowledge__coll__graph.png" border="0" usemap="#jma_1_1JMA__Knowledge__coll__map" alt="Collaboration graph"></center>
 <map name="jma_1_1JMA__Knowledge__coll__map">
-<area shape="rect" href="classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,96,375,123"><area shape="rect" href="classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,147,428,173"><area shape="rect" href="classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,197,373,224"><area shape="rect" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,248,379,275"></map>
+<area shape="rect" href="classjma_1_1Knowledge.html" title="Knowledge manages the linguistic information for Japanese morphological analysis..." alt="" coords="263,101,375,128"><area shape="rect" href="classjma_1_1KanaTable.html" title="KanaTable stores the mapping table between Japanese Hiragana and Katakana characters..." alt="" coords="263,152,375,179"><area shape="rect" href="classjma_1_1GenericArray.html" title="jma::GenericArray\&lt; unsigned int \&gt;" alt="" coords="209,203,428,229"><area shape="rect" href="classjma_1_1POSTable.html" title="POSTable stores the table of part&#45;of&#45;speech tags, each tag includes a string value..." alt="" coords="264,253,373,280"><area shape="rect" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information." alt="" coords="259,304,379,331"></map>
 <center><font size="2">[<a href="graph_legend.html">legend</a>]</font></center></div>
 
 <p>
@@ -74,15 +74,18 @@ int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const <a class="el" href="classjma_1_1POSTable.html">POSTable</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#dfc1b9fd54cc9a023197094a41f1350b">getPOSTable</a> () const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the part-of-speech tags table.  <a href="#dfc1b9fd54cc9a023197094a41f1350b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">const <a class="el" href="classjma_1_1KanaTable.html">KanaTable</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#f3bf76af06e7cb12bcabd2edf817a220">getKanaTable</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the mapping table to convert between Hiragana and Katakana characters.  <a href="#f3bf76af06e7cb12bcabd2edf817a220"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#4069c3086d25e504c67f4df9b20e51b2">isStopWord</a> (const string &amp;word) const </td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether the specific word is stop word.  <a href="#4069c3086d25e504c67f4df9b20e51b2"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#b10a63d01d68bd5c2a8ab7e9e6c9ae69">getPOSCatNum</a> () const </td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get POS category number.  <a href="#b10a63d01d68bd5c2a8ab7e9e6c9ae69"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#ae04fb2aba2960d076970789e2b04ce0">getBaseFormOffset</a> () const </td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the feature offset of base form.  <a href="#ae04fb2aba2960d076970789e2b04ce0"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the feature offset of base form indexed from zero.  <a href="#ae04fb2aba2960d076970789e2b04ce0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#02290b84340a0d6cff135b5b05e7afc0">getReadFormOffset</a> () const </td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the feature offset of reading form indexed from zero.  <a href="#02290b84340a0d6cff135b5b05e7afc0"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#c018aa7eec8ceab702543bc682be1fd4">isSentenceSeparator</a> (const char *p)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check whether is a seperator of sentence.  <a href="#c018aa7eec8ceab702543bc682be1fd4"></a><br></td></tr>
@@ -96,13 +99,13 @@ int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Load the sentence separator configuration file, which is in text format.  <a href="#3114b451d10b77e865277c0ff08c44e5"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#16e445c9916122e404becf79c19f53a8">onEncodeTypeChange</a> (<a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">EncodeType</a> type)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">virtual void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#e254f42e6622691bf3c3e560daf13345">onEncodeTypeChange</a> (<a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">EncodeType</a> type)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Invoked when the encode type is changed (except for the initialization).  <a href="#16e445c9916122e404becf79c19f53a8"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Invoked when the encode type is changed (except for the initialization).  <a href="#e254f42e6622691bf3c3e560daf13345"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <a class="el" href="classjma_1_1JMA__Knowledge.html" title="JMA_Knowledge manages the linguistic information for Japanese morphological analysis...">JMA_Knowledge</a> manages the linguistic information for Japanese morphological analysis. 
-<p>Definition at line <a class="el" href="jma__knowledge_8h-source.html#l00039">39</a> of file <a class="el" href="jma__knowledge_8h-source.html">jma_knowledge.h</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8h-source.html#l00040">40</a> of file <a class="el" href="jma__knowledge_8h-source.html">jma_knowledge.h</a>.</p>
 <hr><h2>Member Typedef Documentation</h2>
 <a class="anchor" name="d1f08f4bc103da228569aedecb92c14c"></a><!-- doxytag: member="jma::JMA_Knowledge::SepArray" ref="d1f08f4bc103da228569aedecb92c14c" args="" -->
 <div class="memitem">
@@ -117,7 +120,7 @@ int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 
 <p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8h-source.html#l00042">42</a> of file <a class="el" href="jma__knowledge_8h-source.html">jma_knowledge.h</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8h-source.html#l00043">43</a> of file <a class="el" href="jma__knowledge_8h-source.html">jma_knowledge.h</a>.</p>
 
 </div>
 </div><p>
@@ -141,9 +144,9 @@ int &gt;&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 Constructor. 
 <p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00094">94</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00104">104</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
-<p>References <a class="el" href="knowledge_8cpp-source.html#l00061">jma::Knowledge::getEncodeType()</a>, and <a class="el" href="jma__knowledge_8cpp-source.html#l00718">onEncodeTypeChange()</a>.</p>
+<p>References <a class="el" href="knowledge_8cpp-source.html#l00061">jma::Knowledge::getEncodeType()</a>, and <a class="el" href="classjma_1_1JMA__Knowledge.html#e254f42e6622691bf3c3e560daf13345">onEncodeTypeChange()</a>.</p>
 
 </div>
 </div><p>
@@ -166,7 +169,7 @@ Constructor.
 Destructor. 
 <p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00101">101</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00111">111</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div><p>
@@ -197,7 +200,7 @@ Add the sentence separator, the duplicated one would be ignored (return false).
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the val not exists in the current sentence separators and add successfully </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00746">746</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00758">758</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="generic__array_8h-source.html#l00088">jma::GenericArray&lt; ArrayType &gt;::insert()</a>.</p>
 
@@ -223,11 +226,11 @@ Create tagger by loading dictionary files.
 <p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>pointer to tagger. 0 for fail, otherwise the life cycle of the tagger should be maintained by the caller. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00242">242</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00252">252</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="knowledge_8h-source.html#l00120">jma::Knowledge::systemDictPath_</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00385">loadDict()</a>, <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00090">jma::JMA_Analyzer::setKnowledge()</a>.</p>
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00370">loadDict()</a>, <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00133">jma::JMA_Analyzer::setKnowledge()</a>.</p>
 
 </div>
 </div><p>
@@ -270,7 +273,7 @@ Encode the system dictionary files from text to binary format.
 
 <p>Implements <a class="el" href="classjma_1_1Knowledge.html#57d0580b29b351e325760befc53e4018">jma::Knowledge</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00458">458</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00454">454</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="knowledge_8h-source.html#l00126">jma::Knowledge::ENCODE_TYPE_STR_</a>, <a class="el" href="knowledge_8cpp-source.html#l00061">jma::Knowledge::getEncodeType()</a>, and <a class="el" href="dictionary__compiler_8cpp-source.html#l00159">mecab_dict_index()</a>.</p>
 
@@ -292,13 +295,11 @@ Encode the system dictionary files from text to binary format.
 <div class="memdoc">
 
 <p>
-Get the feature offset of base form. 
+Get the feature offset of base form indexed from zero. 
 <p>
 For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of base form "見る" would be 6. <dl class="return" compact><dt><b>Returns:</b></dt><dd>POS category number. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00554">554</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
-
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00090">jma::JMA_Analyzer::setKnowledge()</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00561">561</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div><p>
@@ -322,18 +323,18 @@ Get the current <a class="el" href="classjma_1_1JMA__CType.html" title="JMA_CTyp
 <p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>the current <a class="el" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information.">JMA_CType</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00713">713</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00725">725</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00114">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00273">jma::JMA_Analyzer::runWithStream()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00225">jma::JMA_Analyzer::runWithString()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00361">jma::JMA_Analyzer::splitSentence()</a>.</p>
+<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00502">jma::JMA_Analyzer::convertToHiragana()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00522">jma::JMA_Analyzer::convertToKatakana()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00155">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00285">jma::JMA_Analyzer::runWithStream()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00252">jma::JMA_Analyzer::runWithString()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00339">jma::JMA_Analyzer::splitSentence()</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="b10a63d01d68bd5c2a8ab7e9e6c9ae69"></a><!-- doxytag: member="jma::JMA_Knowledge::getPOSCatNum" ref="b10a63d01d68bd5c2a8ab7e9e6c9ae69" args="() const " -->
+<a class="anchor" name="f3bf76af06e7cb12bcabd2edf817a220"></a><!-- doxytag: member="jma::JMA_Knowledge::getKanaTable" ref="f3bf76af06e7cb12bcabd2edf817a220" args="() const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int jma::JMA_Knowledge::getPOSCatNum           </td>
+          <td class="memname">const <a class="el" href="classjma_1_1KanaTable.html">KanaTable</a> * jma::JMA_Knowledge::getKanaTable           </td>
           <td>(</td>
           <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
@@ -344,13 +345,13 @@ Get the current <a class="el" href="classjma_1_1JMA__CType.html" title="JMA_CTyp
 <div class="memdoc">
 
 <p>
-Get POS category number. 
+Get the mapping table to convert between Hiragana and Katakana characters. 
 <p>
-For example, if dictionary file contains POS like "名詞,固有名詞,人名,名", the POS category number would be 4. <dl class="return" compact><dt><b>Returns:</b></dt><dd>POS category number. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>pointer to the table instance. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00549">549</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00280">280</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00090">jma::JMA_Analyzer::setKnowledge()</a>.</p>
+<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00133">jma::JMA_Analyzer::setKnowledge()</a>.</p>
 
 </div>
 </div><p>
@@ -374,9 +375,33 @@ Get the part-of-speech tags table.
 <p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>pointer to the table instance. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00265">265</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00275">275</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00090">jma::JMA_Analyzer::setKnowledge()</a>.</p>
+<p>Referenced by <a class="el" href="jma__analyzer_8cpp-source.html#l00133">jma::JMA_Analyzer::setKnowledge()</a>.</p>
+
+</div>
+</div><p>
+<a class="anchor" name="02290b84340a0d6cff135b5b05e7afc0"></a><!-- doxytag: member="jma::JMA_Knowledge::getReadFormOffset" ref="02290b84340a0d6cff135b5b05e7afc0" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int jma::JMA_Knowledge::getReadFormOffset           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Get the feature offset of reading form indexed from zero. 
+<p>
+For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of reading form "ミ" would be 7. <dl class="return" compact><dt><b>Returns:</b></dt><dd>POS category number. </dd></dl>
+
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00566">566</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div><p>
@@ -406,11 +431,11 @@ Check whether is a seperator of sentence.
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true for separator, false for non separator. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00724">724</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00736">736</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="generic__array_8h-source.html#l00132">jma::GenericArray&lt; ArrayType &gt;::contains()</a>, and <a class="el" href="classjma_1_1JMA__CType.html#0b1e9b97251f7f390178f3e7badce59f">jma::JMA_CType::getByteCount()</a>.</p>
 
-<p>Referenced by <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00361">jma::JMA_Analyzer::splitSentence()</a>.</p>
+<p>Referenced by <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00339">jma::JMA_Analyzer::splitSentence()</a>.</p>
 
 </div>
 </div><p>
@@ -440,11 +465,11 @@ Whether the specific word is stop word.
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>whether the word is in the stop word list </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00544">544</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00556">556</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="classjma_1_1JMA__CType.html#81fa180bc015fbbf9f7038c7a09469eb">jma::JMA_CType::isSpace()</a>.</p>
 
-<p>Referenced by <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00114">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00273">jma::JMA_Analyzer::runWithStream()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00225">jma::JMA_Analyzer::runWithString()</a>.</p>
+<p>Referenced by <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00155">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp-source.html#l00285">jma::JMA_Analyzer::runWithStream()</a>, and <a class="el" href="jma__analyzer_8cpp-source.html#l00252">jma::JMA_Analyzer::runWithString()</a>.</p>
 
 </div>
 </div><p>
@@ -472,9 +497,9 @@ if any user dictionary file need to be loaded, the file name should be added by 
 
 <p>Implements <a class="el" href="classjma_1_1Knowledge.html#29f458da5f0c2621652326730dcaba95">jma::Knowledge</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00385">385</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00370">370</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
-<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00242">createTagger()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00086">jma::getMapValue()</a>, and <a class="el" href="knowledge_8h-source.html#l00120">jma::Knowledge::systemDictPath_</a>.</p>
+<p>References <a class="el" href="jma__knowledge_8cpp-source.html#l00252">createTagger()</a>, <a class="el" href="knowledge_8cpp-source.html#l00061">jma::Knowledge::getEncodeType()</a>, <a class="el" href="jma__knowledge_8cpp-source.html#l00096">jma::getMapValue()</a>, <a class="el" href="pos__table_8cpp-source.html#l00160">jma::POSTable::loadCombineRule()</a>, <a class="el" href="kana__table_8cpp-source.html#l00029">jma::KanaTable::loadConfig()</a>, <a class="el" href="pos__table_8cpp-source.html#l00032">jma::POSTable::loadConfig()</a>, and <a class="el" href="knowledge_8h-source.html#l00120">jma::Knowledge::systemDictPath_</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__analyzer_8cpp-source.html#l00028">main()</a>.</p>
 
@@ -508,7 +533,7 @@ This file each separator character(only one character) per line. <dl compact><dt
 
 <p>Implements <a class="el" href="classjma_1_1Knowledge.html#b619012342b791f37190fd50a17e450b">jma::Knowledge</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00763">763</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00775">775</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="classjma_1_1JMA__CType.html#0b1e9b97251f7f390178f3e7badce59f">jma::JMA_CType::getByteCount()</a>, and <a class="el" href="generic__array_8h-source.html#l00088">jma::GenericArray&lt; ArrayType &gt;::insert()</a>.</p>
 
@@ -544,18 +569,18 @@ The words in this file are ignored in the morphological analysis result. <dl com
 
 <p>Implements <a class="el" href="classjma_1_1Knowledge.html#4ab11e83ef3ee437423de635bebeac35">jma::Knowledge</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00437">437</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00433">433</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__knowledge_8cpp-source.html#l00028">main()</a>.</p>
 
 </div>
 </div><p>
-<a class="anchor" name="16e445c9916122e404becf79c19f53a8"></a><!-- doxytag: member="jma::JMA_Knowledge::onEncodeTypeChange" ref="16e445c9916122e404becf79c19f53a8" args="(EncodeType type)" -->
+<a class="anchor" name="e254f42e6622691bf3c3e560daf13345"></a><!-- doxytag: member="jma::JMA_Knowledge::onEncodeTypeChange" ref="e254f42e6622691bf3c3e560daf13345" args="(EncodeType type)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void jma::JMA_Knowledge::onEncodeTypeChange           </td>
+          <td class="memname">virtual void jma::JMA_Knowledge::onEncodeTypeChange           </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classjma_1_1Knowledge.html#996079692b66e0bec79613ffe16b4133">EncodeType</a>&nbsp;</td>
           <td class="paramname"> <em>type</em>          </td>
@@ -575,20 +600,14 @@ Invoked when the encode type is changed (except for the initialization).
   </table>
 </dl>
 
-<p>Implements <a class="el" href="classjma_1_1Knowledge.html#a6cbe415103763d9e78abd92ec6bc34c">jma::Knowledge</a>.</p>
-
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp-source.html#l00718">718</a> of file <a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a>.</p>
-
-<p>References <a class="el" href="jma__ctype_8cpp-source.html#l00020">jma::JMA_CType::instance()</a>.</p>
-
-<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00094">JMA_Knowledge()</a>.</p>
+<p>Referenced by <a class="el" href="jma__knowledge_8cpp-source.html#l00104">JMA_Knowledge()</a>.</p>
 
 </div>
 </div><p>
 <hr>The documentation for this class was generated from the following files:<ul>
 <li>source/include/<a class="el" href="jma__knowledge_8h-source.html">jma_knowledge.h</a><li>source/src/<a class="el" href="jma__knowledge_8cpp-source.html">jma_knowledge.cpp</a></ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Wed Sep 30 17:21:01 2009 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Feb 10 18:03:32 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>
