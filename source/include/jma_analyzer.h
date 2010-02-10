@@ -26,6 +26,7 @@ namespace jma
 
 class JMA_Knowledge;
 class JMA_CType;
+class KanaTable;
 
 /**
  * JMA_Analyzer executes the Japanese morphological analysis based on conditional random field.
@@ -82,6 +83,20 @@ public:
      * \attention the original elements in \e sentences would not be removed, and the splited sentences are appended into \e sentences.
      */
     virtual void splitSentence(const char* paragraph, std::vector<Sentence>& sentences);
+
+    /**
+     * Convert all Japanese Katakana characters to their Hiragana equivalents, other characters are kept as original.
+     * \param str string to convert from
+     * \return the conversion result
+     */
+    virtual std::string convertToHiragana(const char* str) const;
+
+    /**
+     * Convert all Japanese Hiragana characters to their Katakana equivalents, other characters are kept as original.
+     * \param str string to convert from
+     * \return the conversion result
+     */
+    virtual std::string convertToKatakana(const char* str) const;
 
 private:
 	/**
@@ -151,6 +166,9 @@ private:
 
     /** POS table for POS string and index code */
     const POSTable* posTable_;
+
+    /** mapping table between Hiragana and Katakana characters */
+    const KanaTable* kanaTable_;
 };
 
 } // namespace jma

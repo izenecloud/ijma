@@ -191,7 +191,6 @@ bool POSTable::loadCombineRule(const char* fileName)
         iss.str(line);
         iss >> pos1 >> pos2 >> target;
 
-        // TODO is check iss OK?
         if(! iss)
         {
             cerr << "invalid format in rule: " << line << endl;

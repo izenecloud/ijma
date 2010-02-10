@@ -62,6 +62,9 @@ const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 /** POS combination rule file name */
 const char* POS_COMBINE_DEF_FILE = "pos-combine.def";
 
+/** Map file name to convert between Hiragana and Katakana characters */
+const char* KANA_MAP_DEF_FILE = "kana-map.def";
+
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
@@ -274,6 +277,11 @@ const POSTable* JMA_Knowledge::getPOSTable() const
     return &posTable_;
 }
 
+const KanaTable* JMA_Knowledge::getKanaTable() const
+{
+    return &kanaTable_;
+}
+
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
   std::ifstream ifs(filename);
   if(!ifs)
@@ -381,8 +389,16 @@ int JMA_Knowledge::loadDict()
         cerr << "warning: as " << posCombineName << " not exists, no rules is defined to combine tokens with specific POS tags" << endl;
     }
 
+    // file "kana-map.def"
+    string kanaFileName = createFilePath(systemDictPath_.c_str(), KANA_MAP_DEF_FILE);
+    // load kana conversion map
+    if(! kanaTable_.loadConfig(kanaFileName.c_str(), configEncodeType_, getEncodeType()))
+    {
+        cerr << "warning: as fails to load " << kanaFileName << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
+    }
+
     if(! loadPOSFeatureMapping() )
-    	cerr<< "Fail to load POS - Feature Mapping, User dictionary can't work"<<endl;
+    	cerr << "Fail to load POS - Feature Mapping, User dictionary can't work" << endl;
     else
     	defaultFeature_ = getMapValue(posFeatureMap_, defaultPOS_);
 
@@ -524,6 +540,14 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     if(copyFile(src.c_str(), dest.c_str()) == false)
     {
         cout << POS_COMBINE_DEF_FILE << " is not found in " << txtDirPath << ", no rule is defined to combine tokens with specific POS." << endl;
+    }
+
+    // if kana-map.def exists, copy it to the destination directory
+    src = createFilePath(txtDirPath, KANA_MAP_DEF_FILE);
+    dest = createFilePath(binDirPath, KANA_MAP_DEF_FILE);
+    if(copyFile(src.c_str(), dest.c_str()) == false)
+    {
+        cout << KANA_MAP_DEF_FILE << " is not found in " << txtDirPath << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
     }
 
     return 1;

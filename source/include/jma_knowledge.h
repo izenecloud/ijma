@@ -13,6 +13,7 @@
 #include "generic_array.h"
 #include "jma_ctype.h"
 #include "pos_table.h"
+#include "kana_table.h"
 
 #include <string>
 #include <set>
@@ -87,6 +88,12 @@ public:
      * \return pointer to the table instance.
      */
     const POSTable* getPOSTable() const;
+
+    /**
+     * Get the mapping table to convert between Hiragana and Katakana characters.
+     * \return pointer to the table instance.
+     */
+    const KanaTable* getKanaTable() const;
 
     /**
 	 * Whether the specific word is stop word
@@ -292,6 +299,9 @@ private:
      * It is set by "config_charset" item in "dicrc" file.
      */
     EncodeType configEncodeType_;
+
+    /** mapping table between Hiragana and Katakana characters */
+    KanaTable kanaTable_;
 };
 
 } // namespace jma

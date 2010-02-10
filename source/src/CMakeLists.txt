@@ -13,6 +13,7 @@ set(objs_jma
 ./tokenizer
 ./pos_table
 ./iconv_utils
+./kana_table
 )
 
 # include modules

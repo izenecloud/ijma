@@ -123,6 +123,20 @@ public:
     virtual void splitSentence(const char* paragraph, std::vector<Sentence>& sentences) = 0;
 
     /**
+     * Convert all Japanese Katakana characters to their Hiragana equivalents, other characters are kept as original.
+     * \param str string to convert from
+     * \return the conversion result
+     */
+    virtual std::string convertToHiragana(const char* str) const = 0;
+
+    /**
+     * Convert all Japanese Hiragana characters to their Katakana equivalents, other characters are kept as original.
+     * \param str string to convert from
+     * \return the conversion result
+     */
+    virtual std::string convertToKatakana(const char* str) const = 0;
+
+    /**
      * Option type for analysis.
      */
     enum OptionType
@@ -197,6 +211,32 @@ public:
          * Default value: 1
          */
         OPTION_TYPE_COMBINE_NOUN_AFFIX,
+
+        /** Configure whether to convert Katakana characters in lexicon string to their Hiragana equivalents, other characters are kept as original.
+         * If a non-zero value is configured, Katakana characters in lexicon string are converted to their Hiragana equivalents,
+         * it is valid for below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "帝国でーたばんく/名詞,固有名詞,組織  ".
+         *
+         * If a zero value is configured, Katakana characters in lexicon string are not converted as original,
+         * output example: "帝国データバンク/名詞,固有名詞,組織  ".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_HIRAGANA,
+
+        /** Configure whether to convert Hiragana characters in lexicon string to their Katakana equivalents, other characters are kept as original.
+         * If a non-zero value is configured, Hiragana characters in lexicon string are converted to their Katakana equivalents,
+         * it is valid for below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "少ナクトモ/副詞,一般  ".
+         *
+         * If a zero value is configured, Hiragana characters in lexicon string are not converted as original,
+         * output example: "少なくとも/副詞,一般  ".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_KATAKANA,
 
         OPTION_TYPE_NUM ///< the count of option types
     };

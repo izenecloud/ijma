@@ -16,6 +16,7 @@
 #include "jma_knowledge.h"
 #include "tokenizer.h"
 #include "pos_table.h"
+#include "kana_table.h"
 
 #ifndef JMA_DEBUG_PRINT
     #define JMA_DEBUG_PRINT 1
@@ -84,7 +85,7 @@ inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* l
 
 JMA_Analyzer::JMA_Analyzer()
     : knowledge_(0), tagger_(0),
-    posTable_(0)
+    posTable_(0), kanaTable_(0)
 {
 }
 
@@ -148,6 +149,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     }
 
     posTable_ = knowledge_->getPOSTable();
+    kanaTable_ = knowledge_->getKanaTable();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -433,6 +435,12 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
     result.posCode_ = (int)node->posid;
     result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
 
+    // convert lexicon to Hiragana or Katakana
+    if(getOption(OPTION_TYPE_CONVERT_TO_HIRAGANA) != 0)
+        result.lexicon_ = convertToHiragana(result.lexicon_.c_str());
+    else if(getOption(OPTION_TYPE_CONVERT_TO_KATAKANA) != 0)
+        result.lexicon_ = convertToKatakana(result.lexicon_.c_str());
+
     return result;
 }
 
@@ -489,6 +497,46 @@ MeCab::Node* JMA_Analyzer::combineNode(const MeCab::Node* startNode, Morpheme& r
     }
 
     return nextNode;
+}
+
+std::string JMA_Analyzer::convertToHiragana(const char* str) const
+{
+    assert(str);
+
+    string result;
+    CTypeTokenizer tokenizer(knowledge_->getCType());
+    tokenizer.assign(str);
+
+    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
+    {
+        const char* q = kanaTable_->toHiragana(p);
+        if(q)
+            result += q;
+        else
+            result += p;
+    }
+
+    return result;
+}
+
+std::string JMA_Analyzer::convertToKatakana(const char* str) const
+{
+    assert(str);
+
+    string result;
+    CTypeTokenizer tokenizer(knowledge_->getCType());
+    tokenizer.assign(str);
+
+    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
+    {
+        const char* q = kanaTable_->toKatakana(p);
+        if(q)
+            result += q;
+        else
+            result += p;
+    }
+
+    return result;
 }
 
 } // namespace jma
