@@ -120,6 +120,8 @@ for(int i=0; i<s.getListSize(); ++i)
         const char* strPOS = s.getStrPOS(i, j);
         // get the base form of the specific Japanese word
         const char* baseForm = s.getBaseForm(i, j);
+        // get the reading form
+        const char* readForm = s.getReadForm(i, j);
         ...
     }
     double score = s.getScore(i);
