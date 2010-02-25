@@ -23,6 +23,7 @@ import java.util.Iterator;
  */
 public class StatisticManager {
     //private static final String WEB_TEST_PATH = "/home/wisenut/tomcat/public_html/jma-test/jma/bin/web_test/"; /** the web test path containing script and data files */
+    //private static final String WEB_TEST_PATH = "/home/jun.jiang/gitorious/ijma/bin/web_test/"; /** the web test path containing script and data files */
     private static final String WEB_TEST_PATH = "/home/jun/gitorious/ijma/ijma/bin/web_test/"; /** the web test path containing script and data files */
     //private static final String WEB_TEST_PATH = "/home/vernkin/projects/jma/bin/web_test/";
     public static final String DB_PATH = WEB_TEST_PATH + "db/"; /** the path of data files */
