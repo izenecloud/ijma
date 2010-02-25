@@ -3,7 +3,7 @@
 # default path
 TOMCAT_APP_PATH=/usr/share/tomcat5.5/webapps
 # the deployment package
-WAR_NAME=jmacomp
+WAR_NAME=ijma
 
 if [ -d $TOMCAT_APP_PATH ]; then
     echo ">>>>> $TOMCAT_APP_PATH exists."
