@@ -10,6 +10,7 @@
 #define JMA_ANALYZER_H
 
 #include <vector>
+#include <string>
 
 /**
  * namespace of library JMA (Japanese Morphological Analyzer)

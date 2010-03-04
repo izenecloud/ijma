@@ -20,6 +20,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 using namespace jma;
