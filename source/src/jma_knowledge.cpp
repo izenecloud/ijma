@@ -35,9 +35,6 @@ using namespace std;
 
 namespace
 {
-/** Tag string in JMA config file for whether output POS result in full category */
-const char* CONFIG_TAG_OUTPUT_FULL_POS = "OUTPUT_FULL_POS";
-
 /** Default value of base form feature offset */
 const int BASE_FORM_OFFSET_DEFAULT = 6;
 
