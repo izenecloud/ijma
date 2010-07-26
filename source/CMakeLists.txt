@@ -40,7 +40,7 @@ ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(../include)
 include_directories(./include)
-include_directories(./libmecab)
+include_directories(./src/libmecab)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
@@ -70,13 +70,11 @@ ENDIF (CMAKE_COMPILER_IS_XLC)
 
 IF (UNIX)
     MESSAGE(STATUS "UNIX: " ${UNIX})
-    set(LIBS_MECAB mecab pthread)
+    set(LIBS_JMA jma pthread)
 ELSE (WIN32)
     MESSAGE(STATUS "WIN32: " ${WIN32})
-    set(LIBS_MECAB mecab) # pthread library is not used under Win32 platform.
+    set(LIBS_JMA jma) # pthread library is not used under Win32 platform.
 ENDIF (UNIX)
-
-set(LIBS_JMA jma)
 
 # set compile flag for whether to print debug information
 add_definitions(-DJMA_DEBUG_PRINT=${CMAKE_JMA_DEBUG_PRINT})
@@ -87,5 +85,4 @@ IF (CMAKE_PLATFORM_IS_AIX)
 ENDIF (CMAKE_PLATFORM_IS_AIX)
 
 add_subdirectory(src)
-add_subdirectory(libmecab)
 add_subdirectory(test)

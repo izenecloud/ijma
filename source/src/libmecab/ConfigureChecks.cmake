@@ -1,29 +1,3 @@
-# objs
-set(objs_mecab
-char_property
-connector
-context_id
-dictionary_compiler
-dictionary_generator
-dictionary
-dictionary_rewriter
-eval
-feature_index
-iconv_utils
-lbfgs
-learner
-learner_tagger
-libmecab
-nbest_generator
-param
-string_buffer
-tagger
-tokenizer
-utils
-viterbi
-writer
-)
-
 # include modules
 INCLUDE (CheckIncludeFiles)
 # usage: CHECK_INCLUDE_FILES (<header> <RESULT_VARIABLE> )
@@ -62,7 +36,7 @@ CHECK_INCLUDE_FILES (unistd.h HAVE_UNISTD_H)
 CHECK_INCLUDE_FILES (windows.h HAVE_WINDOWS_H)
 
 # generate config.h
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libmecab/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 # include config.h
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -82,29 +56,3 @@ ELSE (WIN32)
     add_definitions(-DDLL_EXPORT)
     add_definitions(-DMECAB_DEFAULT_RC="NUL")
 ENDIF (UNIX)
-
-# output definitions
-add_library(mecab SHARED ${objs_mecab})
-
-IF (CMAKE_COMPILER_IS_XLC)
-# link libmecab.so with libiconv.a
-target_link_libraries(mecab iconv)
-ENDIF (CMAKE_COMPILER_IS_XLC)
-
-add_executable(mecab-exe mecab.cpp)
-target_link_libraries(mecab-exe ${LIBS_MECAB})
-
-add_executable(mecab-cost-train mecab-cost-train.cpp)
-target_link_libraries(mecab-cost-train ${LIBS_MECAB})
-
-add_executable(mecab-dict-gen mecab-dict-gen.cpp)
-target_link_libraries(mecab-dict-gen ${LIBS_MECAB})
-
-add_executable(mecab-dict-index mecab-dict-index.cpp)
-target_link_libraries(mecab-dict-index ${LIBS_MECAB})
-
-add_executable(mecab-system-eval mecab-system-eval.cpp)
-target_link_libraries(mecab-system-eval ${LIBS_MECAB})
-
-add_executable(mecab-test-gen mecab-test-gen.cpp)
-target_link_libraries(mecab-test-gen ${LIBS_MECAB})

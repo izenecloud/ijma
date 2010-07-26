@@ -1,20 +1,4 @@
-# objs
-set(objs_jma
-./analyzer
-./knowledge
-./sentence
-./jma_factory
-./jma_knowledge
-./jma_analyzer
-./jma_ctype
-./jma_ctype_eucjp
-./jma_ctype_sjis
-./jma_ctype_utf8
-./tokenizer
-./pos_table
-./iconv_utils
-./kana_table
-)
+FILE(GLOB_RECURSE jma_SRC "*.cpp")
 
 # include modules
 # usage: CHECK_INCLUDE_FILES (<header> <RESULT_VARIABLE> )
@@ -23,13 +7,14 @@ INCLUDE (CheckIncludeFiles)
 # check variables
 CHECK_INCLUDE_FILES (iconv.h HAVE_ICONV)
 
-add_library(jma STATIC ${objs_jma})
+# check libmecab configurations
+INCLUDE(libmecab/ConfigureChecks.cmake)
+
+add_library(jma STATIC ${jma_SRC})
 
 IF (CMAKE_COMPILER_IS_XLC)
     # link libjma.a with libiconv.a
-    target_link_libraries(jma ${LIBS_MECAB} iconv)
-ELSE (CMAKE_COMPILER_IS_XLC)
-    target_link_libraries(jma ${LIBS_MECAB})
+    target_link_libraries(jma iconv)
 ENDIF (CMAKE_COMPILER_IS_XLC)
 
 # generate jma_config.h
