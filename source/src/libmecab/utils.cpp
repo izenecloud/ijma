@@ -212,81 +212,8 @@ int progress_bar(const char* message, size_t current, size_t total) {
 }
 
 bool load_dictionary_resource(Param *param) {
-  std::string rcfile = param->get<std::string>("rcfile");
-
-#ifdef HAVE_GETENV
-  if (rcfile.empty()) {
-    const char *homedir = getenv("HOME");
-    if (homedir) {
-      std::string s = MeCab::create_filename(std::string(homedir),
-                                             ".mecabrc");
-      std::ifstream ifs(s.c_str());
-      if (ifs) rcfile = s;
-    }
-  }
-
-  if (rcfile.empty()) {
-    const char *rcenv = getenv("MECABRC");
-    if (rcenv) rcfile = rcenv;
-  }
-#endif
-
-#if defined (HAVE_GETENV) && defined(_WIN32) && !defined(__CYGWIN__)
-  if (rcfile.empty()) {
-    char buf[BUF_SIZE];
-    DWORD len = GetEnvironmentVariable("MECABRC",
-                                       buf,
-                                       sizeof(buf));
-    if (len < sizeof(buf) && len > 0) {
-      rcfile = buf;
-    }
-  }
-#endif
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-  HKEY hKey;
-  char v[BUF_SIZE];
-  DWORD vt;
-  DWORD size = sizeof(v);
-
-  if (rcfile.empty()) {
-    RegOpenKeyEx(HKEY_LOCAL_MACHINE, "software\\mecab", 0, KEY_READ, &hKey);
-    RegQueryValueEx(hKey, "mecabrc", 0, &vt,
-                    reinterpret_cast<BYTE *>(v), &size);
-    RegCloseKey(hKey);
-    if (vt == REG_SZ) rcfile = v;
-  }
-
-  if (rcfile.empty()) {
-    RegOpenKeyEx(HKEY_CURRENT_USER, "software\\mecab", 0, KEY_READ, &hKey);
-    RegQueryValueEx(hKey, "mecabrc", 0, &vt,
-                    reinterpret_cast<BYTE *>(v), &size);
-    RegCloseKey(hKey);
-    if (vt == REG_SZ) rcfile = v;
-  }
-
-  if (rcfile.empty()) {
-    vt = GetModuleFileName(DllInstance, v, size);
-    if (vt != 0) {
-      char drive[_MAX_DRIVE];
-      char dir[_MAX_DIR];
-      _splitpath(v, drive, dir, NULL, NULL);
-      std::string s = std::string(drive)
-          + std::string(dir) + std::string("mecabrc");
-      std::ifstream ifs(s.c_str());
-      if (ifs) rcfile = s;
-    }
-  }
-#endif
-
-  if (rcfile.empty()) rcfile = MECAB_DEFAULT_RC;
-
-  if (!param->load(rcfile.c_str())) return false;
-
   std::string dicdir = param->get<std::string>("dicdir");
   if (dicdir.empty()) dicdir = ".";  // current
-  remove_filename(&rcfile);
-  replace_string(&dicdir, "$(rcpath)", rcfile);
   param->set<std::string>("dicdir", dicdir, true);
   dicdir = create_filename(dicdir, DICRC);
 
