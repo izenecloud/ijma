@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <string>
 
+#include "jma_dictionary.h" // JMA_Dictionary
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -78,6 +80,25 @@ template <class T> class Mmap {
   int    flag;
 #endif
 
+  // for jma dictionary archive
+  bool isArchiveSection;
+
+  bool loadArchiveSection(const char *filename) {
+      const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+
+      if (dict) {
+          isArchiveSection = true;
+
+          fileName = dict->fileName_;
+          length = dict->length_;
+          text = reinterpret_cast<T *>(dict->text_);
+
+          return true;
+      }
+
+      return false;
+  }
+
  public:
   T&       operator[](size_t n)       { return *(text + n); }
   const T& operator[](size_t n) const { return *(text + n); }
@@ -96,6 +117,11 @@ template <class T> class Mmap {
 #if defined(_WIN32) && !defined(__CYGWIN__)
   bool open(const char *filename, const char *mode = "r") {
     this->close();
+
+    // check jma dictionary archive
+    if (loadArchiveSection(filename))
+        return true;
+
     unsigned long mode1, mode2, mode3;
     fileName = std::string(filename);
 
@@ -128,6 +154,13 @@ template <class T> class Mmap {
   }
 
   void close() {
+    // check jma dictionary archive
+    if (isArchiveSection) {
+        text = 0;
+        isArchiveSection = false;
+        return;
+    }
+
     if (text) { UnmapViewOfFile(text); }
     if (hFile != INVALID_HANDLE_VALUE) {
       CloseHandle(hFile);
@@ -140,12 +173,17 @@ template <class T> class Mmap {
     text = 0;
   }
 
-  Mmap(): text(0), hFile(INVALID_HANDLE_VALUE), hMap(0) {}
+  Mmap(): text(0), hFile(INVALID_HANDLE_VALUE), hMap(0), isArchiveSection(false) {}
 
 #else
 
   bool open(const char *filename, const char *mode = "r") {
     this->close();
+
+    // check jma dictionary archive
+    if (loadArchiveSection(filename))
+        return true;
+
     struct stat st;
     fileName = std::string(filename);
 
@@ -186,6 +224,13 @@ template <class T> class Mmap {
   }
 
   void close() {
+    // check jma dictionary archive
+    if (isArchiveSection) {
+        text = 0;
+        isArchiveSection = false;
+        return;
+    }
+
     if (fd >= 0) {
       close__(fd);
       fd = -1;
@@ -210,7 +255,7 @@ template <class T> class Mmap {
     text = 0;
   }
 
-  Mmap(): text(0), fd(-1) {}
+  Mmap(): text(0), fd(-1), isArchiveSection(false) {}
 #endif
 
   virtual ~Mmap() { this->close(); }

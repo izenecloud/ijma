@@ -7,12 +7,14 @@
  */
 
 #include "pos_table.h"
+#include "jma_dictionary.h"
 #include "iconv_utils.h"
 
 #include <cassert>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <strstream>
 
 #ifndef JMA_DEBUG_PRINT
     #define JMA_DEBUG_PRINT 1
@@ -46,9 +48,17 @@ bool POSTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowl
         strTableVec_[i].clear();
 
     // open file
-    ifstream from(fileName);
+    const DictUnit* dict = JMA_Dictionary::instance()->getDict(fileName);
+    if(! dict)
+    {
+        cerr << "cannot find configuration file: " << fileName << endl;
+        return false;
+    }
+
+    istrstream from(dict->text_, dict->length_);
     if(! from)
     {
+        cerr << "cannot read configuration file: " << fileName << endl;
         return false;
     }
 

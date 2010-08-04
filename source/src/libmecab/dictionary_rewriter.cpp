@@ -15,6 +15,10 @@
 #include "dictionary_rewriter.h"
 #include "iconv_utils.h"
 
+#include "jma_dictionary.h" // JMA_Dictionary
+#include "scoped_ptr.h"
+#include <strstream>
+
 namespace {
 
 using namespace MeCab;
@@ -132,11 +136,18 @@ void DictionaryRewriter::clear() { cache_.clear(); }
 
 bool DictionaryRewriter::open(const char *filename,
                               Iconv *iconv) {
-  std::ifstream ifs(filename);
-  CHECK_DIE(ifs) << "no such file or directory: " << filename;
+  scoped_ptr<std::istream> p_ist;
+
+  const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+  if(dict)
+    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+  else
+    p_ist.reset(new std::ifstream(filename));
+
+  CHECK_DIE(*p_ist) << "no such file or directory: " << filename;
   int append_to = 0;
   std::string line;
-  while (std::getline(ifs, line)) {
+  while (std::getline(*p_ist, line)) {
     if (iconv) iconv->convert(&line);
     if (line.empty() || line[0] == '#') continue;
     if (line == "[unigram rewrite]") {
@@ -201,8 +212,15 @@ bool DictionaryRewriter::rewrite2(const std::string &feature,
 
 bool POSIDGenerator::open(const char *filename,
                           Iconv *iconv) {
-  std::ifstream ifs(filename);
-  if (!ifs) {
+  scoped_ptr<std::istream> p_ist;
+
+  const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+  if(dict)
+    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+  else
+    p_ist.reset(new std::ifstream(filename));
+
+  if (!*p_ist) {
     std::cerr << filename
               << " is not found. minimum setting is used" << std::endl;
     rewrite_.resize(1);
@@ -212,7 +230,7 @@ bool POSIDGenerator::open(const char *filename,
 
   std::string line;
   char *col[2];
-  while (std::getline(ifs, line)) {
+  while (std::getline(*p_ist, line)) {
     if (iconv) iconv->convert(&line);
     const size_t n = tokenize2(const_cast<char *>(line.c_str()),
                                " \t", col, 2);

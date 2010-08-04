@@ -39,7 +39,7 @@ SET(CMAKE_C_FLAGS_PROFILE        "${CMAKE_CXX_FLAGS_PROFILE}" CACHE STRING "Prof
 project(JMA)
 
 IF (CMAKE_COMPILER_IS_GNUCXX)
-add_definitions("-Wall")
+add_definitions("-Wall -Wno-deprecated")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(../include)

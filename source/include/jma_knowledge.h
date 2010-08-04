@@ -34,6 +34,8 @@ class Tagger;
 namespace jma
 {
 
+class JMA_Dictionary;
+
 /**
  * JMA_Knowledge manages the linguistic information for Japanese morphological analysis.
  */
@@ -69,7 +71,7 @@ public:
     virtual int loadStopWordDict(const char* fileName);
 
     /**
-     * Encode the system dictionary files from text to binary format.
+     * Encode the system dictionary files from text to binary file.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files
      * \return 0 for fail, 1 for success
@@ -302,6 +304,9 @@ private:
 
     /** mapping table between Hiragana and Katakana characters */
     KanaTable kanaTable_;
+
+    /** the dictionary instance */
+    JMA_Dictionary* dictionary_;
 };
 
 } // namespace jma

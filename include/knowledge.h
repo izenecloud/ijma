@@ -69,10 +69,11 @@ public:
 	virtual int loadSentenceSeparatorConfig(const char* fileName) = 0;
 
     /**
-     * Encode the system dictionary files from text to binary format.
+     * Encode the system dictionary files from text to binary file.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files
      * \return 0 for fail, 1 for success
+     * \pre both \e txtDirPath and \e binDirPath are assumed as the directory paths that already exists. If any of the directory paths does not exist, 0 would be returned for fail.
      */
     virtual int encodeSystemDict(const char* txtDirPath, const char* binDirPath) = 0;
 

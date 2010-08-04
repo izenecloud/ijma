@@ -11,6 +11,9 @@
 #include "utils.h"
 #include "string_buffer.h"
 
+#include "jma_dictionary.h" // JMA_Dictionary
+#include <strstream>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -66,12 +69,18 @@ void Param::dump_config(std::ostream *os) const {
 }
 
 bool Param::load(const char *filename) {
-  std::ifstream ifs(filename);
+  scoped_ptr<std::istream> p_ist;
 
-  CHECK_FALSE(ifs) << "no such file or directory: " << filename;
+  const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+  if(dict)
+    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+  else
+    p_ist.reset(new std::ifstream(filename));
+
+  CHECK_FALSE(*p_ist) << "no such file or directory: " << filename;
 
   std::string line;
-  while (std::getline(ifs, line)) {
+  while (std::getline(*p_ist, line)) {
     if (!line.size() ||
         (line.size() && (line[0] == ';' || line[0] == '#'))) continue;
 

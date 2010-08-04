@@ -19,8 +19,8 @@
     pool__.lock();                                              \
     if (map->begin() == 0 && !map->open(file.c_str(), mode)) {  \
       WHAT << map->what();                                      \
-      close();                                                  \
       pool__.unlock();                                          \
+      close();                                                  \
       return false;                                             \
     }                                                           \
     pool__.unlock();                                            \

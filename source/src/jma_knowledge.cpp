@@ -8,7 +8,7 @@
 
 #include "jma_knowledge.h"
 #include "sentence.h"
-#include "dictionary.h"
+#include "jma_dictionary.h"
 #include "strutil.h"
 
 #include "mecab.h" // MeCab::Tagger
@@ -19,6 +19,7 @@
 #include <sstream> // stringstream
 #include <cstdlib> // mkstemp, atoi
 #include <unistd.h> // unlink
+#include <strstream> // istrstream
 #include <cassert>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
@@ -50,6 +51,9 @@ const char* DEFAULT_POS_DEFAULT = "n";
 /** Dictionary configure and definition files */
 const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
 
+/** Dictionary binary files */
+const char* DICT_BINARY_FILES[] = {"unk.dic", "char.bin", "sys.dic", "matrix.bin"};
+
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
 
@@ -61,6 +65,9 @@ const char* POS_COMBINE_DEF_FILE = "pos-combine.def";
 
 /** Map file name to convert between Hiragana and Katakana characters */
 const char* KANA_MAP_DEF_FILE = "kana-map.def";
+
+/** System dictionary archive */
+const char* DICT_ARCHIVE_FILE = "sys.bin";
 
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
@@ -100,13 +107,16 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 
 JMA_Knowledge::JMA_Knowledge()
     : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0),
-    defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE)
+    defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
+    dictionary_(JMA_Dictionary::instance())
 {
     onEncodeTypeChange( getEncodeType() );
 }
 
 JMA_Knowledge::~JMA_Knowledge()
 {
+    dictionary_->close();
+
     // remove the temporary user file in binary format
     if(hasUserDict())
     {
@@ -280,44 +290,51 @@ const KanaTable* JMA_Knowledge::getKanaTable() const
 }
 
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
-  std::ifstream ifs(filename);
-  if(!ifs)
-  {
-      cerr << "cannot open configuration file: " << filename << endl;
-      return false;
-  }
-
-  std::string line;
-  while (std::getline(ifs, line)) {
-    // remove carriage return character
-    line = line.substr(0, line.find('\r'));
-
-    if (line.empty() || line[0] == ';' || line[0] == '#') continue;
-
-    size_t pos = line.find('=');
-    if(pos == std::string::npos)
+    const DictUnit* dict = dictionary_->getDict(filename);
+    if(! dict)
     {
-        cerr << "format error in configuration file: " << filename << ", line: " << line << endl;
+        cerr << "cannot find configuration file: " << filename << endl;
         return false;
     }
 
-    size_t s1, s2;
-    for (s1 = pos+1; s1 < line.size() && isspace(line[s1]); s1++);
-    for (s2 = pos-1; static_cast<long>(s2) >= 0 && isspace(line[s2]); s2--);
-    //const std::string value = line.substr(s1, line.size() - s1);
-    //const std::string key   = line.substr(0, s2 + 1);
-    map[line.substr(0, s2 + 1)] = line.substr(s1, line.size() - s1);
-  }
+    istrstream ist(dict->text_, dict->length_);
+    if(! ist)
+    {
+        cerr << "cannot read configuration file: " << filename << endl;
+        return false;
+    }
 
-  return true;
+    std::string line;
+    while (std::getline(ist, line)) {
+        // remove carriage return character
+        line = line.substr(0, line.find('\r'));
+
+        if (line.empty() || line[0] == ';' || line[0] == '#') continue;
+
+        size_t pos = line.find('=');
+        if(pos == std::string::npos)
+        {
+            cerr << "format error in configuration file: " << filename << ", line: " << line << endl;
+            return false;
+        }
+
+        size_t s1, s2;
+        for (s1 = pos+1; s1 < line.size() && isspace(line[s1]); s1++);
+        for (s2 = pos-1; static_cast<long>(s2) >= 0 && isspace(line[s2]); s2--);
+        //const std::string value = line.substr(s1, line.size() - s1);
+        //const std::string key   = line.substr(0, s2 + 1);
+        map[line.substr(0, s2 + 1)] = line.substr(s1, line.size() - s1);
+    }
+
+    return true;
 }
 
 void JMA_Knowledge::loadDictConfig()
 {
-    string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILES[0]);
+    const char* configFile = DICT_CONFIG_FILES[0];
     map<string, string> configMap;
 
-    if(! loadConfig0(configFile.c_str(), configMap))
+    if(! loadConfig0(configFile, configMap))
     {
         cerr << "warning: " << configFile << " not exists," << endl;
         cerr << "default configuration value is used." << endl;
@@ -359,20 +376,27 @@ void JMA_Knowledge::loadDictConfig()
 
 bool JMA_Knowledge::loadPOSFeatureMapping()
 {
-	string configFile = createFilePath(systemDictPath_.c_str(), POS_FEATURE_DEF_FILE);
 	posFeatureMap_.clear();
-	return loadConfig0( configFile.c_str(), posFeatureMap_ );
+	return loadConfig0(POS_FEATURE_DEF_FILE, posFeatureMap_);
 }
 
 int JMA_Knowledge::loadDict()
 {
+    // file "sys.bin"
+    string sysDicName = createFilePath(systemDictPath_.c_str(), DICT_ARCHIVE_FILE);
+    if(! dictionary_->open(sysDicName.c_str()))
+    {
+        cerr << "fail to open system dictionary: " << sysDicName << endl;
+        return 0;
+    }
+
     // file "dicrc"
     loadDictConfig();
 
     // file "pos-id.def"
-    string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
+    const char* posFileName = POS_ID_DEF_FILE;
     // load POS table
-    if(! posTable_.loadConfig(posFileName.c_str(), configEncodeType_, getEncodeType()))
+    if(! posTable_.loadConfig(posFileName, configEncodeType_, getEncodeType()))
     {
         cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
         return 0;
@@ -387,9 +411,9 @@ int JMA_Knowledge::loadDict()
     }
 
     // file "kana-map.def"
-    string kanaFileName = createFilePath(systemDictPath_.c_str(), KANA_MAP_DEF_FILE);
+    const char* kanaFileName = KANA_MAP_DEF_FILE;
     // load kana conversion map
-    if(! kanaTable_.loadConfig(kanaFileName.c_str(), configEncodeType_, getEncodeType()))
+    if(! kanaTable_.loadConfig(kanaFileName, configEncodeType_, getEncodeType()))
     {
         cerr << "warning: as fails to load " << kanaFileName << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
     }
@@ -455,7 +479,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 #if JMA_DEBUG_PRINT
     cout << "JMA_Knowledge::encodeSystemDict()" << endl;
     cout << "path of source system dictionary: " << txtDirPath << endl;
-    cout << "path of binary system dictionary: " << binDirPath << endl;
+    cout << "path of binary system directory: " << binDirPath << endl;
 #endif
 
     // check if the directory paths exist
@@ -501,36 +525,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
         return 0;
     }
 
-    // copy configure and definition files to the destination directory
-    size_t configNum = sizeof(DICT_CONFIG_FILES) / sizeof(DICT_CONFIG_FILES[0]);
     string src, dest;
-    for(size_t i=0; i<configNum; ++i)
-    {
-        src = createFilePath(txtDirPath, DICT_CONFIG_FILES[i]);
-        dest = createFilePath(binDirPath, DICT_CONFIG_FILES[i]);
-
-        if(copyFile(src.c_str(), dest.c_str()) == false)
-        {
-            return 0;
-        }
-    }
-
-    // if pos-id.def exists, copy it to the destination directory
-    src = createFilePath(txtDirPath, POS_ID_DEF_FILE);
-    dest = createFilePath(binDirPath, POS_ID_DEF_FILE);
-    if(copyFile(src.c_str(), dest.c_str()) == false)
-    {
-        cout << POS_ID_DEF_FILE << " is not found in " << txtDirPath << ", default POS index would be 1." << endl;
-    }
-
-    // if pos-feature.def exists, copy it to the destination directory
-    src = createFilePath(txtDirPath, POS_FEATURE_DEF_FILE);
-    dest = createFilePath(binDirPath, POS_FEATURE_DEF_FILE);
-    if(copyFile(src.c_str(), dest.c_str()) == false)
-    {
-        cout << POS_FEATURE_DEF_FILE << " is not found in " << txtDirPath << ", no default feature is defined for those words in user dictionary." << endl;
-    }
-
     // if pos-combine.def exists, copy it to the destination directory
     src = createFilePath(txtDirPath, POS_COMBINE_DEF_FILE);
     dest = createFilePath(binDirPath, POS_COMBINE_DEF_FILE);
@@ -539,12 +534,44 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
         cout << POS_COMBINE_DEF_FILE << " is not found in " << txtDirPath << ", no rule is defined to combine tokens with specific POS." << endl;
     }
 
-    // if kana-map.def exists, copy it to the destination directory
-    src = createFilePath(txtDirPath, KANA_MAP_DEF_FILE);
-    dest = createFilePath(binDirPath, KANA_MAP_DEF_FILE);
-    if(copyFile(src.c_str(), dest.c_str()) == false)
+    // source files to compile into archive
+    vector<string> srcFiles;
+
+    // configure files
+    size_t configNum = sizeof(DICT_CONFIG_FILES) / sizeof(DICT_CONFIG_FILES[0]);
+    for(size_t i=0; i<configNum; ++i)
     {
-        cout << KANA_MAP_DEF_FILE << " is not found in " << txtDirPath << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
+        srcFiles.push_back(createFilePath(txtDirPath, DICT_CONFIG_FILES[i]));
+    }
+
+    // pos-id.def
+    srcFiles.push_back(createFilePath(txtDirPath, POS_ID_DEF_FILE));
+
+    // pos-feature.def
+    srcFiles.push_back(createFilePath(txtDirPath, POS_FEATURE_DEF_FILE));
+
+    // kana-map.def
+    srcFiles.push_back(createFilePath(txtDirPath, KANA_MAP_DEF_FILE));
+
+    // get binary file names
+    configNum = sizeof(DICT_BINARY_FILES) / sizeof(DICT_BINARY_FILES[0]);
+    for(size_t i=0; i<configNum; ++i)
+    {
+        srcFiles.push_back(createFilePath(binDirPath, DICT_BINARY_FILES[i]));
+    }
+
+    // compile into archive file
+    dest = createFilePath(binDirPath, DICT_ARCHIVE_FILE);
+    if(JMA_Dictionary::compile(srcFiles, dest.c_str()) == false)
+        return 0;
+
+    // remove temporary binary files
+    configNum = sizeof(DICT_BINARY_FILES) / sizeof(DICT_BINARY_FILES[0]);
+    for(size_t i=0; i<configNum; ++i)
+    {
+        dest = createFilePath(binDirPath, DICT_BINARY_FILES[i]);
+        if(! removeFile(dest))
+            cerr << "fail to delete temporary binary file: " << dest << endl;
     }
 
     return 1;

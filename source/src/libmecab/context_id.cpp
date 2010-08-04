@@ -9,6 +9,10 @@
 #include "iconv_utils.h"
 #include "utils.h"
 
+#include "jma_dictionary.h" // JMA_Dictionary
+#include "scoped_ptr.h"
+#include <strstream>
+
 namespace {
 
 using namespace MeCab;
@@ -16,12 +20,19 @@ using namespace MeCab;
 bool open_map(const char *filename,
               std::map<std::string, int> *cmap,
               Iconv *iconv) {
-  std::ifstream ifs(filename);
-  CHECK_DIE(ifs) << "no such file or directory: " << filename;
+  scoped_ptr<std::istream> p_ist;
+
+  const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+  if(dict)
+    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+  else
+    p_ist.reset(new std::ifstream(filename));
+
+  CHECK_DIE(*p_ist) << "no such file or directory: " << filename;
   cmap->clear();
   char *col[2];
   std::string line;
-  while (std::getline(ifs, line)) {
+  while (std::getline(*p_ist, line)) {
     CHECK_DIE(2 == tokenize2(const_cast<char *>(line.c_str()),
                              " \t", col, 2))
         << "format error: " << line;
