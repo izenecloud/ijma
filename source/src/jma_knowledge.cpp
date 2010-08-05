@@ -693,14 +693,14 @@ bool JMA_Knowledge::copyFile(const char* src, const char* dest)
     assert(src && dest);
 
     // open files
-    ifstream from(src);
+    ifstream from(src, ios::binary);
     if(! from)
     {
         cerr << "cannot open source file: " << src << endl;
         return false;
     }
 
-    ofstream to(dest);
+    ofstream to(dest, ios::binary);
     if(! to)
     {
         cerr << "cannot open destinatioin file: " << dest << endl;
