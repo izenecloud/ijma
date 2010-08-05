@@ -20,16 +20,37 @@ IF (CMAKE_COMPILER_IS_GNUCXX)
   SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES} "Debugfull" "Profile")
 
   # Select flags.
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Flags used by the compiler during Release with Debug Info builds." FORCE)
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g" CACHE STRING "Flags used by the compiler during Release with Debug Info builds" FORCE)
   # Disable assertion macros in RELEASE
   SET(CMAKE_CXX_FLAGS_RELEASE        "-O2 -DNDEBUG" CACHE STRING "Flags used by the compiler during release builds" FORCE)
-  SET(CMAKE_CXX_FLAGS_DEBUG          "-g3 -gdwarf-2 -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+  SET(CMAKE_CXX_FLAGS_DEBUG          "-g3 -gdwarf-2 -O0 -fno-reorder-blocks -fno-schedule-insns -fno-inline" CACHE STRING "Flags used by the compiler during debug builds" FORCE)
   SET(CMAKE_CXX_FLAGS_DEBUGFULL      "-g3 -fno-inline -DIZS_DEBUG" CACHE STRING "Debugfull build type" FORCE)
   SET(CMAKE_CXX_FLAGS_PROFILE        "-pg -O2 -DNDEBUG" CACHE STRING "Profile build type" FORCE)
   #SET(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fno-inline -ftest-coverage -fprofile-arcs" CACHE STRING "Profile build type")
 
   MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_DEBUGFULL CMAKE_CXX_FLAGS_PROFILE)
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
+
+# Select compile flags for MSVC
+IF (CMAKE_COMPILER_IS_MSVC)
+MESSAGE(STATUS "CMAKE_COMPILER_IS_MSVC: " ${CMAKE_COMPILER_IS_MSVC})
+
+  SET(CMAKE_CXX_FLAGS_RELEASE "/EHsc /O2 /GL /GA /Ob2 /nologo /W3 /MT /Zi" CACHE STRING "Flags used by the compiler during release builds" FORCE)
+  SET(CMAKE_CXX_FLAGS_DEBUG "/EHsc /Od /nologo /W3 /MTd /Zi" CACHE STRING "Flags used by the compiler during debug builds" FORCE)
+ENDIF (CMAKE_COMPILER_IS_MSVC)
+
+# Select compile flags for XLC
+IF (CMAKE_COMPILER_IS_XLC)
+MESSAGE(STATUS "CMAKE_COMPILER_IS_XLC: " ${CMAKE_COMPILER_IS_XLC})
+
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -q64 -qrtti -DARCH64 -DAIX -DXLC -DNDEBUG")
+  SET(CMAKE_CXX_FLAGS_DEBUG "-g -q64 -qrtti -DARCH64 -DAIX -DXLC -DDEBUG")
+
+  SET(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-brtl -lm -q64")
+  SET(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-bdynamic -G")
+MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: " ${CMAKE_EXE_LINKER_FLAGS})
+MESSAGE(STATUS "CMAKE_SHARED_LINKER_FLAGS: " ${CMAKE_SHARED_LINKER_FLAGS})
+ENDIF (CMAKE_COMPILER_IS_XLC)
 
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" CACHE STRING "Flags used by the compiler during Release with Debug Info builds." FORCE)
 SET(CMAKE_C_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "Flags used by the compiler during release builds" FORCE)
@@ -48,29 +69,6 @@ include_directories(./src/libmecab)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
-
-# Select compile flags for MSVC
-IF (CMAKE_COMPILER_IS_MSVC)
-MESSAGE(STATUS "CMAKE_COMPILER_IS_MSVC: " ${CMAKE_COMPILER_IS_MSVC})
-
-  SET(CMAKE_CXX_FLAGS_RELEASE "/EHsc /O2 /GL /GA /Ob2 /nologo /W3 /MT /Zi")
-  SET(CMAKE_CXX_FLAGS_DEBUG "/EHsc /Od /nologo /W3 /MTd /Zi")
-ENDIF (CMAKE_COMPILER_IS_MSVC)
-
-# Select compile flags for XLC
-IF (CMAKE_COMPILER_IS_XLC)
-MESSAGE(STATUS "CMAKE_COMPILER_IS_XLC: " ${CMAKE_COMPILER_IS_XLC})
-
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -q64 -qrtti -DARCH64 -DAIX -DXLC -DNDEBUG")
-  SET(CMAKE_CXX_FLAGS_DEBUG "-g -q64 -qrtti -DARCH64 -DAIX -DXLC -DDEBUG")
-
-  SET(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-brtl -lm -q64")
-  SET(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-bdynamic -G")
-
-MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: " ${CMAKE_EXE_LINKER_FLAGS})
-MESSAGE(STATUS "CMAKE_SHARED_LINKER_FLAGS: " ${CMAKE_SHARED_LINKER_FLAGS})
-
-ENDIF (CMAKE_COMPILER_IS_XLC)
 
 IF (UNIX)
     MESSAGE(STATUS "UNIX: " ${UNIX})

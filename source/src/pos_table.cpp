@@ -83,7 +83,6 @@ bool POSTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowl
     while(getline(from, line))
     {
         line = line.substr(0, line.find('\r'));
-
         if(line.empty())
             continue;
 
@@ -194,6 +193,7 @@ bool POSTable::loadCombineRule(const char* fileName)
     // those lines not in this format would be ignored
     while(getline(from, line))
     {
+        line = line.substr(0, line.find('\r'));
         if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 

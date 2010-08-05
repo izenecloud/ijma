@@ -18,7 +18,6 @@
 #include <fstream> // ifstream, ofstream
 #include <sstream> // stringstream
 #include <cstdlib> // mkstemp, atoi
-#include <unistd.h> // unlink
 #include <strstream> // istrstream
 #include <cassert>
 
@@ -26,6 +25,7 @@
 #include <windows.h> // GetTempPath, GetTempFileName, FindFirstFile, FindClose
 #else
 #include <dirent.h> // opendir, closedir
+#include <unistd.h> // unlink
 #endif
 
 #ifndef JMA_DEBUG_PRINT
@@ -461,10 +461,10 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
     }
 
 	string line;
-	while(!in.eof())
-	{
-		getline(in, line);
-		if(line.length() <= 0)
+    while(getline(in, line))
+    {
+        line = line.substr(0, line.find('\r'));
+		if(line.empty())
 			continue;
 		stopWords_.insert(line);
 	}
@@ -806,9 +806,10 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
     }
 
 	string line;
-	while(!in.eof())
-	{
-		 getline(in, line);
+    while(getline(in, line))
+    {
+        line = line.substr(0, line.find('\r'));
+
 		//ignore the empty line and comment line(start with '#')
 		if( line.empty() || line[0] == '#' )
 			continue;
@@ -865,9 +866,8 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& o
 	cout<<"Converting User Dictionary " << userDicFile << " ..." << endl;
 
 	string line;
-	while( !in.eof() )
-	{
-		getline(in, line);
+    while(getline(in, line))
+    {
 		trimSelf(line);
 		if(line.empty())
 			continue;

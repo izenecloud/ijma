@@ -73,6 +73,7 @@ bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
     // those lines not in this format would be ignored
     while(getline(from, line))
     {
+        line = line.substr(0, line.find('\r'));
         if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 
