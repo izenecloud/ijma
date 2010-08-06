@@ -10,6 +10,10 @@
 #include <errno.h>
 #include <string>
 
+#if defined(_WIN32) && !defined(__CYGWIN__)
+#include <fstream>
+#endif
+
 #include "jma_dictionary.h" // JMA_Dictionary
 
 #ifdef HAVE_CONFIG_H
@@ -122,33 +126,51 @@ template <class T> class Mmap {
     if (loadArchiveSection(filename))
         return true;
 
-    unsigned long mode1, mode2, mode3;
-    fileName = std::string(filename);
+    /*unsigned long mode1, mode2, mode3;*/
+    /*fileName = std::string(filename);*/
 
-    if (std::strcmp(mode, "r") == 0) {
-      mode1 = GENERIC_READ;
-      mode2 = PAGE_READONLY;
-      mode3 = FILE_MAP_READ;
-    } else if (std::strcmp(mode, "r+") == 0) {
-      mode1 = GENERIC_READ | GENERIC_WRITE;
-      mode2 = PAGE_READWRITE;
-      mode3 = FILE_MAP_ALL_ACCESS;
-    } else {
-      CHECK_CLOSE_FALSE(false) << "unknown open mode:" << filename;
-    }
+    /*if (std::strcmp(mode, "r") == 0) {*/
+    /*mode1 = GENERIC_READ;*/
+    /*mode2 = PAGE_READONLY;*/
+    /*mode3 = FILE_MAP_READ;*/
+    /*} else if (std::strcmp(mode, "r+") == 0) {*/
+    /*mode1 = GENERIC_READ | GENERIC_WRITE;*/
+    /*mode2 = PAGE_READWRITE;*/
+    /*mode3 = FILE_MAP_ALL_ACCESS;*/
+    /*} else {*/
+    /*CHECK_CLOSE_FALSE(false) << "unknown open mode:" << filename;*/
+    /*}*/
 
-    hFile = CreateFile(filename, mode1, FILE_SHARE_READ, 0,
-                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-    CHECK_CLOSE_FALSE(hFile != INVALID_HANDLE_VALUE)
-        << "CreateFile() failed: " << filename;
+    /*hFile = CreateFile(filename, mode1, FILE_SHARE_READ, 0,*/
+    /*OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);*/
+    /*CHECK_CLOSE_FALSE(hFile != INVALID_HANDLE_VALUE)*/
+    /*<< "CreateFile() failed: " << filename;*/
 
-    length = GetFileSize(hFile, 0);
+    /*length = GetFileSize(hFile, 0);*/
 
-    hMap = CreateFileMapping(hFile, 0, mode2, 0, 0, 0);
-    CHECK_CLOSE_FALSE(hMap) << "CreateFileMapping() failed: " << filename;
+    /*hMap = CreateFileMapping(hFile, 0, mode2, 0, 0, 0);*/
+    /*CHECK_CLOSE_FALSE(hMap) << "CreateFileMapping() failed: " << filename;*/
 
-    text = reinterpret_cast<T *>(MapViewOfFile(hMap, mode3, 0, 0, 0));
-    CHECK_CLOSE_FALSE(text) << "MapViewOfFile() failed: " << filename;
+    /*text = reinterpret_cast<T *>(MapViewOfFile(hMap, mode3, 0, 0, 0));*/
+    /*CHECK_CLOSE_FALSE(text) << "MapViewOfFile() failed: " << filename;*/
+
+    std::ifstream ifs;
+    ifs.open(filename, std::ios::binary);
+    CHECK_CLOSE_FALSE(ifs) << "open failed: " << filename;
+
+    // get length of file
+    ifs.seekg(0, std::ios::end);
+    length = ifs.tellg();
+    ifs.seekg(0, std::ios::beg);
+
+    // allocate memory
+    text = new T[length];
+    CHECK_CLOSE_FALSE(text) << "new[" << length << "] failed: " << filename;
+
+    // read data as a block
+    ifs.read(reinterpret_cast<char *>(text),length);
+    CHECK_CLOSE_FALSE(ifs.gcount() == length) << "read() failed: " << filename;
+    ifs.close();
 
     return true;
   }
@@ -161,16 +183,21 @@ template <class T> class Mmap {
         return;
     }
 
-    if (text) { UnmapViewOfFile(text); }
-    if (hFile != INVALID_HANDLE_VALUE) {
-      CloseHandle(hFile);
-      hFile = INVALID_HANDLE_VALUE;
+    /*if (text) { UnmapViewOfFile(text); }*/
+    /*if (hFile != INVALID_HANDLE_VALUE) {*/
+    /*CloseHandle(hFile);*/
+    /*hFile = INVALID_HANDLE_VALUE;*/
+    /*}*/
+    /*if (hMap) {*/
+    /*CloseHandle(hMap);*/
+    /*hMap = 0;*/
+    /*}*/
+    /*text = 0;*/
+
+    if (text) {
+        delete [] text;
+        text = 0;
     }
-    if (hMap) {
-      CloseHandle(hMap);
-      hMap = 0;
-    }
-    text = 0;
   }
 
   Mmap(): text(0), hFile(INVALID_HANDLE_VALUE), hMap(0), isArchiveSection(false) {}

@@ -19,7 +19,7 @@ CHECK_INCLUDE_FILES (io.h HAVE_IO_H)
 CHECK_LIBRARY_EXISTS (iconv iconv_open "" HAVE_LIBICONV)
 CHECK_LIBRARY_EXISTS (pthread "pthread_create;pthread_join;pthread_mutex_lock" "" HAVE_LIBPTHREAD)
 CHECK_INCLUDE_FILES (memory.h HAVE_MEMORY_H)
-CHECK_FUNCTION_EXISTS (mmap HAVE_MMAP)
+#CHECK_FUNCTION_EXISTS (mmap HAVE_MMAP)
 CHECK_FUNCTION_EXISTS (opendir HAVE_OPENDIR)
 CHECK_INCLUDE_FILES (pthread.h HAVE_PTHREAD_H)
 CHECK_FUNCTION_EXISTS (setjmp HAVE_SETJMP)
@@ -37,10 +37,6 @@ CHECK_INCLUDE_FILES (windows.h HAVE_WINDOWS_H)
 
 # generate config.h
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/libmecab/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-
-# include config.h
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_definitions(-DHAVE_CONFIG_H)
 
 # preprocessor definitions
 add_definitions(-DDIC_VERSION=102)

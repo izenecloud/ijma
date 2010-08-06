@@ -10,76 +10,58 @@
 #include "knowledge.h"
 #include "sentence.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
+#include "thread.h"
 
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <cassert>
 #include <string>
+#include <vector>
 
 #include <ctime>
 
-#include <string.h>
-#include <stdlib.h>
-
-#include <pthread.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 using namespace jma;
 
-//#define USE_SAME_ANALYZER
-#define USE_SAME_KNOWLEDGE
+class AnalyzerThread : public MeCab::thread {
+public:
+    unsigned int id_;
+    string input_;
+    string output_;
+    Analyzer* analyzer_;
+
+    AnalyzerThread() : id_(-1), analyzer_(0) { }
+
+    ~AnalyzerThread() {
+        delete analyzer_;
+    }
+
+    void run() {
+        ostringstream ss;
+        ss << id_;
+        string source = input_;
+        string dest = output_ +  ".output-" + ss.str();
+
+        cerr << "########## Thread No." << id_ << " => test method runWithStream()" << endl;
+        cerr << "##### input file: " << source << endl;
+        cerr << "##### output file: " << dest << endl;
 
 
-const unsigned int NUM_THREADS = 10;
-int done[NUM_THREADS];
-
-struct pthread_t_data{
-	unsigned int thread_id;
-	string input_filename;
-	string output_filename;
-	Analyzer* analyzer;
+        int result = analyzer_->runWithStream(source.c_str(), dest.c_str());
+        cerr << "Thread No." << id_ << "=> " << (result == 1 ? "succeeded" : "failed") << endl;
+    }
 };
-
-
-void* analyzerWithThread(void* threadarg)	{
-	pthread_t_data* data;
-	data = (struct pthread_t_data*)threadarg;
-	Analyzer* _analyzer = data->analyzer;
-	done[data->thread_id] = 0;
-	
-	ostringstream ss;
-	ss << data->thread_id;
-	string source = data->input_filename;
-	string dest = data->output_filename +  ".output-" + ss.str();
-	
-	cerr << "########## Thread No." << data->thread_id << " => test method runWithStream()" << endl;
-	cerr << "##### input file: " << source << endl;
-	cerr << "##### output file: " << dest << endl;
-
-
-	int result = _analyzer->runWithStream(source.c_str(), dest.c_str());
-	if(result == 1)
-	{
-		cerr << "Thread No." << data->thread_id << "=> succeed in runWithStream() from " << source << " to " << dest << endl;
-	}
-	else
-	{
-		cerr << "Thread No." << data->thread_id << "=> fail in runWithStream() from " << source << " to " << dest << endl;
-	}
-	
-	done[data->thread_id] = 1;
-
-	pthread_exit(NULL);
-}
 
 /**
  * Print the test usage.
  */
 void printUsage()
 {
-    cerr << "Usages:\t raw_file [result_file]" << endl;
-    cerr << "if result_file is not given, it would be raw_file.output-* defaultly." << endl;
+    cerr << "Usages:\t input_file output_file [--num THREAD_NUM] [--dict DICT_PATH]" << endl;
+    cerr << "the output of each thread would be output_file.output-*." << endl;
 }
 
 /**
@@ -87,122 +69,90 @@ void printUsage()
  */
 int main(int argc, char* argv[])
 {
-	cerr << "Japanese Morphological Analyzer Multi-Thread Test, " << __DATE__ << " " << __TIME__ << endl;
-	
-	if(argc < 2)
-	{
-		printUsage();
-		exit(1);
-	}
+    cerr << "Japanese Morphological Analyzer Multi-Thread Test"<< endl;
 
-	// create instances
-	JMA_Factory* factory = JMA_Factory::instance();
-
-    // set default dictionary file
-    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
-
-    // set encoding type from the dictionary path
-	string sysdictStr(sysdict);
-	size_t first = sysdictStr.find_last_of('_');
-	size_t last = sysdictStr.find_last_not_of('/');
-	string encodeStr = sysdictStr.substr(first+1, last-first);
-	Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
-	
-#ifdef USE_SAME_KNOWLEDGE
-	// create instances
-	Knowledge* knowledge = factory->createKnowledge();
-	knowledge->setSystemDict(sysdict);
-	if(knowledge->loadDict() == 0)
-	{
-		cerr << "fail to load dictionary files "<< sysdict << endl;
-		exit(1);
-	}
-
-	if(encode != Knowledge::ENCODE_TYPE_NUM)
-		knowledge->setEncodeType(encode);
-#endif
-
-#ifdef USE_SAME_ANALYZER
-	Analyzer *analyzer = factory->createAnalyzer();
-	analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
-	analyzer->setKnowledge(knowledge);
-#endif
-
-	// multi-thread test
-	int rc;
-	unsigned int tid = 0;
-	
-	pthread_t threads[NUM_THREADS];
-	pthread_t_data thread_data[NUM_THREADS];
-	
-    // file name of input and output
-    string input = argv[1];
-    string output;
     if(argc < 3)
     {
-        output = input;
+        printUsage();
+        exit(1);
     }
-    else
+
+    // file name of input and output
+    string input = argv[1];
+    string output = argv[2];
+
+    // default config
+    const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
+    unsigned int threadNum = 50;
+    int optIndex = 3;
+    if(argc > optIndex)
     {
-        output = argv[2];
+        if(strcmp(argv[optIndex], "--num") || argc < optIndex + 2)
+        {
+            printUsage();
+            exit(1);
+        }
+        threadNum = atoi(argv[optIndex+1]);
     }
 
-	while(tid < NUM_THREADS)	{
-		thread_data[tid].thread_id = tid;
-		thread_data[tid].input_filename = input;
-		thread_data[tid].output_filename = output;
+    optIndex = 5;
+    if(argc > optIndex)
+    {
+        if(strcmp(argv[optIndex], "--dict") || argc < optIndex + 2)
+        {
+            printUsage();
+            exit(1);
+        }
+        sysdict = argv[optIndex+1];
+    }
 
-	#ifndef USE_SAME_KNOWLEDGE
-		Knowledge* knowledge = factory->createKnowledge();
-		knowledge->setSystemDict(sysdict);
-		if(knowledge->loadDict() == 0)
-		{
-			cerr << "fail to load dictionary files "<< sysdict << endl;
-			exit(1);
-		}
+    // create instances
+    JMA_Factory* factory = JMA_Factory::instance();
 
-		if(encode != Knowledge::ENCODE_TYPE_NUM)
-			knowledge->setEncodeType(encode);
-	#endif
+    // set encoding type from the dictionary path
+    string sysdictStr(sysdict);
+    size_t first = sysdictStr.find_last_of('_');
+    size_t last = sysdictStr.find_last_not_of('/');
+    string encodeStr = sysdictStr.substr(first+1, last-first);
+    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
 
-	#ifdef USE_SAME_ANALYZER
-		thread_data[tid].analyzer = analyzer;
-	#else
-		thread_data[tid].analyzer = factory->createAnalyzer();
-		thread_data[tid].analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
-		thread_data[tid].analyzer->setKnowledge(knowledge);
-	#endif
+    // create instances
+    Knowledge* knowledge = factory->createKnowledge();
+    knowledge->setSystemDict(sysdict);
+    if(knowledge->loadDict() == 0)
+    {
+        cerr << "fail to load dictionary files "<< sysdict << endl;
+        exit(1);
+    }
 
-		rc = pthread_create(&threads[tid], NULL, analyzerWithThread, (void *) &thread_data[tid]);
-		if (rc){
-			printf("ERROR; return code from pthread_create() is %d\n", rc);
-			exit(-1);
-		}
+    if(encode != Knowledge::ENCODE_TYPE_NUM)
+        knowledge->setEncodeType(encode);
 
-		++tid;
-	}
-	
-	while(true)	{
-		unsigned int _done = 0;
-		for(unsigned int i = 0; i < NUM_THREADS; i++)	{
-			_done += done[i];
-		}
-		
-		//cout<<"Progress: "<<_done<<"/"<<NUM_THREADS<<endl;
+    // create multi threads
+    vector<AnalyzerThread> threadVec(threadNum);
+    for(unsigned int i=0; i<threadNum; ++i)
+    {
+        threadVec[i].id_ = i;
+        threadVec[i].input_ = input;
+        threadVec[i].output_ = output;
+        threadVec[i].analyzer_ = factory->createAnalyzer();
+        threadVec[i].analyzer_->setKnowledge(knowledge);
+    }
 
-		if(_done == NUM_THREADS)	{
-			break;
-		}
-	}
-	
-	// destroy instances
-#ifdef USE_SAME_KNOWLEDGE
-	delete knowledge;
-#endif
+    // run
+    for(unsigned int i=0; i<threadNum; ++i)
+    {
+        threadVec[i].start();
+    }
 
-#ifdef USE_SAME_ANALYZER
-	delete analyzer;
-#endif
+    // wait for end
+    for(unsigned int i=0; i<threadNum; ++i)
+    {
+        threadVec[i].join();
+    }
 
-	pthread_exit(NULL);
+    // destroy instance
+    delete knowledge;
+
+    return 0;
 }

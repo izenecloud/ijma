@@ -19,7 +19,3 @@ ENDIF (CMAKE_COMPILER_IS_XLC)
 
 # generate jma_config.h
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/../include/jma_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/jma_config.h)
-
-# include jma_config.h
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_definitions(-DHAVE_JMA_CONFIG_H)

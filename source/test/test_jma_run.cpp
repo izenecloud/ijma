@@ -177,8 +177,8 @@ int main(int argc, char* argv[])
 
     // check argument
     if((optionIndex == optionSize)
-	    || (optionIndex == 0 && argc < 3) // command option "--sentence N-best"
-	    || (optionIndex == 2 && argc < 4)) // command option "--stream INPUT OUTPUT"
+        || (optionIndex == 0 && argc < 3) // command option "--sentence N-best"
+        || (optionIndex == 2 && argc < 4)) // command option "--stream INPUT OUTPUT"
     {
         printUsage();
         exit(1);
