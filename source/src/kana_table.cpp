@@ -8,7 +8,8 @@
 
 #include "kana_table.h"
 #include "jma_dictionary.h"
-#include "iconv_utils.h"
+#include "knowledge.h" // Knowledge::encodeStr()
+#include "iconv_utils.h" // MeCab::Iconv
 
 #include <cassert>
 #include <fstream>
@@ -32,8 +33,8 @@ bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
 {
     assert(fileName);
 
-    Iconv iconv;
-    if(! iconv.open(src, dest))
+    MeCab::Iconv iconv;
+    if(! iconv.open(Knowledge::encodeStr(src), Knowledge::encodeStr(dest)))
     {
         cerr << "error to open encoding conversion from " << src << " to " << dest << endl;
         return false;

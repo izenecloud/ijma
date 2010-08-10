@@ -109,6 +109,14 @@ public:
      */
     static EncodeType decodeEncodeType(const char* encodeStr);
 
+    /**
+     * Get the encode type string from the encode type
+     *
+     * \param encodeType encode type
+     * \return the encoding type string, note that 0 would be returned if the encoding type is unkown.
+     */
+    static const char* encodeStr(EncodeType encodeType);
+
 protected:
     /**
      * Invoked when the encode type is changed (except for the initialization)
@@ -123,12 +131,12 @@ protected:
     /** the file names of user dictionaries */
     std::vector<std::string> userDictNames_;
 
-    /** the string of each encoding type */
-    static const char* ENCODE_TYPE_STR_[ENCODE_TYPE_NUM];
-
 private:
     /** character encode type */
     EncodeType encodeType_;
+
+    /** the string of each encoding type */
+    static const char* ENCODE_TYPE_STR_[ENCODE_TYPE_NUM];
 };
 
 } // namespace jma

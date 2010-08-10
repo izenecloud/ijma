@@ -83,6 +83,15 @@ Knowledge::EncodeType Knowledge::decodeEncodeType(const char* encodeStr)
     return Knowledge::ENCODE_TYPE_NUM;
 }
 
+const char* Knowledge::encodeStr(EncodeType encodeType)
+{
+    if(encodeType < ENCODE_TYPE_NUM)
+        return ENCODE_TYPE_STR_[encodeType];
+
+    // unknown encoding type
+    return 0;
+}
+
 void Knowledge::setSystemDict(const char* dirPath)
 {
     assert(dirPath);

@@ -87,9 +87,8 @@ IF (CMAKE_PLATFORM_IS_AIX)
     add_definitions(-DPLATFORM_IS_AIX=${CMAKE_PLATFORM_IS_AIX})
 ENDIF (CMAKE_PLATFORM_IS_AIX)
 
-# include config.h, jma_config.h
+# include config.h
 add_definitions(-DHAVE_CONFIG_H)
-add_definitions(-DHAVE_JMA_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 add_subdirectory(src)

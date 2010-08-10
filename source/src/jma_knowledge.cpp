@@ -225,7 +225,7 @@ bool JMA_Knowledge::compileUserDict()
     // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
     // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
     compileParam.push_back((char*)"-t");
-    compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
+    compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
 
     compileParam.push_back(const_cast<char*>(tempUserCSVFile.c_str()));
 
@@ -506,7 +506,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     // if the source encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
     // below is to set the destination encoding type, which is "EUC-JP" defaultly.
     compileParam.push_back((char*)"-t");
-    compileParam.push_back(const_cast<char*>(ENCODE_TYPE_STR_[getEncodeType()]));
+    compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
 
 #if JMA_DEBUG_PRINT
     cout << "parameter of mecab_dict_index() to compile system dictionary: ";
