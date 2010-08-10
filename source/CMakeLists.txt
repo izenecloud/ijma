@@ -73,7 +73,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
 
 IF (UNIX)
     MESSAGE(STATUS "UNIX: " ${UNIX})
-    set(LIBS_JMA jma pthread z)
+    set(LIBS_JMA jma pthread)
 ELSE (WIN32)
     MESSAGE(STATUS "WIN32: " ${WIN32})
     set(LIBS_JMA jma) # pthread library is not used under Win32 platform.

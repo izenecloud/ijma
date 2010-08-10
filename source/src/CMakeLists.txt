@@ -1,4 +1,4 @@
-FILE(GLOB_RECURSE jma_SRC "*.cpp")
+FILE(GLOB_RECURSE jma_SRC "*.cpp" "*.c")
 
 # include modules
 # usage: CHECK_INCLUDE_FILES (<header> <RESULT_VARIABLE> )
