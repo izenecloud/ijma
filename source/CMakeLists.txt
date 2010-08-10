@@ -66,13 +66,14 @@ ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 include_directories(../include)
 include_directories(./include)
 include_directories(./src/libmecab)
+include_directories(./src/libz)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
 
 IF (UNIX)
     MESSAGE(STATUS "UNIX: " ${UNIX})
-    set(LIBS_JMA jma pthread)
+    set(LIBS_JMA jma pthread z)
 ELSE (WIN32)
     MESSAGE(STATUS "WIN32: " ${WIN32})
     set(LIBS_JMA jma) # pthread library is not used under Win32 platform.

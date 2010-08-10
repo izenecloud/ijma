@@ -11,6 +11,8 @@
 #include "mmap.h" // MeCab::Mmap
 #include "utils.h" // MeCab::read_static
 
+#include "zwrapper.h" // zlib::ZWrapper
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -19,9 +21,20 @@ using namespace std;
 
 namespace
 {
-unsigned int JMA_DICT_VERSION = 100;
-unsigned int JMA_DICT_BLOCK_SIZE = 512;
-unsigned int JMA_DICT_FILE_NAME_SIZE = 500;
+const unsigned int JMA_DICT_VERSION = 100;
+const unsigned int JMA_DICT_BLOCK_SIZE = 512;
+const unsigned int JMA_DICT_BLOCK_MASK = JMA_DICT_BLOCK_SIZE - 1;
+const unsigned int JMA_DICT_FILE_NAME_SIZE = 500;
+
+/**
+ * Round to multiple of JMA_DICT_BLOCK_SIZE.
+ * \param value any size such as 514
+ * \return the rounded value such as 1024
+ */
+inline unsigned int roundBlockSize(unsigned int value)
+{
+    return (value + JMA_DICT_BLOCK_MASK) & ~JMA_DICT_BLOCK_MASK;
+}
 
 /**
  * Extract file name from path string.
@@ -57,6 +70,10 @@ public:
 
     unsigned int size() const {
         return size_;
+    }
+
+    unsigned int pos() const {
+        return pos_;
     }
 
     void advance(unsigned int len) {
@@ -113,7 +130,7 @@ JMA_Dictionary* JMA_Dictionary::instance()
 }
 
 JMA_Dictionary::JMA_Dictionary()
-    : mmap_(0)
+    : dictText_(0)
 {
 }
 
@@ -122,30 +139,37 @@ JMA_Dictionary::~JMA_Dictionary()
     close();
 }
 
+void JMA_Dictionary::close()
+{
+    dictMap_.clear();
+    delete[] dictText_;
+    dictText_ = 0;
+}
+
 bool JMA_Dictionary::open(const char* fileName)
 {
     assert(fileName);
 
     close();
 
-    mmap_ = new MeCab::Mmap<char>;
-    if(! mmap_->open(fileName))
+    // mapping from compressed file into memory
+    MeCab::Mmap<char> compressFile;
+    if(! compressFile.open(fileName))
     {
         cerr << "error: fail to memory map file " << fileName << endl;
         return false;
     }
-    if(mmap_->size() < JMA_DICT_BLOCK_SIZE)
+    if(compressFile.size() < JMA_DICT_BLOCK_SIZE)
     {
         cerr << "error: dictionary file " << fileName << " is broken." << endl;
         return false;
     }
 
-    const char* start = mmap_->begin();
+    const char* start = compressFile.begin();
     const char* ptr = start;
 
     // read total head
-    unsigned int version;
-    unsigned int fileCount;
+    unsigned int version, fileCount, totalSize;
     MeCab::read_static<unsigned int>(&ptr, version);
     if(version != JMA_DICT_VERSION)
     {
@@ -153,11 +177,33 @@ bool JMA_Dictionary::open(const char* fileName)
         return false;
     }
     MeCab::read_static<unsigned int>(&ptr, fileCount);
+    MeCab::read_static<unsigned int>(&ptr, totalSize);
     ptr = start + JMA_DICT_BLOCK_SIZE;
 
+    // uncompress
+    dictText_ = new char[totalSize];
+    if(! dictText_)
+    {
+        cerr << "error: fail to allcate memory " << totalSize << " bytes to uncompress file " << fileName << endl;
+        return false;
+    }
+
+    zlib::ZWrapper zwrap;
+    unsigned int uncompSize = totalSize;
+    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, dictText_, uncompSize))
+    {
+        cerr << "error: fail to uncompress file " << fileName << endl;
+        return false;
+    }
+    if(uncompSize != totalSize)
+    {
+        cerr << "error: uncompress size " << uncompSize << " , while it should be " << totalSize << endl;
+        return false;
+    }
+
     // read each file head
+    ptr = dictText_;
     const char* content = ptr + JMA_DICT_BLOCK_SIZE * fileCount;
-    const unsigned int mask = JMA_DICT_BLOCK_SIZE - 1;
     for(unsigned int i=0; i<fileCount; ++i)
     {
         // file name is the 1st field in head section
@@ -170,25 +216,18 @@ bool JMA_Dictionary::open(const char* fileName)
 
         dict.text_ = const_cast<char *>(content);
 
-        // round to multiple of block size (power of 2)
-        content += (dict.length_ + mask) & ~mask;
+        // round to multiple of block size
+        content += roundBlockSize(dict.length_);
         ptr = head + JMA_DICT_BLOCK_SIZE;
     }
 
     // check end position
-    if(content != mmap_->end())
+    if(content != dictText_ + totalSize)
     {
         cerr << "error: dictionary file " << fileName << " is broken at end position." << endl;
         return false;
     }
     return true;
-}
-
-void JMA_Dictionary::close()
-{
-    dictMap_.clear();
-    delete mmap_;
-    mmap_ = 0;
 }
 
 const DictUnit* JMA_Dictionary::getDict(const char* fileName) const
@@ -209,12 +248,13 @@ const DictUnit* JMA_Dictionary::getDict(const char* fileName) const
  * [TOTAL HEAD]
  * version, 4 bytes
  * file count, 4 bytes
+ * total size, 4 bytes (the uncompressed size of all sections below)
  *
- * multiple [FILE HEAD]
+ * multiple [FILE HEAD] (compressed)
  * file name, 500 bytes (terminated with null)
  * file size in bytes, 4 bytes (maximum file size is 4 Gigabytes)
  *
- * multiple [FILE CONTENT]
+ * multiple [FILE CONTENT] (compressed)
  */
 bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const char* destFile)
 {
@@ -239,7 +279,18 @@ bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const cha
     buffer.put(&JMA_DICT_VERSION);
     unsigned int fileCount = srcFiles.size();
     buffer.put(&fileCount);
+    // the uncompressed size of all sections below
+    unsigned int totalSize = JMA_DICT_BLOCK_SIZE * fileCount;
+    const streampos totalSizePos = buffer.pos();
     ofs.write(buffer.get(), buffer.size());
+
+    // compressor
+    zlib::ZWrapper zwrap;
+    if(! zwrap.defalteInit())
+    {
+        cerr << "error: fail to initialize compress state." << endl;
+        return false;
+    }
 
     // each file head
     for(unsigned int i=0; i<fileCount; ++i)
@@ -266,7 +317,14 @@ bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const cha
         unsigned int fileSize = ifs.tellg();
         buffer.put(&fileSize);
 
-        ofs.write(buffer.get(), buffer.size());
+        // round to multiple of block size
+        totalSize += roundBlockSize(fileSize);
+
+        if(! zwrap.deflateToStream(buffer.get(), buffer.size(), ofs, false))
+        {
+            cerr << "error: fail to compress into output file " << destFile << endl;
+            return false;
+        }
     }
 
     // each file content
@@ -283,9 +341,23 @@ bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const cha
         {
             buffer.reset();
             buffer.read(ifs);
-            ofs.write(buffer.get(), buffer.size());
+            bool isFlush = (i == fileCount - 1) && ifs.eof();
+            if(! zwrap.deflateToStream(buffer.get(), buffer.size(), ofs, isFlush))
+            {
+                cerr << "error: fail to compress into output file " << destFile << endl;
+                return false;
+            }
         }
     }
+
+    if (! zwrap.deflateEnd())
+    {
+        cerr << "error: fail to free compress state." << endl;
+        return false;
+    }
+
+    ofs.seekp(totalSizePos);
+    ofs.write(reinterpret_cast<char *>(&totalSize), sizeof(totalSize));
 
     ofs.close();
     return true;

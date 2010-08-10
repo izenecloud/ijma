@@ -13,11 +13,6 @@
 #include <string>
 #include <map>
 
-namespace MeCab
-{
-    template <class T> class Mmap;
-}
-
 namespace jma
 {
 
@@ -90,8 +85,8 @@ private:
     /** the instance of dictionary */
     static JMA_Dictionary* instance_;
 
-    /** mapping from archive file into memory */
-    MeCab::Mmap<char>* mmap_;
+    /** the start address of dictionary archive */
+    char* dictText_;
 
     /** mapping from dictionary file name (without path) to dictionary instance */
     std::map<std::string, DictUnit> dictMap_;
