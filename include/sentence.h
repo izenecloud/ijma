@@ -43,6 +43,12 @@ struct Morpheme
     std::string readForm_;
 
     /**
+     * the normalized form string value.
+     * As an example in Japanese, "渡辺" is the normalized form of lexicon "渡邊", "エキスポ" is the normalized form of lexicon "エクスポ".
+     */
+    std::string normForm_;
+
+    /**
      * Constructor.
      * The string value of lexicon, POS, base form, and reading form are initialized with empty string,
      * and the index code of part-of-speech tag is initialized with -1, meaning that no part-of-speech tag is available.
@@ -56,8 +62,9 @@ struct Morpheme
 	 * \param posStr the POS string value
 	 * \param baseForm the base form string value
      * \param readForm the reading form string value
+     * \param normForm the normalized form string value
 	 */
-	Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm);
+	Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm, const std::string& normForm);
 };
 
 /** A list of morphemes. */
@@ -83,6 +90,7 @@ typedef std::vector<Morpheme> MorphemeList;
  *          const char* strPOS = s.getStrPOS(i, j);
  *          const char* baseForm = s.getBaseForm(i, j);
  *          const char* readForm = s.getReadForm(i, j);
+ *          const char* normForm = s.getNormForm(i, j);
  *          ...
  *      }
  *      double score = s.getScore(i);
@@ -97,6 +105,7 @@ typedef std::vector<Morpheme> MorphemeList;
  *      const char* strPOS = s.getStrPOS(i, j);
  *      const char* baseForm = s.getBaseForm(i, j);
  *      const char* readForm = s.getReadForm(i, j);
+ *      const char* normForm = s.getNormForm(i, j);
  *      ...
  * }
  * ...
@@ -184,6 +193,15 @@ public:
      * \return reading form string, if no reading form exists, empty string "" is returned
      */
     const char* getReadForm(int nPos, int nIdx) const;
+
+    /**
+     * Get the normalized form string of morpheme \e nIdx in candidate result \e nPos.
+     * For example in Japanese, "渡辺" is returned as the normalized form of morpheme "渡邊る".
+     * \param nPos candidate result index
+     * \param nIdx morpheme index
+     * \return normalized form string, if no normalized form exists, empty string "" is returned
+     */
+    const char* getNormForm(int nPos, int nIdx) const;
 
     /**
      * Get the MorphemeList of candidate result \e nPos.
