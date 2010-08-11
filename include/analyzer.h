@@ -197,21 +197,21 @@ public:
          */
         OPTION_TYPE_POS_FULL_CATEGORY,
 
-        /** Configure whether to combine affix into noun.
-         * If a non-zero value is configured, affix (including prefix and suffix) is combined with adjacent noun,
+        /** Configure whether to combine a sequence of words into single compound words.
+         * If a non-zero value is configured, sequence of words are combined into single compound words,
          * it is valid for below APIs:
          * \e runWithSentence(), \e runWithString(), \e runWithStream(),
          * output example: "長野県/名詞,固有名詞,地域,一般  ".
          *
-         * If a zero value is configured, affix is not combined in above APIS,
+         * If a zero value is configured, compound words are decomposed into their components in above APIS,
          * output example: "長野/名詞,固有名詞,地域,一般  県/名詞,接尾,地域  ".
          *
          * If the configuration file "pos-combine.def" does not exist in system dictionary path,
-         * no affix would be combined.
+         * no words would be combined into compound words.
          *
          * Default value: 1
          */
-        OPTION_TYPE_COMBINE_NOUN_AFFIX,
+        OPTION_TYPE_COMPOUND_MORPHOLOGY,
 
         /** Configure whether to convert Katakana characters in lexicon string to their Hiragana equivalents, other characters are kept as original.
          * If a non-zero value is configured, Katakana characters in lexicon string are converted to their Hiragana equivalents,

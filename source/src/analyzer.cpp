@@ -31,7 +31,7 @@ Analyzer::Analyzer()
     options_[OPTION_TYPE_NBEST] = 1; // set the default number of candidate results of runWithSentence()
     options_[OPTION_TYPE_POS_FORMAT_ALPHABET] = 0; // disable output part-of-speech tags in alphabet format defaultly, use Japanese format instead.
     options_[OPTION_TYPE_POS_FULL_CATEGORY] = 0; // disable output part-of-speech tags in Japanese full category format
-    options_[OPTION_TYPE_COMBINE_NOUN_AFFIX] = 1; // enable combining affix into nouns defaultly
+    options_[OPTION_TYPE_COMPOUND_MORPHOLOGY] = 1; // enable combining into compound words defaultly
     options_[OPTION_TYPE_CONVERT_TO_HIRAGANA] = 0; // disable conversion to Hiragana characters defaultly
     options_[OPTION_TYPE_CONVERT_TO_KATAKANA] = 0; // disable conversion to Katakana characters defaultly
 }

@@ -109,9 +109,9 @@ bool JMA_Analyzer::isOutputPOS() const
     return (getOption(OPTION_TYPE_POS_TAGGING) != 0);
 }
 
-bool JMA_Analyzer::isCombineNounAffix() const
+bool JMA_Analyzer::isCombineCompound() const
 {
-    return (getOption(OPTION_TYPE_COMBINE_NOUN_AFFIX) != 0);
+    return (getOption(OPTION_TYPE_COMPOUND_MORPHOLOGY) != 0);
 }
 
 POSTable::POSFormat JMA_Analyzer::getPOSFormat() const
@@ -454,7 +454,7 @@ MeCab::Node* JMA_Analyzer::combineNode(const MeCab::Node* startNode, Morpheme& r
     result = getMorpheme(startNode);
 
     // check option
-    if(! isCombineNounAffix())
+    if(! isCombineCompound())
     {
         return nextNode;
     }

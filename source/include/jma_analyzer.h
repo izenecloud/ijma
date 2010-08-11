@@ -131,10 +131,10 @@ private:
     POSTable::POSFormat getPOSFormat() const;
 
     /**
-     * Check whether combine affix into noun.
+     * Check whether combine into compound words.
      * \return true to combine, false for not to combine.
      */
-    bool isCombineNounAffix() const;
+    bool isCombineCompound() const;
 
     /**
      * Convert from \e MeCab::Node to \e Morpheme.

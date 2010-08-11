@@ -38,7 +38,7 @@ struct Morpheme
 
     /**
      * the reading form string value.
-     * As an example in Japanese, "クル" is the reading form of lexicon "来る".
+     * As an example in Japanese, "くる" is the reading form of lexicon "来る".
      */
     std::string readForm_;
 

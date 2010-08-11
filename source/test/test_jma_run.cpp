@@ -274,8 +274,8 @@ int main(int argc, char* argv[])
     // output POS in Japanese format of full category
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY, 1);
 
-    // disable noun affix combination
-    //analyzer->setOption(Analyzer::OPTION_TYPE_COMBINE_NOUN_AFFIX, 0);
+    // disable compound words combination
+    //analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, 0);
 
     // convert from Katakana to Hiragana
     //analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA, 1);
