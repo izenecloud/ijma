@@ -3,7 +3,7 @@
  * Below is the usage examples:
  * \code
  * Test to create and use JMA_Factory.
- * $ ./test_jma_convert_kana --to [hira|kata] [--dict DICT_PATH]
+ * $ ./test_jma_convert_kana --to hira,kata [--dict DICT_PATH]
  * \endcode
  * 
  * \author Jun Jiang
@@ -16,6 +16,8 @@
 #include "knowledge.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
+#include <vector>
+#include <map>
 #include <string>
 #include <iostream>
 #include <cassert>
@@ -39,7 +41,7 @@ namespace
  */
 void printUsage()
 {
-    cerr << "Usages:\t" << OPTION_TO << " [hira|kata] [--dict DICT_PATH]" << endl;
+    cerr << "Usages:\t" << OPTION_TO << " hira,kata [--dict DICT_PATH]" << endl;
 }
 
 /**
@@ -53,16 +55,27 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    bool isToHiragana = true;
+    // map from option string to type value
+    typedef map<string, Analyzer::OptionType> OptionMapT;
+    OptionMapT optionMap;
+    optionMap["kata"] = Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA;
+    optionMap["hira"] = Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA;
+
+    // option types
+    vector<Analyzer::OptionType> optionVec;
     if(! strcmp(argv[1], OPTION_TO))
     {
-        if(! strcmp(argv[2], "kata"))
-            isToHiragana = false;
-        else if(strcmp(argv[2], "hira"))
+        char* p = strtok(argv[2], ",");
+        for(; p; p=strtok(0, ","))
         {
-            cerr << "unknown option value: " << argv[2] << endl;
-            printUsage();
-            exit(1);
+            OptionMapT::const_iterator it = optionMap.find(p);
+            if(it == optionMap.end())
+            {
+                cerr << "unknown option type: " << p << endl;
+                printUsage();
+                exit(1);
+            }
+            optionVec.push_back(it->second);
         }
     }
     else
@@ -129,13 +142,19 @@ int main(int argc, char* argv[])
     // set knowledge
     analyzer->setKnowledge(knowledge);
 
+    // set convert options
+    cout << "convert option values: ";
+    for(unsigned int i=0; i<optionVec.size(); ++i)
+    {
+        cout << optionVec[i];
+        analyzer->setOption(optionVec[i], 1);
+    }
+    cout << endl << endl;
+
     string line;
     while(getline(cin, line))
     {
-        if(isToHiragana)
-            cout << "Hiragana:" << endl << analyzer->convertToHiragana(line.c_str()) << endl << endl;
-        else
-            cout << "Katakana:" << endl << analyzer->convertToKatakana(line.c_str()) << endl << endl;
+        cout << analyzer->convertCharacters(line.c_str()) << endl << endl;
     }
 
     delete knowledge;

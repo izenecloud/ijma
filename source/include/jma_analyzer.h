@@ -85,18 +85,11 @@ public:
     virtual void splitSentence(const char* paragraph, std::vector<Sentence>& sentences);
 
     /**
-     * Convert all Japanese Katakana characters to their Hiragana equivalents, other characters are kept as original.
+     * The characters, configured by OPTION_TYPE_CONVERT_TO_*, are converted to their target types, other characters are kept as original.
      * \param str string to convert from
      * \return the conversion result
      */
-    virtual std::string convertToHiragana(const char* str) const;
-
-    /**
-     * Convert all Japanese Hiragana characters to their Katakana equivalents, other characters are kept as original.
-     * \param str string to convert from
-     * \return the conversion result
-     */
-    virtual std::string convertToKatakana(const char* str) const;
+    virtual std::string convertCharacters(const char* str) const;
 
 private:
 	/**
