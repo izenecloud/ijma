@@ -106,6 +106,14 @@ public:
 	bool isStopWord(const string& word) const;
 
     /**
+	 * Whether the specific part-of-speech tag is keyword
+	 *
+	 * \param pos the index code of part-of-speech tag
+	 * \return whether is keyword
+	 */
+	bool isKeywordPOS(int pos) const;
+
+    /**
      * Get the feature offset of base form indexed from zero.
      * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ",
      * the feature offset of base form "見る" would be 6.

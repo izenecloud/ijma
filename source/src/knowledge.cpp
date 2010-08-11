@@ -106,4 +106,13 @@ void Knowledge::addUserDict(const char* fileName)
     userDictNames_.push_back(fileName);
 }
 
+void Knowledge::setKeywordPOS(const std::vector<int>& posVec)
+{
+    keywordPOSSet_.clear();
+    for(std::vector<int>::const_iterator it=posVec.begin(); it!=posVec.end(); ++it)
+    {
+        keywordPOSSet_.insert(*it);
+    }
+}
+
 } // namespace jma

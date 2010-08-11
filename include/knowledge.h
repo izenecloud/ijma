@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 namespace jma
 {
@@ -43,6 +44,16 @@ public:
      * \param fileName the file name
      */
     void addUserDict(const char* fileName);
+
+    /**
+     * Set the part-of-speech tags as keywords.
+     * If this method is not called or \e posVec is empty,
+     * the results of \e Analyzer::runWith*() would contain all words.
+     * Otherwise, if \e posVec is not empty,
+     * the results of \e Analyzer::runWith*() would only contain the words with part-of-speech tags specified by this method.
+     * \param posVec the vector of part-of-speech index codes
+     */
+    void setKeywordPOS(const std::vector<int>& posVec);
 
     /**
      * Load the dictionaries, which are set by \e setSystemDict() and \e addUserDict().
@@ -130,6 +141,9 @@ protected:
 
     /** the file names of user dictionaries */
     std::vector<std::string> userDictNames_;
+
+    /** the part-of-speech index codes as keywords */
+    std::set<int> keywordPOSSet_;
 
 private:
     /** character encode type */

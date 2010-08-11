@@ -151,6 +151,13 @@ private:
      */
     MeCab::Node* combineNode(const MeCab::Node* startNode, Morpheme& result) const;
 
+    /**
+     * Check whether to filter out the morpheme.
+     * \param morph the morpheme
+     * \return true to filter out, false to reserve
+     */
+    bool isFilter(const Morpheme& morph) const;
+
 private:
 	/**
 	 * hold the JMA_Knowledge Object

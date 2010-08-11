@@ -582,6 +582,14 @@ bool JMA_Knowledge::isStopWord(const string& word) const
 	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
 }
 
+bool JMA_Knowledge::isKeywordPOS(int pos) const
+{
+    if(keywordPOSSet_.empty())
+        return true;
+
+    return keywordPOSSet_.find(pos) != keywordPOSSet_.end();
+}
+
 int JMA_Knowledge::getBaseFormOffset() const
 {
     return baseFormOffset_;

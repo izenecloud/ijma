@@ -176,7 +176,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 		for (const MeCab::Node *node = bosNode->next; node->next;)
 		{
             node = combineNode(node, morp);
-			if(knowledge_->isStopWord(morp.lexicon_))
+			if(isFilter(morp))
 				continue;
 			list.push_back(morp);
 		}
@@ -205,7 +205,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			for (const MeCab::Node *node = bosNode->next; node->next;)
 			{
                 node = combineNode(node, morp);
-                if(knowledge_->isStopWord(morp.lexicon_))
+                if(isFilter(morp))
                     continue;
 				list.push_back(morp);
 			}
@@ -268,7 +268,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
     Morpheme morp;
     for (const MeCab::Node *node = bosNode->next; node->next;){
         node = combineNode(node, morp);
-        if(knowledge_->isStopWord(morp.lexicon_))
+        if(isFilter(morp))
             continue;
 
         strBuf_ += morp.lexicon_;
@@ -319,7 +319,7 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
         for (const MeCab::Node *node = bosNode->next; node->next;){
             node = combineNode(node, morp);
-            if(knowledge_->isStopWord(morp.lexicon_))
+            if(isFilter(morp))
                 continue;
 
             out << morp.lexicon_;
@@ -537,6 +537,14 @@ std::string JMA_Analyzer::convertToKatakana(const char* str) const
     }
 
     return result;
+}
+
+bool JMA_Analyzer::isFilter(const Morpheme& morph) const
+{
+    if(knowledge_->isStopWord(morph.lexicon_) || ! knowledge_->isKeywordPOS(morph.posCode_))
+        return true;
+
+    return false;
 }
 
 } // namespace jma
