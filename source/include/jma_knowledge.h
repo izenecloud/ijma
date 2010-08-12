@@ -13,7 +13,7 @@
 #include "generic_array.h"
 #include "jma_ctype.h"
 #include "pos_table.h"
-#include "kana_table.h"
+#include "char_table.h"
 
 #include <string>
 #include <set>
@@ -87,15 +87,27 @@ public:
 
     /**
      * Get the part-of-speech tags table.
-     * \return pointer to the table instance.
+     * \return reference to the table instance.
      */
-    const POSTable* getPOSTable() const;
+    const POSTable& getPOSTable() const;
 
     /**
      * Get the mapping table to convert between Hiragana and Katakana characters.
-     * \return pointer to the table instance.
+     * \return reference to the table instance.
      */
-    const KanaTable* getKanaTable() const;
+    const CharTable& getKanaTable() const;
+
+    /**
+     * Get the mapping table to convert between half and full width characters.
+     * \return reference to the table instance.
+     */
+    const CharTable& getWidthTable() const;
+
+    /**
+     * Get the mapping table to convert between lower and upper case characters.
+     * \return reference to the table instance.
+     */
+    const CharTable& getCaseTable() const;
 
     /**
 	 * Whether the specific word is stop word
@@ -311,7 +323,13 @@ private:
     EncodeType configEncodeType_;
 
     /** mapping table between Hiragana and Katakana characters */
-    KanaTable kanaTable_;
+    CharTable kanaTable_;
+
+    /** mapping table between half and full width characters */
+    CharTable widthTable_;
+
+    /** mapping table between lower and upper case characters */
+    CharTable caseTable_;
 
     /** the dictionary instance */
     JMA_Dictionary* dictionary_;

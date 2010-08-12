@@ -16,7 +16,7 @@
 #include "jma_knowledge.h"
 #include "tokenizer.h"
 #include "pos_table.h"
-#include "kana_table.h"
+#include "char_table.h"
 
 #ifndef JMA_DEBUG_PRINT
     #define JMA_DEBUG_PRINT 1
@@ -85,7 +85,8 @@ inline bool isSameMorphemeList( const MorphemeList* list1, const MorphemeList* l
 
 JMA_Analyzer::JMA_Analyzer()
     : knowledge_(0), tagger_(0),
-    posTable_(0), kanaTable_(0)
+    posTable_(0), kanaTable_(0),
+    widthTable_(0), caseTable_(0)
 {
 }
 
@@ -148,8 +149,10 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
         tagger_->set_lattice_level(1);
     }
 
-    posTable_ = knowledge_->getPOSTable();
-    kanaTable_ = knowledge_->getKanaTable();
+    posTable_ = &knowledge_->getPOSTable();
+    kanaTable_ = &knowledge_->getKanaTable();
+    widthTable_ = &knowledge_->getWidthTable();
+    caseTable_ = &knowledge_->getCaseTable();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)
@@ -503,21 +506,39 @@ std::string JMA_Analyzer::convertCharacters(const char* str) const
 
     for(const char* p=tokenizer.next(); p; p=tokenizer.next())
     {
-        const char* q = p;
+        const char* q;
         if(getOption(OPTION_TYPE_CONVERT_TO_HIRAGANA) != 0)
         {
-            q = kanaTable_->toHiragana(q);
-            if(! q)
-                q = p;
+            if((q = kanaTable_->toLeft(p)) != NULL)
+                p = q;
         }
         if(getOption(OPTION_TYPE_CONVERT_TO_KATAKANA) != 0)
         {
-            q = kanaTable_->toKatakana(q);
-            if(! q)
-                q = p;
+            if((q = kanaTable_->toRight(p)) != NULL)
+                p = q;
+        }
+        if(getOption(OPTION_TYPE_CONVERT_TO_HALF_WIDTH) != 0)
+        {
+            if((q = widthTable_->toLeft(p)) != NULL)
+                p = q;
+        }
+        if(getOption(OPTION_TYPE_CONVERT_TO_FULL_WIDTH) != 0)
+        {
+            if((q = widthTable_->toRight(p)) != NULL)
+                p = q;
+        }
+        if(getOption(OPTION_TYPE_CONVERT_TO_LOWER_CASE) != 0)
+        {
+            if((q = caseTable_->toLeft(p)) != NULL)
+                p = q;
+        }
+        if(getOption(OPTION_TYPE_CONVERT_TO_UPPER_CASE) != 0)
+        {
+            if((q = caseTable_->toRight(p)) != NULL)
+                p = q;
         }
 
-        result += q;
+        result += p;
     }
 
     return result;

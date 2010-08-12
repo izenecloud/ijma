@@ -232,6 +232,58 @@ public:
          */
         OPTION_TYPE_CONVERT_TO_KATAKANA,
 
+        /** Configure whether to convert digits and alphabets to their half width equivalents.
+         * If a non-zero value is configured, digits and alphabets are converted to their half width equivalents,
+         * it is valid for below APIs:
+         * \e convertCharacters(),
+         * output example: "ABC123".
+         *
+         * If a zero value is configured, digits and alphabets are not converted as original,
+         * output example: "ＡＢＣ１２３".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_HALF_WIDTH,
+
+        /** Configure whether to convert digits and alphabets to their full width equivalents.
+         * If a non-zero value is configured, digits and alphabets are converted to their full width equivalents,
+         * it is valid for below APIs:
+         * \e convertCharacters(),
+         * output example: "ＡＢＣ１２３".
+         *
+         * If a zero value is configured, digits and alphabets are not converted as original,
+         * output example: "ABC123".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_FULL_WIDTH,
+
+        /** Configure whether to convert alphabets to their lower case equivalents.
+         * If a non-zero value is configured, alphabets are converted to their lower case equivalents,
+         * it is valid for below APIs:
+         * \e convertCharacters(),
+         * output example: "abcａｂｃ".
+         *
+         * If a zero value is configured, digits and alphabets are not converted as original,
+         * output example: "ABCＡＢＣ".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_LOWER_CASE,
+
+        /** Configure whether to convert alphabets to their upper case equivalents.
+         * If a non-zero value is configured, alphabets are converted to their upper case equivalents,
+         * it is valid for below APIs:
+         * \e convertCharacters(),
+         * output example: "ABCＡＢＣ".
+         *
+         * If a zero value is configured, digits and alphabets are not converted as original,
+         * output example: "abcａｂｃ".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_CONVERT_TO_UPPER_CASE,
+
         OPTION_TYPE_NUM ///< the count of option types
     };
 

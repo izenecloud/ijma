@@ -64,7 +64,13 @@ const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 const char* POS_COMBINE_DEF_FILE = "pos-combine.def";
 
 /** Map file name to convert between Hiragana and Katakana characters */
-const char* KANA_MAP_DEF_FILE = "kana-map.def";
+const char* KANA_MAP_DEF_FILE = "map-kana.def";
+
+/** Map file name to convert between half and full width characters */
+const char* WIDTH_MAP_DEF_FILE = "map-width.def";
+
+/** Map file name to convert between lower and upper case characters */
+const char* CASE_MAP_DEF_FILE = "map-case.def";
 
 /** System dictionary archive */
 const char* DICT_ARCHIVE_FILE = "sys.bin";
@@ -279,14 +285,24 @@ MeCab::Tagger* JMA_Knowledge::createTagger() const
     return MeCab::createTagger(taggerParam.c_str());
 }
 
-const POSTable* JMA_Knowledge::getPOSTable() const
+const POSTable& JMA_Knowledge::getPOSTable() const
 {
-    return &posTable_;
+    return posTable_;
 }
 
-const KanaTable* JMA_Knowledge::getKanaTable() const
+const CharTable& JMA_Knowledge::getKanaTable() const
 {
-    return &kanaTable_;
+    return kanaTable_;
+}
+
+const CharTable& JMA_Knowledge::getWidthTable() const
+{
+    return widthTable_;
+}
+
+const CharTable& JMA_Knowledge::getCaseTable() const
+{
+    return caseTable_;
 }
 
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
@@ -410,12 +426,28 @@ int JMA_Knowledge::loadDict()
         cerr << "warning: as " << posCombineName << " not exists, no rules is defined to combine tokens with specific POS tags" << endl;
     }
 
-    // file "kana-map.def"
+    // file "map-kana.def"
     const char* kanaFileName = KANA_MAP_DEF_FILE;
     // load kana conversion map
     if(! kanaTable_.loadConfig(kanaFileName, configEncodeType_, getEncodeType()))
     {
         cerr << "warning: as fails to load " << kanaFileName << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
+    }
+
+    // file "map-width.def"
+    const char* widthFileName = WIDTH_MAP_DEF_FILE;
+    // load width conversion map
+    if(! widthTable_.loadConfig(widthFileName, configEncodeType_, getEncodeType()))
+    {
+        cerr << "warning: as fails to load " << widthFileName << ", no mapping is defined to convert between half and full width characters." << endl;
+    }
+
+    // file "map-case.def"
+    const char* caseFileName = CASE_MAP_DEF_FILE;
+    // load case conversion map
+    if(! caseTable_.loadConfig(caseFileName, configEncodeType_, getEncodeType()))
+    {
+        cerr << "warning: as fails to load " << caseFileName << ", no mapping is defined to convert between lower and upper case characters." << endl;
     }
 
     if(! loadPOSFeatureMapping() )
@@ -550,8 +582,14 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     // pos-feature.def
     srcFiles.push_back(createFilePath(txtDirPath, POS_FEATURE_DEF_FILE));
 
-    // kana-map.def
+    // map-kana.def
     srcFiles.push_back(createFilePath(txtDirPath, KANA_MAP_DEF_FILE));
+
+    // map-width.def
+    srcFiles.push_back(createFilePath(txtDirPath, WIDTH_MAP_DEF_FILE));
+
+    // map-case.def
+    srcFiles.push_back(createFilePath(txtDirPath, CASE_MAP_DEF_FILE));
 
     // get binary file names
     configNum = sizeof(DICT_BINARY_FILES) / sizeof(DICT_BINARY_FILES[0]);
@@ -562,6 +600,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
     // compile into archive file
     dest = createFilePath(binDirPath, DICT_ARCHIVE_FILE);
+    cout << "compressing into archive file " << dest << endl;
     if(JMA_Dictionary::compile(srcFiles, dest.c_str()) == false)
         return 0;
 

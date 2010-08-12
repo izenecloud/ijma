@@ -1,12 +1,12 @@
-/** \file kana_table.cpp
- * Implementation of class KanaTable.
+/** \file char_table.cpp
+ * Implementation of class CharTable.
  * 
  * \author Jun Jiang
  * \version 0.1
- * \date Feb 10, 2010
+ * \date Aug 12, 2010
  */
 
-#include "kana_table.h"
+#include "char_table.h"
 #include "jma_dictionary.h"
 #include "knowledge.h" // Knowledge::encodeStr()
 #include "iconv_utils.h" // MeCab::Iconv
@@ -25,11 +25,11 @@ using namespace std;
 
 namespace jma
 {
-KanaTable::KanaTable()
+CharTable::CharTable()
 {
 }
 
-bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
+bool CharTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
 {
     assert(fileName);
 
@@ -41,8 +41,8 @@ bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
     }
 
     // remove the previous tables if exist
-    mapToHiragana_.clear();
-    mapToKatakana_.clear();
+    mapToLeft_.clear();
+    mapToRight_.clear();
 
     // open file
     const DictUnit* dict = JMA_Dictionary::instance()->getDict(fileName);
@@ -60,17 +60,17 @@ bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
     }
 
     // read file
-    string line, hira, kata;
+    string line, left, right;
     istringstream iss;
 
 #if JMA_DEBUG_PRINT
-    cout << "load kana mapping table: " << fileName << endl;
+    cout << "load char mapping table: " << fileName << endl;
     cout << "src charset: " << src << endl;
     cout << "dest charset: " << dest << endl;
-    cout << "Hiragana\tKatakana" << endl;
+    cout << "Left\tRight" << endl;
 #endif
 
-    // each line is assumed in the format "Hiragana Katakana",
+    // each line is assumed in the format "LeftType RightType",
     // those lines not in this format would be ignored
     while(getline(from, line))
     {
@@ -80,55 +80,55 @@ bool KanaTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
 
         iss.clear();
         iss.str(line);
-        iss >> hira >> kata;
+        iss >> left >> right;
 
         if(! iss)
         {
-            cerr << "ignore the invalid kana mapping line: " << line << endl;
+            cerr << "ignore the invalid char mapping line: " << line << endl;
             continue;
         }
 
         // convert encoding
-        if(! iconv.convert(&hira))
+        if(! iconv.convert(&left))
         {
-            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << hira << endl;
+            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << left << endl;
             return false;
         }
-        if(! iconv.convert(&kata))
+        if(! iconv.convert(&right))
         {
-            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << kata << endl;
+            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << right << endl;
             return false;
         }
 
 #if JMA_DEBUG_PRINT
-        cout << hira << "\t" << kata << endl;
+        cout << left << "\t" << right << endl;
 #endif
 
-        mapToHiragana_[kata] = hira;
-        mapToKatakana_[hira] = kata;
+        mapToLeft_[right] = left;
+        mapToRight_[left] = right;
     }
 
-    assert(mapToHiragana_.size() == mapToKatakana_.size() && "the Kana mapping table size should be the same.");
+    assert(mapToLeft_.size() == mapToRight_.size() && "the char mapping table size should be the same.");
 #if JMA_DEBUG_PRINT
-    cout << "total " << mapToHiragana_.size() << " kanas mapping are loaded" << endl << endl;
+    cout << "total " << mapToLeft_.size() << " char mapping are loaded" << endl << endl;
 #endif
 
     return true;
 }
 
-const char* KanaTable::toHiragana(const char* str) const
+const char* CharTable::toLeft(const char* str) const
 {
-    KanaMap::const_iterator it = mapToHiragana_.find(str);
-    if(it == mapToHiragana_.end())
+    CharMap::const_iterator it = mapToLeft_.find(str);
+    if(it == mapToLeft_.end())
         return 0;
 
     return it->second.c_str();
 }
 
-const char* KanaTable::toKatakana(const char* str) const
+const char* CharTable::toRight(const char* str) const
 {
-    KanaMap::const_iterator it = mapToKatakana_.find(str);
-    if(it == mapToKatakana_.end())
+    CharMap::const_iterator it = mapToRight_.find(str);
+    if(it == mapToRight_.end())
         return 0;
 
     return it->second.c_str();

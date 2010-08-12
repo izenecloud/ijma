@@ -3,7 +3,7 @@
  * Below is the usage examples:
  * \code
  * Test to create and use JMA_Factory.
- * $ ./test_jma_convert_kana --to hira,kata [--dict DICT_PATH]
+ * $ ./test_jma_convert_kana --to hira,kata,half,full,lower,upper [--dict DICT_PATH]
  * \endcode
  * 
  * \author Jun Jiang
@@ -41,7 +41,7 @@ namespace
  */
 void printUsage()
 {
-    cerr << "Usages:\t" << OPTION_TO << " hira,kata [--dict DICT_PATH]" << endl;
+    cerr << "Usages:\t" << OPTION_TO << " hira,kata,half,full,lower,upper [--dict DICT_PATH]" << endl;
 }
 
 /**
@@ -60,6 +60,10 @@ int main(int argc, char* argv[])
     OptionMapT optionMap;
     optionMap["kata"] = Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA;
     optionMap["hira"] = Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA;
+    optionMap["half"] = Analyzer::OPTION_TYPE_CONVERT_TO_HALF_WIDTH;
+    optionMap["full"] = Analyzer::OPTION_TYPE_CONVERT_TO_FULL_WIDTH;
+    optionMap["lower"] = Analyzer::OPTION_TYPE_CONVERT_TO_LOWER_CASE;
+    optionMap["upper"] = Analyzer::OPTION_TYPE_CONVERT_TO_UPPER_CASE;
 
     // option types
     vector<Analyzer::OptionType> optionVec;
@@ -146,7 +150,7 @@ int main(int argc, char* argv[])
     cout << "convert option values: ";
     for(unsigned int i=0; i<optionVec.size(); ++i)
     {
-        cout << optionVec[i];
+        cout << optionVec[i] << " ";
         analyzer->setOption(optionVec[i], 1);
     }
     cout << endl << endl;

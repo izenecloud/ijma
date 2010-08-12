@@ -26,7 +26,7 @@ namespace jma
 
 class JMA_Knowledge;
 class JMA_CType;
-class KanaTable;
+class CharTable;
 
 /**
  * JMA_Analyzer executes the Japanese morphological analysis based on conditional random field.
@@ -168,7 +168,13 @@ private:
     const POSTable* posTable_;
 
     /** mapping table between Hiragana and Katakana characters */
-    const KanaTable* kanaTable_;
+    const CharTable* kanaTable_;
+
+    /** mapping table between half and full width characters */
+    const CharTable* widthTable_;
+
+    /** mapping table between lower and upper case characters */
+    const CharTable* caseTable_;
 };
 
 } // namespace jma
