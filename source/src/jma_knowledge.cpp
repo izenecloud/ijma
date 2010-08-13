@@ -61,7 +61,7 @@ const char* POS_ID_DEF_FILE = "pos-id.def";
 const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 
 /** POS combination rule file name */
-const char* POS_COMBINE_DEF_FILE = "pos-combine.def";
+const char* POS_COMBINE_DEF_FILE = "compound.def";
 
 /** Map file name to convert between Hiragana and Katakana characters */
 const char* KANA_MAP_DEF_FILE = "map-kana.def";
@@ -418,7 +418,7 @@ int JMA_Knowledge::loadDict()
         return 0;
     }
 
-    // file "pos-combine.def"
+    // file "compound.def"
     string posCombineName = createFilePath(systemDictPath_.c_str(), POS_COMBINE_DEF_FILE);
     // load POS combine rules
     if(! posTable_.loadCombineRule(posCombineName.c_str()))
@@ -558,7 +558,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     }
 
     string src, dest;
-    // if pos-combine.def exists, copy it to the destination directory
+    // if compound.def exists, copy it to the destination directory
     src = createFilePath(txtDirPath, POS_COMBINE_DEF_FILE);
     dest = createFilePath(binDirPath, POS_COMBINE_DEF_FILE);
     if(copyFile(src.c_str(), dest.c_str()) == false)

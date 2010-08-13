@@ -199,7 +199,7 @@ public:
          * If a zero value is configured, compound words are decomposed into their components in above APIS,
          * output example: "長野/名詞,固有名詞,地域,一般  県/名詞,接尾,地域  ".
          *
-         * If the configuration file "pos-combine.def" does not exist in system dictionary path,
+         * If the configuration file "compound.def" does not exist in system dictionary path,
          * no words would be combined into compound words.
          *
          * Default value: 1

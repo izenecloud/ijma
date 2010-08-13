@@ -82,7 +82,7 @@ public:
     bool loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest);
 
     /**
-     * Load the combination rule file "pos-combine.def", which is in text format.
+     * Load the combination rule file "compound.def", which is in text format.
      * Each entry in this file would be like "NC-G    NS-G    NC-G",
      * the left two columns are POS to combine from,
      * the last column is POS as combination result.
