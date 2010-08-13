@@ -10,6 +10,7 @@
 #define JMA_POS_TABLE_H
 
 #include "knowledge.h" // Knowledge::EncodeType
+#include "mecab.h" // MeCab::Node
 
 #include <string>
 #include <vector>
@@ -20,14 +21,30 @@ namespace jma
 
 /**
  * POSRule defines rule to combine POS.
- * src1_ src2_ => target_
- * the above rule would combine src1_ and src2_ into target_.
+ * src1 src2 ... srcN => target
+ * the above rule would combine src1, src2, ..., srcN (N >= 1) into target.
  */
 struct POSRule
 {
-    int src1_; ///< index code of 1st POS source
-    int src2_; ///< index code of 2nd POS source
+    std::vector<int> srcVec_; ///< index codes of POS source
     int target_; ///< index code of POS target
+
+    /**
+     * Check whether this rule is valid.
+     * \return true for valid, false for invalid
+     */
+    bool valid() const {
+        if(target_ < 0 || srcVec_.size() == 0)
+            return false;
+
+        for(std::vector<int>::const_iterator it=srcVec_.begin(); it!=srcVec_.end(); ++it)
+        {
+            if(*it < 0)
+                return false;
+        }
+
+        return true;
+    }
 };
 
 /**
@@ -83,12 +100,12 @@ public:
     const char* getPOS(int index, POSFormat format = POS_FORMAT_DEFAULT) const;
 
     /**
-     * Combine tokens using rules on POS, which rules are loaded by \e loadCombineRule().
-     * \param pos1 the 1st POS
-     * \param pos2 the 2nd POS
-     * \return the POS of combination result, -1 for not to combine.
+     * Get the first matched rule to combine the nodes.
+     * \param startPOS the POS index code of the start node
+     * \param nextNode the node next to the start node, the matching process ends before the end-of-sentence node is reached.
+     * \return the first matched rule for combination, if no rule is found, 0 is returned.
      */
-    int combinePOS(int pos1, int pos2) const;
+    const POSRule* getCombineRule(int startPOS, const MeCab::Node* nextNode) const;
 
 private:
     /**

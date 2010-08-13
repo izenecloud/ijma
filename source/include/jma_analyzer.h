@@ -12,7 +12,7 @@
 #include "analyzer.h"
 #include "sentence.h"
 #include "pos_table.h"
-#include "mecab.h"
+#include "mecab.h" // MeCab::Node, Tagger
 
 #include <string>
 
@@ -140,9 +140,9 @@ private:
      * Combine MeCab nodes to morpheme using combination rules based on POS.
      * \param[in] startNode the nodes starting from \e startNode are checked whether to combine by \e POSTable::combinePOS()
      * \param[out] result the morpheme as combination result
-     * \return MeCab node next to the combination range
+     * \return the including end node in the combination range
      */
-    MeCab::Node* combineNode(const MeCab::Node* startNode, Morpheme& result) const;
+    MeCab::Node* combineNode(MeCab::Node* startNode, Morpheme& result) const;
 
     /**
      * Check whether to filter out the morpheme.

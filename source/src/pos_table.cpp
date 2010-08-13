@@ -182,15 +182,17 @@ bool POSTable::loadCombineRule(const char* fileName)
     }
 
     // read file
-    string line, pos1, pos2, target;
+    string line, pos;
+    vector<string> posVec;
+    vector<string>::const_iterator it;
     istringstream iss;
 
 #if JMA_DEBUG_PRINT
     cout << "load POS rule: " << fileName << endl;
-    cout << "pos1\tpos2\ttarget" << endl;
+    cout << "sources => target" << endl;
 #endif
 
-    // each line is assumed in the format "pos1 pos2 target",
+    // each line is assumed in the format "source1 source2 ... target",
     // those lines not in this format would be ignored
     while(getline(from, line))
     {
@@ -199,28 +201,37 @@ bool POSTable::loadCombineRule(const char* fileName)
             continue;
 
         iss.clear();
+        posVec.clear();
         iss.str(line);
-        iss >> pos1 >> pos2 >> target;
-
-        if(! iss)
+        while(iss >> pos)
         {
-            cerr << "invalid format in rule: " << line << endl;
-            cerr << "ignore this rule." << endl;
+            posVec.push_back(pos);
+        }
+
+        if(posVec.size() < 2)
+        {
+            cerr << "ignore invalid rule: " << line << endl;
+            cerr << "it should be \"source1 source2 ... target\"." << endl;
             continue;
         }
 
 #if JMA_DEBUG_PRINT
-        cout << pos1 << "\t" << pos2 << "\t" << target << endl;
+        for(it=posVec.begin(); it!=posVec.end(); ++it)
+        {
+            cout << *it << "\t";
+        }
 #endif
 
         POSRule rule;
-        rule.src1_ = getIndexFromAlphaPOS(pos1);
-        rule.src2_ = getIndexFromAlphaPOS(pos2);
-        rule.target_ = getIndexFromAlphaPOS(target);
-        if(rule.src1_ < 0 || rule.src2_ < 0 || rule.target_ < 0)
+        for(it=posVec.begin(); it!=posVec.end()-1; ++it)
         {
-            cerr << "POS string is invalid in rule: " << line << endl;
-            cerr << "ignore this rule." << endl;
+            rule.srcVec_.push_back(getIndexFromAlphaPOS(*it));
+        }
+        rule.target_ = getIndexFromAlphaPOS(*it);
+        if(! rule.valid())
+        {
+            cerr << "ignore invalid rule: " << line << endl;
+            cerr << "some POS string in this rule is unknown." << endl;
             continue;
         }
 
@@ -234,29 +245,44 @@ bool POSTable::loadCombineRule(const char* fileName)
     return true;
 }
 
-int POSTable::combinePOS(int pos1, int pos2) const
+const POSRule* POSTable::getCombineRule(int startPOS, const MeCab::Node* nextNode) const
 {
-    assert(pos1 >= 0 && pos2 >= 0 && "POS code to combine should not be negative.");
+    assert(startPOS >=0 && nextNode);
 
-#if JMA_DEBUG_PRINT_COMBINE
-    cout << strTableVec_[POS_FORMAT_ALPHABET][pos1] << " + " << strTableVec_[POS_FORMAT_ALPHABET][pos2] << " => ";
-#endif
-
-    for(vector<POSRule>::const_iterator it=ruleVec_.begin(); it!=ruleVec_.end(); ++it)
+    for(vector<POSRule>::const_iterator ruleIt=ruleVec_.begin(); ruleIt!=ruleVec_.end(); ++ruleIt)
     {
-        if(pos1 == it->src1_ && pos2 == it->src2_)
+        vector<int>::const_iterator posIt = ruleIt->srcVec_.begin();
+        const vector<int>::const_iterator posEnd = ruleIt->srcVec_.end();
+        assert(posIt != posEnd && "the rule should not be empty");
+
+        if(*posIt == startPOS)
         {
+            ++posIt;
+            for(const MeCab::Node* node = nextNode;
+                    node->next && posIt != posEnd;
+                    node=node->next, ++posIt)
+            {
+                if(*posIt != (int)node->posid)
+                    break;
+            }
+
+            if(posIt == posEnd)
+            {
 #if JMA_DEBUG_PRINT_COMBINE
-            cout << strTableVec_[POS_FORMAT_ALPHABET][it->target_] << endl;
+                for(posIt = ruleIt->srcVec_.begin(); posIt != posEnd; ++posIt)
+                    cout << strTableVec_[POS_FORMAT_ALPHABET][*posIt] << "\t";
+
+                cout << "=> " << strTableVec_[POS_FORMAT_ALPHABET][ruleIt->target_] << endl;
 #endif
-            return it->target_;
+                return &*ruleIt;
+            }
         }
     }
 
 #if JMA_DEBUG_PRINT_COMBINE
     cout << "no rule found" << endl;
 #endif
-    return -1;
+    return 0;
 }
 
 int POSTable::getIndexFromAlphaPOS(const std::string& posStr) const

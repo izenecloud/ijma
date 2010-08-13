@@ -23,7 +23,6 @@
 #endif
 
 #define JMA_DEBUG_PRINT_COMBINE 0
-#define JMA_DEBUG_PRINT_SEPARATE 0
 
 namespace
 {
@@ -176,7 +175,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 		const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 		MorphemeList list;
         Morpheme morp;
-		for (const MeCab::Node *node = bosNode->next; node->next;)
+		for (MeCab::Node *node = bosNode->next; node->next; node=node->next)
 		{
             node = combineNode(node, morp);
 			if(isFilter(morp))
@@ -205,7 +204,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 				break;
 			MorphemeList list;
             Morpheme morp;
-			for (const MeCab::Node *node = bosNode->next; node->next;)
+			for (MeCab::Node *node = bosNode->next; node->next; node=node->next)
 			{
                 node = combineNode(node, morp);
                 if(isFilter(morp))
@@ -269,7 +268,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 
 	strBuf_.clear();
     Morpheme morp;
-    for (const MeCab::Node *node = bosNode->next; node->next;){
+    for (MeCab::Node *node = bosNode->next; node->next; node=node->next){
         node = combineNode(node, morp);
         if(isFilter(morp))
             continue;
@@ -320,7 +319,7 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
         const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 
-        for (const MeCab::Node *node = bosNode->next; node->next;){
+        for (MeCab::Node *node = bosNode->next; node->next; node=node->next){
             node = combineNode(node, morp);
             if(isFilter(morp))
                 continue;
@@ -441,59 +440,57 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
     return result;
 }
 
-MeCab::Node* JMA_Analyzer::combineNode(const MeCab::Node* startNode, Morpheme& result) const
+MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result) const
 {
-    assert(startNode && "it is invalid to combine NULL node");
-
-    MeCab::Node* nextNode = startNode->next;
-    assert(nextNode && "it is invalid to combine EOS node.");
+    assert(startNode && startNode->next && "it is invalid to combine NULL or EOS node");
 
     result = getMorpheme(startNode);
 
     // check option
     if(! isCombineCompound())
-    {
-        return nextNode;
-    }
+        return startNode;
 
-    for(; nextNode->next; nextNode=nextNode->next)
+    MeCab::Node* node = startNode;
+    int startPOS = (int)node->posid;
+    while(node->next)
     {
-        int combineID = posTable_->combinePOS(result.posCode_, (int)nextNode->posid);
-        if(combineID == -1)
-        {
-#if JMA_DEBUG_PRINT_SEPARATE
-            if(!strcmp(posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET), "P-N")
-                    && !strcmp(posTable_->getPOS((int)nextNode->posid, POSTable::POS_FORMAT_ALPHABET), "NP-C"))
-                    //if(!strcmp(posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET), "P-N"))
-            //if(!strcmp(posTable_->getPOS((int)nextNode->posid, POSTable::POS_FORMAT_ALPHABET), "NS-D"))
-            {
-                Morpheme nextMorph = getMorpheme(nextNode);
-#if JMA_DEBUG_PRINT_SEPARATE
-                cerr << result.lexicon_ << "/" << result.posStr_ << "/" << posTable_->getPOS(result.posCode_, POSTable::POS_FORMAT_ALPHABET);
-                cerr << "\t\t" << nextMorph.lexicon_ << "/" << nextMorph.posStr_ << "/" << posTable_->getPOS(nextMorph.posCode_, POSTable::POS_FORMAT_ALPHABET);
-                cerr << endl;
-#endif
-            }
-#endif
+        const POSRule* combineRule = posTable_->getCombineRule(startPOS, node->next);
+        if(! combineRule)
             break;
-        }
 
-        Morpheme nextMorph = getMorpheme(nextNode);
+        vector<int>::const_iterator it = combineRule->srcVec_.begin();
+        const vector<int>::const_iterator itEnd = combineRule->srcVec_.end();
+        assert(*it == startPOS && "the pos index code should be equal to rule.");
 #if JMA_DEBUG_PRINT_COMBINE
         cerr << result.lexicon_ << "/" << result.posStr_;
-        cerr << "\t+\t" << nextMorph.lexicon_ << "/" << nextMorph.posStr_;
 #endif
-        result.lexicon_ += nextMorph.lexicon_;
-        result.baseForm_ += nextMorph.baseForm_;
-        result.readForm_ += nextMorph.readForm_;
-        result.posCode_ = combineID;
+
+        for(++it; it!=itEnd; ++it)
+        {
+            node = node->next;
+            assert(node->next && "the node should not be end-of-sentence node.");
+            assert(*it == (int)node->posid && "the pos index code should be equal to rule.");
+
+            Morpheme morp = getMorpheme(node);
+#if JMA_DEBUG_PRINT_COMBINE
+            cerr << "\t+\t" << morp.lexicon_ << "/" << morp.posStr_;
+#endif
+            result.baseForm_ = result.lexicon_ + morp.baseForm_; // combined base form = previous lexicon + last base form
+            result.lexicon_ += morp.lexicon_;
+            result.readForm_ += morp.readForm_;
+            result.normForm_ += morp.normForm_;
+        }
+
+        result.posCode_ = combineRule->target_;
         result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
+        startPOS = result.posCode_; // to match rules from this combined result
+
 #if JMA_DEBUG_PRINT_COMBINE
         cerr << "\t=>\t" << result.lexicon_ << "/" << result.posStr_ << endl;
 #endif
     }
 
-    return nextNode;
+    return node;
 }
 
 std::string JMA_Analyzer::convertCharacters(const char* str) const

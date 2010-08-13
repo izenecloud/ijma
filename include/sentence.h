@@ -196,7 +196,7 @@ public:
 
     /**
      * Get the normalized form string of morpheme \e nIdx in candidate result \e nPos.
-     * For example in Japanese, "渡辺" is returned as the normalized form of morpheme "渡邊る".
+     * For example in Japanese, "渡辺" is returned as the normalized form of morpheme "渡邊".
      * \param nPos candidate result index
      * \param nIdx morpheme index
      * \return normalized form string, if no normalized form exists, empty string "" is returned
