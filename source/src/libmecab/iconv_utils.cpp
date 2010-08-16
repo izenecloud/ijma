@@ -34,11 +34,7 @@ const char * decode_charset_iconv(const char *str) {
     case MeCab::EUC_JP:
       return "EUC-JP";
     case  MeCab::CP932:
-#if PLATFORM_IS_AIX
-      return "IBM-943"; // for iconv library on AIX platform
-#else
       return "SHIFT-JIS";
-#endif
     case  MeCab::UTF16:
       return "UTF-16";
     case  MeCab::UTF16LE:

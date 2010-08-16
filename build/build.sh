@@ -62,7 +62,7 @@ then
         OBJECT_MODE=64
         export CC CXX OBJECT_MODE
         echo "CC: $CC, CXX: $CXX, OBJECT_MODE: $OBJECT_MODE"
-        cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_XLC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 -DCMAKE_PLATFORM_IS_AIX=1 ../../source
+        cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_XLC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
         make all
     else
         echo "unkown platform $2, please use \"linux\", \"win32\" or \"aix\"."
