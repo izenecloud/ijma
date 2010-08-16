@@ -243,7 +243,7 @@ size_t iconv (iconv_t icd,
               ICONV_CONST char* * inbuf, size_t *inbytesleft,
               char* * outbuf, size_t *outbytesleft)
 {
-    //printf("===========> iconv()");
+  /*printf("===========> iconv()");*/
   conv_t cd = (conv_t) icd;
   if (inbuf == NULL || *inbuf == NULL)
     return cd->lfuncs.loop_reset(icd,outbuf,outbytesleft);
