@@ -28,8 +28,13 @@ using namespace std;
 namespace jma
 {
 POSTable::POSTable()
-    : strTableVec_(POS_FORMAT_NUM), tableSize_(0)
+    : strTableVec_(POS_FORMAT_NUM), tableSize_(0), ruleRoot_(0)
 {
+}
+
+POSTable::~POSTable()
+{
+    delete ruleRoot_;
 }
 
 bool POSTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
@@ -171,8 +176,9 @@ bool POSTable::loadCombineRule(const char* fileName)
 {
     assert(fileName);
 
-    // remove the previous table if exists
-    ruleVec_.clear();
+    // remove the previous rule Trie if exists
+    delete ruleRoot_;
+    ruleRoot_ = new RuleNode(0, tableSize_);
 
     // open file
     ifstream from(fileName);
@@ -222,20 +228,34 @@ bool POSTable::loadCombineRule(const char* fileName)
         }
 #endif
 
-        POSRule rule;
+        RuleNode* node = ruleRoot_;
+        bool isValid = true;
         for(it=posVec.begin(); it!=posVec.end()-1; ++it)
         {
-            rule.srcVec_.push_back(getIndexFromAlphaPOS(*it));
+            int posIndex = getIndexFromAlphaPOS(*it);
+            if(posIndex < 0 || posIndex >= tableSize_)
+            {
+                isValid = false;
+                break;
+            }
+
+            if(! node->children_[posIndex])
+                node->children_[posIndex] = new RuleNode(node->level_+1, tableSize_);
+
+            node = node->children_[posIndex];
         }
-        rule.target_ = getIndexFromAlphaPOS(*it);
-        if(! rule.valid())
+
+        int targetPOS = getIndexFromAlphaPOS(*it);
+        if(! isValid || targetPOS < 0)
         {
             cerr << "ignore invalid rule: " << line << endl;
             cerr << "some POS string in this rule is unknown." << endl;
             continue;
         }
 
-        ruleVec_.push_back(rule);
+        // save target only if not assigned before
+        if(node->target_ < 0)
+            node->target_ = targetPOS;
     }
 
 #if JMA_DEBUG_PRINT
@@ -245,44 +265,39 @@ bool POSTable::loadCombineRule(const char* fileName)
     return true;
 }
 
-const POSRule* POSTable::getCombineRule(int startPOS, const MeCab::Node* nextNode) const
+const RuleNode* POSTable::getCombineRule(int startPOS, const MeCab::Node* nextNode) const
 {
     assert(startPOS >=0 && nextNode);
 
-    for(vector<POSRule>::const_iterator ruleIt=ruleVec_.begin(); ruleIt!=ruleVec_.end(); ++ruleIt)
+    const RuleNode* ruleNode = 0;
+    const RuleNode* result = 0;
+
+    // check whether "compound.def" is loaded
+    if(ruleRoot_)
+        ruleNode = ruleRoot_->children_[startPOS];
+
+    const MeCab::Node* tokenNode = nextNode;
+    while(ruleNode)
     {
-        vector<int>::const_iterator posIt = ruleIt->srcVec_.begin();
-        const vector<int>::const_iterator posEnd = ruleIt->srcVec_.end();
-        assert(posIt != posEnd && "the rule should not be empty");
+        if(ruleNode->target_ >= 0)
+            result = ruleNode;
 
-        if(*posIt == startPOS)
-        {
-            ++posIt;
-            for(const MeCab::Node* node = nextNode;
-                    node->next && posIt != posEnd;
-                    node=node->next, ++posIt)
-            {
-                if(*posIt != (int)node->posid)
-                    break;
-            }
+        // in case of tokenNode is EOS node
+        if(! tokenNode->next)
+            break;
 
-            if(posIt == posEnd)
-            {
-#if JMA_DEBUG_PRINT_COMBINE
-                for(posIt = ruleIt->srcVec_.begin(); posIt != posEnd; ++posIt)
-                    cout << strTableVec_[POS_FORMAT_ALPHABET][*posIt] << "\t";
-
-                cout << "=> " << strTableVec_[POS_FORMAT_ALPHABET][ruleIt->target_] << endl;
-#endif
-                return &*ruleIt;
-            }
-        }
+        ruleNode = ruleNode->children_[(int)tokenNode->posid];
+        tokenNode = tokenNode->next;
     }
 
 #if JMA_DEBUG_PRINT_COMBINE
-    cout << "no rule found" << endl;
+    if(result)
+        cout << result->level_ << " POSes are combined into " << strTableVec_[POS_FORMAT_ALPHABET][result->target_] << endl;
+    else
+        cout << "no rule found" << endl;
 #endif
-    return 0;
+
+    return result;
 }
 
 int POSTable::getIndexFromAlphaPOS(const std::string& posStr) const

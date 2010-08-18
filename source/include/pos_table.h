@@ -20,30 +20,33 @@ namespace jma
 {
 
 /**
- * POSRule defines rule to combine POS.
- * src1 src2 ... srcN => target
- * the above rule would combine src1, src2, ..., srcN (N >= 1) into target.
+ * RuleNode is a Trie node, the path from root to leaf means a rule to combine POS.
+ * For example, the rule below:
+ * src1 src2 ... srcN => target,
+ * would combine src1, src2, ..., srcN (N >= 1) into target.
+ *
+ * The corresponding path would be:
+ * root src1Node src2Node ... srcNNode,
+ * the target value is saved in srcNNode.
  */
-struct POSRule
+struct RuleNode
 {
-    std::vector<int> srcVec_; ///< index codes of POS source
-    int target_; ///< index code of POS target
+    int level_; ///< the node level in Trie, root node is 0, its child is 1, etc
+    int target_; ///< POS index code of target, -1 for no rule is defined with this ending node
+    std::vector<RuleNode*> children_; ///< the pointers to each child, the index is POS index code, pointer 0 for the child does not exist
 
     /**
-     * Check whether this rule is valid.
-     * \return true for valid, false for invalid
+     * Constructor.
      */
-    bool valid() const {
-        if(target_ < 0 || srcVec_.size() == 0)
-            return false;
+    RuleNode(int level, int childSize)
+        : level_(level), target_(-1), children_(childSize) {}
 
-        for(std::vector<int>::const_iterator it=srcVec_.begin(); it!=srcVec_.end(); ++it)
-        {
-            if(*it < 0)
-                return false;
-        }
-
-        return true;
+    /**
+     * Destructor.
+     */
+    ~RuleNode() {
+        for(std::vector<RuleNode*>::iterator it=children_.begin(); it!=children_.end(); ++it)
+            delete *it;
     }
 };
 
@@ -58,6 +61,11 @@ public:
      * Constructor.
      */
     POSTable();
+
+    /**
+     * Destructor.
+     */
+    ~POSTable();
 
     /**
      * POS format type.
@@ -100,12 +108,12 @@ public:
     const char* getPOS(int index, POSFormat format = POS_FORMAT_DEFAULT) const;
 
     /**
-     * Get the first matched rule to combine the nodes.
+     * Get the longest matched rule to combine the nodes.
      * \param startPOS the POS index code of the start node
      * \param nextNode the node next to the start node, the matching process ends before the end-of-sentence node is reached.
-     * \return the first matched rule for combination, if no rule is found, 0 is returned.
+     * \return the leaf Trie node of the longest matched rule for combination, if no rule is found, 0 is returned.
      */
-    const POSRule* getCombineRule(int startPOS, const MeCab::Node* nextNode) const;
+    const RuleNode* getCombineRule(int startPOS, const MeCab::Node* nextNode) const;
 
 private:
     /**
@@ -125,8 +133,8 @@ private:
     /** map from POS alphabet format to index code */
     std::map<std::string, int> alphaPOSMap_;
 
-    /** rules to combine POS */
-    std::vector<POSRule> ruleVec_;
+    /** root node to rule Trie */
+    RuleNode* ruleRoot_;
 };
 
 } // namespace jma

@@ -15,7 +15,6 @@
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
 #include "tokenizer.h"
-#include "pos_table.h"
 #include "char_table.h"
 
 #ifndef JMA_DEBUG_PRINT
@@ -454,22 +453,19 @@ MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result)
     int startPOS = (int)node->posid;
     while(node->next)
     {
-        const POSRule* combineRule = posTable_->getCombineRule(startPOS, node->next);
-        if(! combineRule)
+        const RuleNode* ruleNode = posTable_->getCombineRule(startPOS, node->next);
+        if(! ruleNode)
             break;
 
-        vector<int>::const_iterator it = combineRule->srcVec_.begin();
-        const vector<int>::const_iterator itEnd = combineRule->srcVec_.end();
-        assert(*it == startPOS && "the pos index code should be equal to rule.");
 #if JMA_DEBUG_PRINT_COMBINE
         cerr << result.lexicon_ << "/" << result.posStr_;
 #endif
 
-        for(++it; it!=itEnd; ++it)
+        // start from next node
+        for(int i=1; i<ruleNode->level_; ++i)
         {
             node = node->next;
             assert(node->next && "the node should not be end-of-sentence node.");
-            assert(*it == (int)node->posid && "the pos index code should be equal to rule.");
 
             Morpheme morp = getMorpheme(node);
 #if JMA_DEBUG_PRINT_COMBINE
@@ -481,7 +477,7 @@ MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result)
             result.normForm_ += morp.normForm_;
         }
 
-        result.posCode_ = combineRule->target_;
+        result.posCode_ = ruleNode->target_;
         result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());
         startPOS = result.posCode_; // to match rules from this combined result
 
