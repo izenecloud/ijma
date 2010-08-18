@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <strstream>
+#include <utility> // make_pair
 
 #ifndef JMA_DEBUG_PRINT
     #define JMA_DEBUG_PRINT 1
@@ -104,13 +105,13 @@ bool CharTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
         cout << left << "\t" << right << endl;
 #endif
 
-        mapToLeft_[right] = left;
-        mapToRight_[left] = right;
+        // only insert when not exists
+        mapToLeft_.insert(make_pair(right, left));
+        mapToRight_.insert(make_pair(left, right));
     }
 
-    assert(mapToLeft_.size() == mapToRight_.size() && "the char mapping table size should be the same.");
 #if JMA_DEBUG_PRINT
-    cout << "total " << mapToLeft_.size() << " char mapping are loaded" << endl << endl;
+    cout << "total " << mapToLeft_.size() << " <=> " << mapToRight_.size() << " char mapping are loaded" << endl << endl;
 #endif
 
     return true;
