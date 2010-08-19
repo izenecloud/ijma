@@ -11,6 +11,9 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <string>
+#include <cstring> // strlen
+#include <algorithm> // find
 
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
@@ -22,6 +25,8 @@
 #endif
 
 #define JMA_DEBUG_PRINT_COMBINE 0
+
+using namespace std;
 
 namespace
 {
@@ -385,38 +390,39 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
     }
 }
 
-void JMA_Analyzer::getFeatureStr(const char* featureList, int featureOffset, string& retVal) const
+void JMA_Analyzer::getFeatureStr(const char* featureList, int featureOffset, std::string& retVal) const
 {
     assert(featureList && featureOffset >= 0);
+    
+    const char delimit = ',';
+    const char* str = featureList;
+    const char* stre = featureList + strlen(featureList);
+    const char* begin;
+    const char* end;
 
-	int offset = 0;
-	int commaCount = 0;
-	int begin = -1;
-	int end = -1;
-	for( ; featureList[offset]; ++offset )
-	{
-		if(featureList[offset] == ',')
-		{
-			++commaCount;
-			if(commaCount == featureOffset)
-				begin = offset + 1;
-			else if(commaCount == featureOffset + 1)
-			{
-				end = offset;
-				break;
-			}
-		}
-	}
+    const int size = featureOffset + 1; // how many ',' to find
+    int count = 0; // how many ',' have been found
 
-	if(begin >= 0)
-	{
-		if(end < 0)
-			end = offset;
-		retVal = string(featureList + begin, end - begin);
-	}
+    while(count < size && str < stre)
+    {
+        begin = str;
+        end = find(str, stre, delimit);
+        ++count; // also when 'end' reaches 'stre'
 
-	if(retVal == "*")
-		retVal = "";
+        if(end == stre)
+            break;
+
+        str = end + 1;
+    }
+
+    if(count == size)
+    {
+        retVal = string(begin, end - begin);
+        if(retVal == "*")
+            retVal = "";
+    }
+    else
+        retVal = "";
 }
 
 Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
@@ -432,6 +438,10 @@ Morpheme JMA_Analyzer::getMorpheme(const MeCab::Node* node) const
         result.baseForm_ = result.lexicon_;
 
     getFeatureStr(node->feature, knowledge_->getReadFormOffset(), result.readForm_);
+
+    getFeatureStr(node->feature, knowledge_->getNormFormOffset(), result.normForm_);
+    if(result.normForm_.empty())
+        result.normForm_ = result.lexicon_;
 
     result.posCode_ = (int)node->posid;
     result.posStr_ = posTable_->getPOS(result.posCode_, getPOSFormat());

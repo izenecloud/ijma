@@ -42,6 +42,9 @@ const int BASE_FORM_OFFSET_DEFAULT = 6;
 /** Default value of read form feature offset */
 const int READ_FORM_OFFSET_DEFAULT = 7;
 
+/** Default value of norm form feature offset */
+const int NORM_FORM_OFFSET_DEFAULT = 9;
+
 /** Default tokens size in a feature */
 const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
 
@@ -112,7 +115,7 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 }
 
 JMA_Knowledge::JMA_Knowledge()
-    : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0),
+    : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0), normFormOffset_(0),
     defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
     dictionary_(JMA_Dictionary::instance())
 {
@@ -362,6 +365,9 @@ void JMA_Knowledge::loadDictConfig()
     value = getMapValue(configMap, "read-form-feature-offset");
     readFormOffset_ = value ? convertFromStr<int>(*value) : READ_FORM_OFFSET_DEFAULT;
 
+    value = getMapValue(configMap, "norm-form-feature-offset");
+    normFormOffset_ = value ? convertFromStr<int>(*value) : NORM_FORM_OFFSET_DEFAULT;
+
     value = getMapValue(configMap, "feature-token-size");
     featureTokenSize_ = value ? convertFromStr<size_t>(*value) : FEATURE_TOKEN_SIZE_DEFAULT;
 
@@ -384,6 +390,7 @@ void JMA_Knowledge::loadDictConfig()
     cout << "configFile: " << configFile << endl;
     cout << "base form feature offset: " << baseFormOffset_ << endl;
     cout << "read form feature offset: " << readFormOffset_ << endl;
+    cout << "norm form feature offset: " << normFormOffset_ << endl;
     cout << "feature token size: " << featureTokenSize_ << endl;
     cout << "defaut POS: " << defaultPOS_ << endl;
     cout << "config charset: " << configEncodeType_ << endl;
@@ -637,6 +644,11 @@ int JMA_Knowledge::getBaseFormOffset() const
 int JMA_Knowledge::getReadFormOffset() const
 {
     return readFormOffset_;
+}
+
+int JMA_Knowledge::getNormFormOffset() const
+{
+    return normFormOffset_;
 }
 
 bool JMA_Knowledge::createTempFile(std::string& tempName)
@@ -896,7 +908,7 @@ bool JMA_Knowledge::isDictFeature( const char* str, bool includeWord )
 			++tokenSize;
 		++str;
 	}
-	return tokenSize == featureTokenSize_;
+	return tokenSize >= featureTokenSize_;
 }
 
 unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)

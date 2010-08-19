@@ -14,12 +14,8 @@
 #include "pos_table.h"
 #include "mecab.h" // MeCab::Node, Tagger
 
-#include <string>
-
 /** Base N-Best Score */
 #define BASE_NBEST_SCORE 200
-
-using namespace std;
 
 namespace jma
 {
@@ -98,7 +94,7 @@ private:
      * \param featureOffset the feature offset indexed from zero, each feature is delimited by comma ","
 	 * \param retVal to store the feature string
 	 */
-    void getFeatureStr(const char* featureList, int featureOffset, string& retVal) const;
+    void getFeatureStr(const char* featureList, int featureOffset, std::string& retVal) const;
 
     /**
      * Release the resources owned by \e JMA_Analyzer itself.
@@ -162,7 +158,7 @@ private:
 	 */
 	MeCab::Tagger* tagger_;
 
-	string strBuf_;
+    std::string strBuf_;
 
     /** POS table for POS string and index code */
     const POSTable* posTable_;

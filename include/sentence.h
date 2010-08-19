@@ -187,7 +187,7 @@ public:
 
     /**
      * Get the reading form string of morpheme \e nIdx in candidate result \e nPos.
-     * For example in Japanese, "クル" is returned as the reading form of morpheme "来る".
+     * For example in Japanese, "くる" is returned as the reading form of morpheme "来る".
      * \param nPos candidate result index
      * \param nIdx morpheme index
      * \return reading form string, if no reading form exists, empty string "" is returned

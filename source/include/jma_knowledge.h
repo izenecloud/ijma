@@ -129,7 +129,7 @@ public:
      * Get the feature offset of base form indexed from zero.
      * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ",
      * the feature offset of base form "見る" would be 6.
-     * \return POS category number.
+     * \return the feature offset
      */
     int getBaseFormOffset() const;
 
@@ -137,9 +137,17 @@ public:
      * Get the feature offset of reading form indexed from zero.
      * For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ",
      * the feature offset of reading form "ミ" would be 7.
-     * \return POS category number.
+     * \return the feature offset
      */
     int getReadFormOffset() const;
+
+    /**
+     * Get the feature offset of normalized form indexed from zero.
+     * For example, if an entry in dictionary file contains the features like "名詞,固有名詞,人名,姓,*,*,渡邊,わたなべ,ワタナベ,渡辺",
+     * the feature offset of normalized form "渡辺" would be 9.
+     * \return the feature offset
+     */
+    int getNormFormOffset() const;
 
     /**
      * Check whether is a seperator of sentence.
@@ -222,7 +230,7 @@ private:
 
     /**
      * Whether the str is the dictionary feature, if it is, do not convert
-     * \param the string to be checked
+     * \param str the string to be checked
      * \param includedWord whether the str include the word
      * \return true if the str is the dictionary feature
      */
@@ -298,6 +306,9 @@ private:
 
     /** the feature offset (starting from zero) of reading form, which value is got from entry "read-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
     int readFormOffset_;
+
+    /** the feature offset (starting from zero) of normalized form, which value is got from entry "norm-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
+    int normFormOffset_;
 
     /** the tokens size in a feature */
     size_t featureTokenSize_;
