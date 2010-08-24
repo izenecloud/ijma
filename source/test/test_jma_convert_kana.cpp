@@ -2,7 +2,7 @@
  * Test to convert Japanese Hiragana and Katakana characters.
  * Below is the usage examples:
  * \code
- * Test to create and use JMA_Factory.
+ * Test to convert characters.
  * $ ./test_jma_convert_kana --to hira,kata,half,full,lower,upper [--dict DICT_PATH]
  * \endcode
  * 

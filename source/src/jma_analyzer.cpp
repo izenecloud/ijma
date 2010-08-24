@@ -397,8 +397,8 @@ void JMA_Analyzer::getFeatureStr(const char* featureList, int featureOffset, std
     const char delimit = ',';
     const char* str = featureList;
     const char* stre = featureList + strlen(featureList);
-    const char* begin;
-    const char* end;
+    const char* begin = 0;
+    const char* end = 0;
 
     const int size = featureOffset + 1; // how many ',' to find
     int count = 0; // how many ',' have been found
