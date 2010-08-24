@@ -7,3 +7,5 @@
 !/compare
 !/web_test
 !/convert_read_hiragana.rb
+!/extract_norm/*.rb
+!/extract_norm/*.def
