@@ -29,6 +29,11 @@ struct DictUnit
 
     /** file name (without path) */
     std::string fileName_;
+
+    /**
+     * Constructor.
+     */
+    DictUnit() : text_(0), length_(0) {}
 };
 
 /**
@@ -51,16 +56,36 @@ public:
     bool open(const char* fileName);
 
     /**
-     * Close the archive file.
+     * Close the opened system and user dictionary.
      */
     void close();
+
+    /**
+     * Create an empty binary user dictionary instance.
+     * \param fileName the file name, the path would be ignored and only file name is saved
+     */
+    void createEmptyBinaryUserDict(const char* fileName);
+
+    /**
+     * Create an empty text user dictionary instance.
+     * \param fileName the file name, the path would be ignored and only file name is saved
+     */
+    void createEmptyTextUserDict(const char* fileName);
 
     /**
      * Get a dictionary file.
      * \param fileName the file name, the path would be ignored and only file name is used to find the dictionary file
      * \return the pointer to dictionary file, 0 is returned if not loaded
      */
-    const DictUnit* getDict(const char* fileName) const;
+    DictUnit* getDict(const char* fileName);
+
+    /**
+     * Copy the string content to dictionary.
+     * \param str the string content
+     * \param fileName the file name, the path would be ignored and only file name is used to find the dictionary file
+     * \return true for success, false for failure
+     */
+    bool copyStrToDict(const std::string& str, const char* fileName);
 
     /**
      * Complile dictionary files \e srcVec into archive \e destFile.
@@ -82,14 +107,36 @@ protected:
     virtual ~JMA_Dictionary();
 
 private:
+    /**
+     * Close the system dictionary.
+     */
+    void closeSysDict();
+
+    /**
+     * Close binary user dictionary.
+     */
+    void closeBinUserDict();
+
+    /**
+     * Close text user dictionary.
+     */
+    void closeTxtUserDict();
+
+private:
     /** the instance of dictionary */
     static JMA_Dictionary* instance_;
 
-    /** the start address of dictionary archive */
-    char* dictText_;
+    /** the start address of system dictionary archive */
+    char* sysDictAddr_;
 
     /** mapping from dictionary file name (without path) to dictionary instance */
     std::map<std::string, DictUnit> dictMap_;
+
+    /** the binary user dictionary instance */
+    DictUnit* binUserDict_;
+
+    /** the text user dictionary instance */
+    DictUnit* txtUserDict_;
 };
 
 } // namespace jma

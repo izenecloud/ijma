@@ -249,10 +249,13 @@ int main(int argc, char* argv[])
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
 
-    //const char* userdict1 = TEST_JMA_DEFAULT_USER_DICT_TXT;
+    //const char* userdict1 = TEST_JMA_DEFAULT_USER_DICT_CSV;
+    //const char* userdict2 = TEST_JMA_DEFAULT_USER_DICT_TXT;
     //knowledge->addUserDict(userdict1);
+    //knowledge->addUserDict(userdict2);
     //cout << "system dictionary: " << sysdict << endl;
     //cout << "user dictionary 1: " << userdict1 << endl;
+    //cout << "user dictionary 2: " << userdict2 << endl;
 
     int result = knowledge->loadDict();
     if(result == 0)

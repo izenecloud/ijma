@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
-#include <sstream> // stringstream
+#include <sstream> // stringstream, ostringstream
 #include <cstdlib> // mkstemp, atoi
 #include <strstream> // istrstream
 #include <cassert>
@@ -78,6 +78,12 @@ const char* CASE_MAP_DEF_FILE = "map-case.def";
 /** System dictionary archive */
 const char* DICT_ARCHIVE_FILE = "sys.bin";
 
+/** Binary user dictionary in memory */
+const char* BIN_USER_DICT_MEMORY_FILE = "user.bin";
+
+/** Text user dictionary in memory */
+const char* TXT_USER_DICT_MEMORY_FILE = "user.csv";
+
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
@@ -126,15 +132,6 @@ JMA_Knowledge::~JMA_Knowledge()
 {
     dictionary_->close();
 
-    // remove the temporary user file in binary format
-    if(hasUserDict())
-    {
-        if(! removeFile(tempUserDic_))
-        {
-            cerr << "fail to delete tempUserDic_ file: " << tempUserDic_ << endl;
-        }
-    }
-
     if(ctype_)
     {
         delete ctype_;
@@ -168,39 +165,19 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
-    // remove the temporary user binary file if exists
-    if(! tempUserDic_.empty())
-    {
-        if(! removeFile(tempUserDic_))
-        {
-            cerr << "fail to delete tempUserDic_ file: " << tempUserDic_ << endl;
-        }
-    }
+    // just create an empty instance, it would be generated in mecab compiling
+    binUserDic_ = BIN_USER_DICT_MEMORY_FILE;
+    dictionary_->createEmptyBinaryUserDict(binUserDic_.c_str());
 
-    // temporary csv file for user dictionary
-    string tempUserCSVFile;
+    // create text user dictionary
+    const char* textUserDicName = TXT_USER_DICT_MEMORY_FILE;
+    dictionary_->createEmptyTextUserDict(textUserDicName);
 
-    // convert user dictionaries to a csv file
-    if(! createTempFile(tempUserCSVFile))
-    {
-        cerr << "fail to create a temporary user dictionary csv file" << endl;
-        return false;
-    }
-#if JMA_DEBUG_PRINT
-    cout << "temporary file name of user csv file: " << tempUserCSVFile << endl;
-#endif
-
-    ofstream ostream(tempUserCSVFile.c_str());
-    if(! ostream)
-    {
-        cerr << "fail to open temporary user CSV file: " << tempUserCSVFile << endl;
-        return false;
-    }
-
+    ostringstream osst;
     // append source files of user dictionary
     unsigned int entryCount = 0;
     for(size_t i=0; i<userDictNum; ++i)
-        entryCount += convertTxtToCSV(userDictNames_[i].c_str(), ostream);
+        entryCount += convertTxtToCSV(userDictNames_[i].c_str(), osst);
 
 #if JMA_DEBUG_PRINT
     cout << entryCount << " entries in user dictionaries altogether." << endl;
@@ -211,16 +188,11 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
-    // create a unique temporary file for user dictionary in binary type
-    bool tempResult = createTempFile(tempUserDic_);
-    if(! tempResult)
+    if(! dictionary_->copyStrToDict(osst.str(), textUserDicName))
     {
-        cerr << "fail to create a temporary user dictionary binary file" << endl;
+        cerr << "fail to copy text user dictionary from stream to memory." << endl;
         return false;
     }
-#if JMA_DEBUG_PRINT
-    cout << "temporary file name of binary user dictionary: " << tempUserDic_ << endl;
-#endif
 
     // construct parameter to compile user dictionary
     vector<char*> compileParam;
@@ -228,7 +200,7 @@ bool JMA_Knowledge::compileUserDict()
     compileParam.push_back((char*)"-d");
     compileParam.push_back(const_cast<char*>(systemDictPath_.c_str()));
     compileParam.push_back((char*)"-u");
-    compileParam.push_back(const_cast<char*>(tempUserDic_.c_str()));
+    compileParam.push_back(const_cast<char*>(binUserDic_.c_str()));
 
     // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
     // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
@@ -236,7 +208,7 @@ bool JMA_Knowledge::compileUserDict()
     compileParam.push_back((char*)"-t");
     compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
 
-    compileParam.push_back(const_cast<char*>(tempUserCSVFile.c_str()));
+    compileParam.push_back(const_cast<char*>(textUserDicName));
 
 #if JMA_DEBUG_PRINT
     cout << "parameter of mecab_dict_index() to compile user dictionary: ";
@@ -255,13 +227,6 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
-    // as the binary user dictionary is created,
-    // remove the temporary user csv file
-    if(! removeFile(tempUserCSVFile))
-    {
-        cerr << "fail to delete tempUserCSVFile file: " << tempUserCSVFile << endl;
-    }
-
     return true;
 }
 
@@ -273,11 +238,11 @@ MeCab::Tagger* JMA_Knowledge::createTagger() const
 
     if(hasUserDict())
     {
-        assert(! tempUserDic_.empty() && "the temporary file of user dictionary in binary format should have been created by JMA_Knowledge::compileUserDict()");
+        assert(! binUserDic_.empty() && "the binary user dictionary in memory should have been created by JMA_Knowledge::compileUserDict()");
 
         // append the name of user dictionary binary file to the parameter of tagger creation
         taggerParam += " -u ";
-        taggerParam += tempUserDic_;
+        taggerParam += binUserDic_;
     }
 
 #if JMA_DEBUG_PRINT
@@ -651,49 +616,49 @@ int JMA_Knowledge::getNormFormOffset() const
     return normFormOffset_;
 }
 
-bool JMA_Knowledge::createTempFile(std::string& tempName)
-{
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    // directory name for temporary file
-    char dirName[MAX_PATH];
+//bool JMA_Knowledge::createTempFile(std::string& tempName)
+//{
+//#if defined(_WIN32) && !defined(__CYGWIN__)
+    //// directory name for temporary file
+    //char dirName[MAX_PATH];
 
-    // retrieve the directory path designated for temporary files
-    DWORD dirResult = GetTempPath(MAX_PATH, dirName);
-    if(dirResult == 0)
-    {
-        cerr << "fail in GetTempPath() to get the directory path for temporary file" << endl;
-        return false;
-    }
+    //// retrieve the directory path designated for temporary files
+    //DWORD dirResult = GetTempPath(MAX_PATH, dirName);
+    //if(dirResult == 0)
+    //{
+        //cerr << "fail in GetTempPath() to get the directory path for temporary file" << endl;
+        //return false;
+    //}
 
-    // file name for temporary file
-    char fileName[MAX_PATH];
+    //// file name for temporary file
+    //char fileName[MAX_PATH];
 
-    // create a unique temporary file
-    UINT nameResult = GetTempFileName(dirName, "jma", 0, fileName);
-    if(nameResult == 0)
-    {
-        cerr << "fail in GetTempFileName() to create a temporary file" << endl;
-        return false;
-    }
+    //// create a unique temporary file
+    //UINT nameResult = GetTempFileName(dirName, "jma", 0, fileName);
+    //if(nameResult == 0)
+    //{
+        //cerr << "fail in GetTempFileName() to create a temporary file" << endl;
+        //return false;
+    //}
 
-    tempName = fileName;
-#else
-    // file name for temporary file
-    char fileName[] = "/tmp/jmaXXXXXX";
+    //tempName = fileName;
+//#else
+    //// file name for temporary file
+    //char fileName[] = "/tmp/jmaXXXXXX";
 
-    // create a unique temporary file
-    int tempFd = mkstemp(fileName);
-    if(tempFd == -1)
-    {
-        cerr << "fail in mkstemp() to create a temporary file" << endl;
-        return false;
-    }
+    //// create a unique temporary file
+    //int tempFd = mkstemp(fileName);
+    //if(tempFd == -1)
+    //{
+        //cerr << "fail in mkstemp() to create a temporary file" << endl;
+        //return false;
+    //}
 
-    tempName = fileName;
-#endif
+    //tempName = fileName;
+//#endif
 
-    return true;
-}
+    //return true;
+//}
 
 bool JMA_Knowledge::removeFile(const std::string& fileName)
 {
@@ -911,7 +876,7 @@ bool JMA_Knowledge::isDictFeature( const char* str, bool includeWord )
 	return tokenSize >= featureTokenSize_;
 }
 
-unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& ostream)
+unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& ost)
 {
     unsigned int count = 0;
 
@@ -941,9 +906,9 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& o
 		if( vecSize == 1 )
 		{
 			if( isDictFeature( word.c_str(), true) )
-				ostream << word << endl;
+				ost << word << endl;
 			else if( defaultFeature_ )
-				ostream << vec[0] << "," << *defaultFeature_ << endl;
+				ost << vec[0] << "," << *defaultFeature_ << endl;
             ++count;
 			continue;
 		}
@@ -958,7 +923,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& o
 				//don't insert duplicate entry
 				if( usedFeatures.find(posOrFec) == usedFeatures.end() )
 				{
-					ostream << word << "," << posOrFec << endl;
+					ost << word << "," << posOrFec << endl;
                     ++count;
 					usedFeatures.insert(posOrFec);
 				}
@@ -971,7 +936,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& o
 				{
 					if( usedFeatures.find( *fec ) == usedFeatures.end() )
 					{
-						ostream << word << "," << *fec << endl;
+						ost << word << "," << *fec << endl;
                         ++count;
 						usedFeatures.insert( *fec );
 					}
@@ -983,7 +948,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ofstream& o
 
 		if( usedFeatures.empty() && defaultFeature_ )
 		{
-			ostream << vec[0] << "," << *defaultFeature_ << endl;
+			ost << vec[0] << "," << *defaultFeature_ << endl;
             ++count;
 		}
 	}

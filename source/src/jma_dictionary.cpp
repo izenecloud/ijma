@@ -130,7 +130,7 @@ JMA_Dictionary* JMA_Dictionary::instance()
 }
 
 JMA_Dictionary::JMA_Dictionary()
-    : dictText_(0)
+    : sysDictAddr_(0), binUserDict_(0), txtUserDict_(0)
 {
 }
 
@@ -141,16 +141,63 @@ JMA_Dictionary::~JMA_Dictionary()
 
 void JMA_Dictionary::close()
 {
+    closeSysDict();
+    closeBinUserDict();
+    closeTxtUserDict();
+}
+
+void JMA_Dictionary::closeSysDict()
+{
     dictMap_.clear();
-    delete[] dictText_;
-    dictText_ = 0;
+    delete[] sysDictAddr_;
+    sysDictAddr_ = 0;
+}
+
+void JMA_Dictionary::closeBinUserDict()
+{
+    if(binUserDict_)
+    {
+        delete[] binUserDict_->text_;
+        delete binUserDict_;
+        binUserDict_ = 0;
+    }
+}
+
+void JMA_Dictionary::closeTxtUserDict()
+{
+    if(txtUserDict_)
+    {
+        delete[] txtUserDict_->text_;
+        delete txtUserDict_;
+        txtUserDict_ = 0;
+    }
+}
+
+void JMA_Dictionary::createEmptyBinaryUserDict(const char* fileName)
+{
+    assert(fileName);
+
+    closeBinUserDict();
+
+    binUserDict_ = new DictUnit;
+    binUserDict_->fileName_ = getFileName(fileName);
+}
+
+void JMA_Dictionary::createEmptyTextUserDict(const char* fileName)
+{
+    assert(fileName);
+
+    closeTxtUserDict();
+
+    txtUserDict_ = new DictUnit;
+    txtUserDict_->fileName_ = getFileName(fileName);
 }
 
 bool JMA_Dictionary::open(const char* fileName)
 {
     assert(fileName);
 
-    close();
+    closeSysDict();
 
     // mapping from compressed file into memory
     MeCab::Mmap<char> compressFile;
@@ -181,8 +228,8 @@ bool JMA_Dictionary::open(const char* fileName)
     ptr = start + JMA_DICT_BLOCK_SIZE;
 
     // uncompress
-    dictText_ = new char[totalSize];
-    if(! dictText_)
+    sysDictAddr_ = new char[totalSize];
+    if(! sysDictAddr_)
     {
         cerr << "error: fail to allcate memory " << totalSize << " bytes to uncompress file " << fileName << endl;
         return false;
@@ -190,7 +237,7 @@ bool JMA_Dictionary::open(const char* fileName)
 
     zlib::ZWrapper zwrap;
     unsigned int uncompSize = totalSize;
-    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, dictText_, uncompSize))
+    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, sysDictAddr_, uncompSize))
     {
         cerr << "error: fail to uncompress file " << fileName << endl;
         return false;
@@ -202,7 +249,7 @@ bool JMA_Dictionary::open(const char* fileName)
     }
 
     // read each file head
-    ptr = dictText_;
+    ptr = sysDictAddr_;
     const char* content = ptr + JMA_DICT_BLOCK_SIZE * fileCount;
     for(unsigned int i=0; i<fileCount; ++i)
     {
@@ -222,7 +269,7 @@ bool JMA_Dictionary::open(const char* fileName)
     }
 
     // check end position
-    if(content != dictText_ + totalSize)
+    if(content != sysDictAddr_ + totalSize)
     {
         cerr << "error: dictionary file " << fileName << " is broken at end position." << endl;
         return false;
@@ -230,14 +277,39 @@ bool JMA_Dictionary::open(const char* fileName)
     return true;
 }
 
-const DictUnit* JMA_Dictionary::getDict(const char* fileName) const
+DictUnit* JMA_Dictionary::getDict(const char* fileName)
 {
+    assert(fileName);
+
     string str = getFileName(fileName);
-    std::map<std::string, DictUnit>::const_iterator it = dictMap_.find(str);
+    std::map<std::string, DictUnit>::iterator it = dictMap_.find(str);
     if(it != dictMap_.end())
         return &it->second;
 
+    if(binUserDict_ && binUserDict_->fileName_ == str)
+        return binUserDict_;
+
+    if(txtUserDict_ && txtUserDict_->fileName_ == str)
+        return txtUserDict_;
+
     return 0;
+}
+
+bool JMA_Dictionary::copyStrToDict(const std::string& str, const char* fileName)
+{
+    DictUnit* dict = getDict(fileName);
+    if(! dict)
+        return false;
+
+    // in case of already allocated
+    delete[] dict->text_;
+
+    dict->length_ = str.size();
+    dict->text_ = new char[dict->length_];
+    if(str.copy(dict->text_, dict->length_) != dict->length_)
+        return false;
+
+    return true;
 }
 
 /**

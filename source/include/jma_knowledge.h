@@ -18,13 +18,12 @@
 #include <string>
 #include <set>
 #include <map>
-#include <fstream>
+#include <ostream>
 
 using std::string;
 using std::set;
 using std::map;
-using std::ofstream;
-using std::ifstream;
+using std::ostream;
 
 namespace MeCab
 {
@@ -196,7 +195,7 @@ private:
      * \return true for success, false for fail.
      * \pre \e systemDictPath_ is assumed as the directory path of system dictionary.
      * \pre \e userDictNames_ is assumed as file names of user dictionaries in text format.
-     * \post as the compilation result, \e tempUserDic_ is the file name of the temporary user dictionary in binary format.
+     * \post as the compilation result, \e binUserDic_ is the file name of the temporary user dictionary in binary format.
      */
     bool compileUserDict();
 
@@ -223,10 +222,10 @@ private:
     /**
      * Convert the User's txt file to CSV format, also change POS to feature
      * \param userDicFile user dictionary file
-     * \param ostream csv output stream
-     * \return how many entries are written into \e ostream
+     * \param ost csv output stream
+     * \return how many entries are written into \e ost
      */
-    unsigned int convertTxtToCSV(const char* userDicFile, ofstream& ostream);
+    unsigned int convertTxtToCSV(const char* userDicFile, ostream& ost);
 
     /**
      * Whether the str is the dictionary feature, if it is, do not convert
@@ -238,10 +237,11 @@ private:
 
     /**
      * Create a unique temporary file and output its file name.
+     * It is commented out as the temporary file is replaced with memory.
      * \param tempName the string to save the temporary file name
      * \return true for success and \e tempName is set as the temporary file name. false for fail and \e tempName is not modified.
      */
-    static bool createTempFile(std::string& tempName);
+    /*static bool createTempFile(std::string& tempName);*/
 
     /**
      * Delete the file on disk.
@@ -286,8 +286,8 @@ private:
     /** the table of part-of-speech tags */
     POSTable posTable_;
 
-    /** temporary file name for binary user dictionary */
-    std::string tempUserDic_;
+    /** file name for binary user dictionary in memory */
+    std::string binUserDic_;
 
     /** stop words set */
     set<string> stopWords_;

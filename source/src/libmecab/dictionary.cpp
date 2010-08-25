@@ -18,6 +18,10 @@
 #include "writer.h"
 #include "mmap.h"
 
+#include <sstream> // ostringstream, istringstream
+#include <string> // string
+#include "jma_dictionary.h" // JMA_Dictionary
+
 namespace MeCab {
 
 static const unsigned int DictionaryMagicID = 0xef718f77u;
@@ -144,15 +148,27 @@ bool Dictionary::compile(const Param &param,
   std::istringstream iss(UNK_DEF_DEFAULT);
 
   for (size_t i = 0; i < dics.size(); ++i) {
-    std::ifstream ifs(dics[i].c_str());
-    std::istream *is = &ifs;
-    if (!ifs) {
+    std::ifstream ifs;
+    std::istringstream user_iss; // for iJMA user dictionary in memory
+    std::istream *is = 0;
+
+    const char* filename = dics[i].c_str();
+    const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+    if(dict) {
+        user_iss.str(std::string(dict->text_, dict->length_));
+        is = &user_iss;
+    } else {
+        ifs.open(filename);
+        is = &ifs;
+    }
+
+    if (! *is) {
       if (type == MECAB_UNK_DIC) {
         std::cerr << dics[i]
                   << " is not found. minimum setting is used." << std::endl;
         is = &iss;
       } else {
-        CHECK_DIE(ifs) << "no such file or directory: " << dics[i];
+        CHECK_DIE(*is) << "no such file or directory: " << dics[i];
       }
     }
 
@@ -321,39 +337,52 @@ bool Dictionary::compile(const Param &param,
   std::fill(charset, charset + sizeof(charset), '\0');
   std::strncpy(charset, to.c_str(), 31);
 
-  std::ofstream bofs(output, std::ios::binary|std::ios::out);
-  CHECK_DIE(bofs) << "permission denied: " << output;
+  scoped_ptr<std::ostream> p_ost;
+  std::ostringstream* p_strstream = 0;
+  // check whether is user dict
+  jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(output);
+  if(dict) {
+    p_strstream = new std::ostringstream(std::ios::binary|std::ios::out);
+    p_ost.reset(p_strstream);
+  } else
+    p_ost.reset(new std::ofstream(output, std::ios::binary|std::ios::out));
+
+  CHECK_DIE(*p_ost) << "permission denied: " << output;
 
   unsigned int magic = 0;
 
   // needs to be 64bit aligned
   // 10*32 = 64*5
-  bofs.write(reinterpret_cast<const char *>(&magic),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&version), sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&type),    sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&lexsize), sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&lsize),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&rsize),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&dsize),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&tsize),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&fsize),   sizeof(unsigned int));
-  bofs.write(reinterpret_cast<const char *>(&dummy),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&magic),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&version), sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&type),    sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&lexsize), sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&lsize),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&rsize),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&dsize),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&tsize),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&fsize),   sizeof(unsigned int));
+  p_ost->write(reinterpret_cast<const char *>(&dummy),   sizeof(unsigned int));
 
   // 32 * 8 = 64 * 4
-  bofs.write(reinterpret_cast<const char *>(charset),  sizeof(charset));
+  p_ost->write(reinterpret_cast<const char *>(charset),  sizeof(charset));
 
-  bofs.write(reinterpret_cast<const char*>(da.array()),
+  p_ost->write(reinterpret_cast<const char*>(da.array()),
              da.unit_size() * da.size());
-  bofs.write(const_cast<const char *>(tbuf.data()), tbuf.size());
-  bofs.write(const_cast<const char *>(fbuf.data()), fbuf.size());
+  p_ost->write(const_cast<const char *>(tbuf.data()), tbuf.size());
+  p_ost->write(const_cast<const char *>(fbuf.data()), fbuf.size());
 
   // save magic id
-  magic = static_cast<unsigned int>(bofs.tellp());
+  magic = static_cast<unsigned int>(p_ost->tellp());
   magic ^= DictionaryMagicID;
-  bofs.seekp(0);
-  bofs.write(reinterpret_cast<const char *>(&magic), sizeof(unsigned int));
+  p_ost->seekp(0);
+  p_ost->write(reinterpret_cast<const char *>(&magic), sizeof(unsigned int));
 
-  bofs.close();
+  // allocate memory for user dict, and copy its content from stream to memory
+  if(dict) {
+      bool result = jma::JMA_Dictionary::instance()->copyStrToDict(p_strstream->str(), output);
+      CHECK_DIE(result) << "failed to copy binary user dictionary from stream to memory.";
+  }
 
   return true;
 }
