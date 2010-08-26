@@ -6,12 +6,12 @@
  * \date Aug 26, 2010
  */
 
-#ifndef JMA_IJMA_H
-#define JMA_IJMA_H
+#ifndef IJMA_H
+#define IJMA_H
 
 #include "jma_factory.h"
 #include "sentence.h"
 #include "analyzer.h"
 #include "knowledge.h"
 
-#endif // JMA_IJMA_H
+#endif // IJMA_H
