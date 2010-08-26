@@ -1,22 +1,24 @@
 cmake_minimum_required(VERSION 2.6)
 
-#set(CMAKE_VERBOSE_MAKEFILE on)
+project(JMA)
 
+#set(CMAKE_VERBOSE_MAKEFILE on)
 # In CMake, compiler flags can be grouped in Configurations
 #
 
 # - Set default configurations definition, also add configuration Debugfull and Profile.
 #
 # Debugfull adds more debug information, and Profile adds profiling information as well.
-#
 
 IF (NOT CMAKE_BUILD_TYPE)
-  #SET(CMAKE_BUILD_TYPE RelWithDebInfo)
   SET(CMAKE_BUILD_TYPE Release)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
-MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCXX: " ${CMAKE_COMPILER_IS_GNUCXX})
+MESSAGE(STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE})
+
+# Select compile flags for g++
 IF (CMAKE_COMPILER_IS_GNUCXX)
+  MESSAGE(STATUS "CMAKE_COMPILER_IS_GNUCXX: " ${CMAKE_COMPILER_IS_GNUCXX})
   SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_CONFIGURATION_TYPES} "Debugfull" "Profile")
 
   # Select flags.
@@ -29,15 +31,17 @@ IF (CMAKE_COMPILER_IS_GNUCXX)
   #SET(CMAKE_CXX_FLAGS_PROFILE        "-g3 -fno-inline -ftest-coverage -fprofile-arcs" CACHE STRING "Profile build type")
 
   MARK_AS_ADVANCED(CMAKE_CXX_FLAGS_DEBUGFULL CMAKE_CXX_FLAGS_PROFILE)
+
+  add_definitions("-Wall -Wno-deprecated")
 ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 # Select compile flags for MSVC
-IF (CMAKE_COMPILER_IS_MSVC)
-MESSAGE(STATUS "CMAKE_COMPILER_IS_MSVC: " ${CMAKE_COMPILER_IS_MSVC})
+IF (MSVC)
+MESSAGE(STATUS "MSVC: " ${MSVC})
 
   SET(CMAKE_CXX_FLAGS_RELEASE "/EHsc /O2 /GL /GA /Ob2 /nologo /W3 /MT /Zi" CACHE STRING "Flags used by the compiler during release builds" FORCE)
   SET(CMAKE_CXX_FLAGS_DEBUG "/EHsc /Od /nologo /W3 /MTd /Zi" CACHE STRING "Flags used by the compiler during debug builds" FORCE)
-ENDIF (CMAKE_COMPILER_IS_MSVC)
+ENDIF (MSVC)
 
 # Select compile flags for XLC
 IF (CMAKE_COMPILER_IS_XLC)
@@ -57,11 +61,6 @@ SET(CMAKE_C_FLAGS_RELEASE        "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "Flag
 SET(CMAKE_C_FLAGS_DEBUG          "${CMAKE_CXX_FLAGS_DEBUG}" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 SET(CMAKE_C_FLAGS_PROFILE        "${CMAKE_CXX_FLAGS_PROFILE}" CACHE STRING "Profile build type" FORCE)
 
-project(JMA)
-
-IF (CMAKE_COMPILER_IS_GNUCXX)
-add_definitions("-Wall -Wno-deprecated")
-ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 
 include_directories(../include)
 include_directories(./include)
@@ -81,6 +80,10 @@ ELSE (WIN32)
 ENDIF (UNIX)
 
 # set compile flag for whether to print debug information
+IF (NOT CMAKE_JMA_DEBUG_PRINT)
+  SET(CMAKE_JMA_DEBUG_PRINT 0)
+ENDIF (NOT CMAKE_JMA_DEBUG_PRINT)
+MESSAGE(STATUS "CMAKE_JMA_DEBUG_PRINT: " ${CMAKE_JMA_DEBUG_PRINT})
 add_definitions(-DJMA_DEBUG_PRINT=${CMAKE_JMA_DEBUG_PRINT})
 
 # include config.h

@@ -17,9 +17,7 @@
  * \date Jul 17, 2009
  */
 
-#include "jma_factory.h"
-#include "analyzer.h"
-#include "knowledge.h"
+#include "ijma.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV
 
 #include <iostream>

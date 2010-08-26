@@ -17,10 +17,7 @@
  * \date Jul 27, 2009
  */
 
-#include "jma_factory.h"
-#include "analyzer.h"
-#include "knowledge.h"
-#include "sentence.h"
+#include "ijma.h"
 #include "strutil.h"
 
 #include <iostream>

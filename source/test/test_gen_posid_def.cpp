@@ -29,8 +29,6 @@
 #include <dirent.h> // opendir, closedir
 #endif
 
-//#define JMA_DEBUG_PRINT 1
-
 using namespace std;
 
 bool toLower(string& s)

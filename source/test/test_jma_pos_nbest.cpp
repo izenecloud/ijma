@@ -22,10 +22,7 @@
  * \date Aug 12, 2009
  */
 
-#include "jma_factory.h"
-#include "analyzer.h"
-#include "knowledge.h"
-#include "sentence.h"
+#include "ijma.h"
 
 #include <iostream>
 #include <fstream>
@@ -35,8 +32,8 @@
 
 #include <ctime>
 
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 using namespace jma;

@@ -28,10 +28,6 @@
 #include <unistd.h> // unlink
 #endif
 
-#ifndef JMA_DEBUG_PRINT
-	#define JMA_DEBUG_PRINT 1
-#endif
-
 using namespace std;
 
 namespace

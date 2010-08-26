@@ -17,10 +17,6 @@
 #include <sstream>
 #include <strstream>
 
-#ifndef JMA_DEBUG_PRINT
-    #define JMA_DEBUG_PRINT 1
-#endif
-
 #define JMA_DEBUG_PRINT_COMBINE 0
 
 using namespace std;
@@ -195,7 +191,7 @@ bool POSTable::loadCombineRule(const char* fileName)
 
 #if JMA_DEBUG_PRINT
     cout << "load POS rule: " << fileName << endl;
-    cout << "sources => target" << endl;
+    cout << "source1 source2 ... target" << endl;
 #endif
 
     // each line is assumed in the format "source1 source2 ... target",
@@ -226,6 +222,7 @@ bool POSTable::loadCombineRule(const char* fileName)
         {
             cout << *it << "\t";
         }
+        cout << endl;
 #endif
 
         RuleNode* node = ruleRoot_;
@@ -259,7 +256,7 @@ bool POSTable::loadCombineRule(const char* fileName)
     }
 
 #if JMA_DEBUG_PRINT
-    cout << ruleVec_.size() << " rules are loaded." << endl;
+    cout << endl;
 #endif
 
     return true;

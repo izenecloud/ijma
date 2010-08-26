@@ -18,10 +18,6 @@
 #include <strstream>
 #include <utility> // make_pair
 
-#ifndef JMA_DEBUG_PRINT
-    #define JMA_DEBUG_PRINT 1
-#endif
-
 using namespace std;
 
 namespace jma

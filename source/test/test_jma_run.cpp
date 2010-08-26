@@ -21,10 +21,7 @@
  * \date Jul 2, 2009
  */
 
-#include "jma_factory.h"
-#include "analyzer.h"
-#include "knowledge.h"
-#include "sentence.h"
+#include "ijma.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
 #include <iostream>
@@ -33,9 +30,8 @@
 #include <string>
 
 #include <ctime>
-
-#include <string.h>
-#include <stdlib.h>
+#include <cstring>
+#include <cstdlib>
 
 using namespace std;
 using namespace jma;

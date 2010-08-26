@@ -14,8 +14,7 @@
  * \date Jun 22, 2009
  */
 
-#include "jma_factory.h"
-#include "knowledge.h"
+#include "ijma.h"
 
 #include <iostream>
 #include <cassert>

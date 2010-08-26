@@ -11,7 +11,6 @@
  * \date Jun 23, 2009
  */
 #include "jma_knowledge.h"
-#include "mecab.h"
 #include "jma_analyzer.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV, TEST_JMA_DEFAULT_USER_DICT_TXT
 
@@ -49,16 +48,6 @@ int main()
         exit(1);
     }
 
-    // comment lines below as JMA_Knowledge::getTagger() is replaced with createTagger(),
-    // which MeCab::Tagger life cycle is managed by the caller.
-    // get tagger
-    //MeCab::Tagger* tagger = knowledge->getTagger();
-    //if(! tagger)
-    //{
-        //cerr << "MeCab::Tagger is not accessible after dictionary is loaded" << endl;
-        //exit(1);
-    //}
-
     JMA_Analyzer* analyzer = new JMA_Analyzer;
     analyzer->setKnowledge(knowledge);
     analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 5);
@@ -94,7 +83,6 @@ int main()
 			for(int j=0; j<s.getCount(i); ++j)
 			{
 				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
-				//cout<< s.getLexicon(i, j) << "/" << s.getPOS(i, j) << " ";
 			}
 			cout<<endl;
 		}

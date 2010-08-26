@@ -20,10 +20,6 @@
 #include "tokenizer.h"
 #include "char_table.h"
 
-#ifndef JMA_DEBUG_PRINT
-    #define JMA_DEBUG_PRINT 1
-#endif
-
 #define JMA_DEBUG_PRINT_COMBINE 0
 
 using namespace std;

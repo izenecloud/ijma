@@ -43,12 +43,12 @@ then
     if [ "$2" = "" -o "$2" = "linux" ]
     then
         echo "generating Makefiles for GCC"
-        cmake -G "Unix Makefiles" -DCMAKE_COMPILER_IS_GNUCXX=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
         make all
     elif [ "$2" = "win32" ]
     then
         echo "generating MSVC project (\"$WIN32_BUILD_SYSTEM\" is required)"
-        cmake -G "$WIN32_BUILD_SYSTEM" -DCMAKE_COMPILER_IS_MSVC=1 -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
+        cmake -G "$WIN32_BUILD_SYSTEM" -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_JMA_DEBUG_PRINT=0 ../../source
         if [ $? = 0 ]
         then
             echo "MSVC project file \"temp\JMA.sln\" is generated,"
