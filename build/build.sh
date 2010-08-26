@@ -13,14 +13,13 @@ WIN32_BUILD_SYSTEM="Visual Studio 9 2008"
 if [ "$1" = "clean" ]
 then 
     if test -d $BUILD_PATH
-    then rm -r $BUILD_PATH
+    then
+        cd $BUILD_PATH
+        make clean
+        cd -
+        rm -r $BUILD_PATH
     fi
 
-    # remove all lib files
-    rm -fr $JMA_PROJECT_HOME/lib/lib*
-
-    # remove all executable files
-    rm -fr $JMA_PROJECT_HOME/bin/test_* $JMA_PROJECT_HOME/bin/mecab* $JMA_PROJECT_HOME/bin/demo_* $JMA_PROJECT_HOME/bin/jma_*
 elif [ "$1" = "" ] || [ "$1" = "debug" ] || [ "$1" = "release" ] || [ "$1" = "profile" ]
 then
     if [ "$1" != "" ]
