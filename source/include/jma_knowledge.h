@@ -14,6 +14,7 @@
 #include "jma_ctype.h"
 #include "pos_table.h"
 #include "char_table.h"
+#include "sentence.h"
 
 #include <string>
 #include <set>
@@ -41,7 +42,16 @@ class JMA_Dictionary;
 class JMA_Knowledge : public Knowledge
 {
 public:
-	typedef GenericArray<unsigned int> SepArray;
+    typedef GenericArray<unsigned int> SepArray;
+
+    /**
+     * The map to decompose user defined noun. 
+     * The key of the map is the user defined noun, such as "本田総一郎",
+     * the value of the map is a list of decomposed morphemes, such as "本田", "総一郎",
+     * the decomposed morpheme includes Morpheme::lexicon_ and Morpheme::readForm_,
+     * if Morpheme::readForm_ is an empty string, no read form is defined.
+     */
+    typedef std::map<std::string, MorphemeList> DecompMap;
 
     /**
      * Constructor.
@@ -109,20 +119,26 @@ public:
     const CharTable& getCaseTable() const;
 
     /**
-	 * Whether the specific word is stop word
-	 *
-	 * \param word the word to be checked
-	 * \return whether the word is in the stop word list
-	 */
-	bool isStopWord(const string& word) const;
+     * Get the map to decompose user defined noun.
+     * \return reference to the map instance.
+     */
+    const DecompMap& getDecompMap() const;
 
     /**
-	 * Whether the specific part-of-speech tag is keyword
-	 *
-	 * \param pos the index code of part-of-speech tag
-	 * \return whether is keyword
-	 */
-	bool isKeywordPOS(int pos) const;
+     * Whether the specific word is stop word
+     *
+     * \param word the word to be checked
+     * \return whether the word is in the stop word list
+     */
+    bool isStopWord(const string& word) const;
+
+    /**
+     * Whether the specific part-of-speech tag is keyword
+     *
+     * \param pos the index code of part-of-speech tag
+     * \return whether is keyword
+     */
+    bool isKeywordPOS(int pos) const;
 
     /**
      * Get the feature offset of base form indexed from zero.
@@ -169,12 +185,12 @@ public:
     JMA_CType* getCType();
 
     /**
-	 * Load the sentence separator configuration file, which is in text format.
-	 * This file each separator character(only one character) per line.
-	 * \param fileName the file name
-	 * \return 0 for fail, 1 for success
-	 */
-	virtual int loadSentenceSeparatorConfig(const char* fileName);
+     * Load the sentence separator configuration file, which is in text format.
+     * This file each separator character(only one character) per line.
+     * \param fileName the file name
+     * \return 0 for fail, 1 for success
+     */
+    virtual int loadSentenceSeparatorConfig(const char* fileName);
 
 protected:
     /**
@@ -260,13 +276,12 @@ private:
      */
     static std::string createFilePath(const char* dir, const char* file);
 
-
-	/**
-	 * Get the number of bytes the character val occupies.
-	 * \param val the character to be checked
-	 * \return the number of bytes the character val occupies
-	 */
-	unsigned int getOccupiedBytes(unsigned int val);
+    /**
+     * Get the number of bytes the character val occupies.
+     * \param val the character to be checked
+     * \return the number of bytes the character val occupies
+     */
+    unsigned int getOccupiedBytes(unsigned int val);
 
 private:
     /** the table of part-of-speech tags */
@@ -300,10 +315,10 @@ private:
     JMA_CType* ctype_;
 
     /**
-	 * Separator Arrays, index 0 is reserved, and index 1 ~ 4 represents
-	 * character with 1 ~ 4 bytes separately.
-	 */
-	SepArray seps_[5];
+     * Separator Arrays, index 0 is reserved, and index 1 ~ 4 represents
+     * character with 1 ~ 4 bytes separately.
+     */
+    SepArray seps_[5];
 
     /** character encode type of dictionary config files.
      * It is set by "config_charset" item in "dicrc" file.
@@ -321,6 +336,9 @@ private:
 
     /** the dictionary instance */
     JMA_Dictionary* dictionary_;
+
+    /** the instance of decomposition map */
+    DecompMap decompMap_;
 };
 
 } // namespace jma

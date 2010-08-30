@@ -16,7 +16,6 @@
 #include <algorithm> // find
 
 #include "jma_analyzer.h"
-#include "jma_knowledge.h"
 #include "tokenizer.h"
 #include "char_table.h"
 
@@ -152,6 +151,7 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     kanaTable_ = &knowledge_->getKanaTable();
     widthTable_ = &knowledge_->getWidthTable();
     caseTable_ = &knowledge_->getCaseTable();
+    decompMap_ = &knowledge_->getDecompMap();
 }
 
 int JMA_Analyzer::runWithSentence(Sentence& sentence)

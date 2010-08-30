@@ -11,6 +11,7 @@
 
 #include "analyzer.h"
 #include "sentence.h"
+#include "jma_knowledge.h"
 #include "pos_table.h"
 #include "mecab.h" // MeCab::Node, Tagger
 
@@ -20,7 +21,6 @@
 namespace jma
 {
 
-class JMA_Knowledge;
 class JMA_CType;
 class CharTable;
 
@@ -148,14 +148,10 @@ private:
     bool isFilter(const Morpheme& morph) const;
 
 private:
-	/**
-	 * hold the JMA_Knowledge Object
-	 */
+	/** hold the JMA_Knowledge Object */
 	JMA_Knowledge* knowledge_;
 
-	/**
-	 * The Tagger from the Mecab (created by JMA_Knowledge, owned by JMA_Analyzer)
-	 */
+	/** the tagger from Mecab (created by JMA_Knowledge, owned by JMA_Analyzer) */
 	MeCab::Tagger* tagger_;
 
     std::string strBuf_;
@@ -171,6 +167,9 @@ private:
 
     /** mapping table between lower and upper case characters */
     const CharTable* caseTable_;
+
+    /** decomposition map to decompose user defined noun */
+    const JMA_Knowledge::DecompMap* decompMap_;
 };
 
 } // namespace jma

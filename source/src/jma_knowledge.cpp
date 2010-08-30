@@ -9,6 +9,7 @@
 #include "jma_knowledge.h"
 #include "sentence.h"
 #include "jma_dictionary.h"
+#include "tokenizer.h"
 #include "strutil.h"
 
 #include "mecab.h" // MeCab::Tagger
@@ -129,7 +130,7 @@ unsigned int tokenizeCSV(const string& str, vector<string>& compVec)
     }
 
 #if JMA_DEBUG_PRINT
-	cout << "tokenize CSV from string (" << str << ") to ";
+    cout << "tokenize CSV from string (" << str << ") to ";
     for(unsigned int i=0; i<compVec.size(); ++i)
     {
         cout << compVec[i] << ", ";
@@ -169,10 +170,10 @@ namespace jma
 
 inline string* getMapValue(map<string, string>& map, const string& key)
 {
-	std::map<string, string>::iterator itr = map.find( key );
-	if( itr == map.end() )
-		return 0;
-	return &itr->second;
+    std::map<string, string>::iterator itr = map.find( key );
+    if( itr == map.end() )
+        return 0;
+    return &itr->second;
 }
 
 JMA_Knowledge::JMA_Knowledge()
@@ -220,6 +221,9 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
+    // remove existing decompostion map
+    decompMap_.clear();
+
     // just create an empty instance, it would be generated in mecab compiling
     binUserDic_ = BIN_USER_DICT_MEMORY_FILE;
     dictionary_->createEmptyBinaryUserDict(binUserDic_.c_str());
@@ -261,9 +265,13 @@ bool JMA_Knowledge::compileUserDict()
     compileParam.push_back((char*)"-u");
     compileParam.push_back(const_cast<char*>(binUserDic_.c_str()));
 
-    // the encoding type of text user dictionary could be predefined by the "dictionary-charset" entry in "dicrc" file under binary system directory path,
-    // if the text encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
-    // below is to set the encoding type of binary user dictionary, which is "EUC-JP" defaultly.
+    // the encoding type of text user dictionary,
+    // as they have been converted to destination encoding in convertTxtToCSV(),
+    // use destination encoding here
+    compileParam.push_back((char*)"-f");
+    compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
+
+    // the encoding type of binary user dictionary
     compileParam.push_back((char*)"-t");
     compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
 
@@ -330,6 +338,11 @@ const CharTable& JMA_Knowledge::getWidthTable() const
 const CharTable& JMA_Knowledge::getCaseTable() const
 {
     return caseTable_;
+}
+
+const JMA_Knowledge::DecompMap& JMA_Knowledge::getDecompMap() const
+{
+    return decompMap_;
 }
 
 bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
@@ -501,23 +514,23 @@ int JMA_Knowledge::loadDict()
 
 int JMA_Knowledge::loadStopWordDict(const char* fileName)
 {
-	ifstream in(fileName);
+    ifstream in(fileName);
     if(!in)
     {
         cerr << "cannot open file: " << fileName << endl;
         return 0;
     }
 
-	string line;
+    string line;
     while(getline(in, line))
     {
         line = line.substr(0, line.find('\r'));
-		if(line.empty())
-			continue;
-		stopWords_.insert(line);
-	}
-	in.close();
-	return 1;
+        if(line.empty())
+            continue;
+        stopWords_.insert(line);
+    }
+    in.close();
+    return 1;
 }
 
 int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath)
@@ -631,7 +644,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
 bool JMA_Knowledge::isStopWord(const string& word) const
 {
-	return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
+    return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
 }
 
 bool JMA_Knowledge::isKeywordPOS(int pos) const
@@ -813,96 +826,96 @@ std::string JMA_Knowledge::createFilePath(const char* dir, const char* file)
 
 JMA_CType* JMA_Knowledge::getCType()
 {
-	return ctype_;
+    return ctype_;
 }
 
 void JMA_Knowledge::onEncodeTypeChange(EncodeType type)
 {
-	delete ctype_;
-	ctype_ = JMA_CType::instance(type);
+    delete ctype_;
+    ctype_ = JMA_CType::instance(type);
 }
 
 bool JMA_Knowledge::isSentenceSeparator(const char* p)
 {
-	unsigned int bytes = ctype_->getByteCount(p);
-	const unsigned char* uc = (const unsigned char*)p;
+    unsigned int bytes = ctype_->getByteCount(p);
+    const unsigned char* uc = (const unsigned char*)p;
 
-	switch(bytes)
-	{
-		case 1:
-			return seps_[1].contains( uc[0] );
-		case 2:
-			return seps_[2].contains( uc[0] << 8 | uc[1]);
-		case 3:
-			return seps_[3].contains( uc[0] << 16 | uc[1] << 8 | uc[2] );
-		case 4:
-			return seps_[4].contains( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
-		default:
-			assert(false && "Cannot handle Character's length > 4");
-	}
+    switch(bytes)
+    {
+        case 1:
+            return seps_[1].contains( uc[0] );
+        case 2:
+            return seps_[2].contains( uc[0] << 8 | uc[1]);
+        case 3:
+            return seps_[3].contains( uc[0] << 16 | uc[1] << 8 | uc[2] );
+        case 4:
+            return seps_[4].contains( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
+        default:
+            assert(false && "Cannot handle Character's length > 4");
+    }
 
-	return false;
+    return false;
 }
 
 bool JMA_Knowledge::addSentenceSeparator(unsigned int val)
 {
-	return seps_[getOccupiedBytes(val)].insert(val);
+    return seps_[getOccupiedBytes(val)].insert(val);
 }
 
 unsigned int JMA_Knowledge::getOccupiedBytes(unsigned int val)
 {
-	unsigned int ret = 1;
-	while( val & 0xffffff00 )
-	{
-		val >>= 4;
-		++ ret;
-	}
-	assert( ret > 0 && ret < 4 );
-	return ret;
+    unsigned int ret = 1;
+    while( val & 0xffffff00 )
+    {
+        val >>= 4;
+        ++ ret;
+    }
+    assert( ret > 0 && ret < 4 );
+    return ret;
 }
 
 int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 {
-	ifstream in(fileName);
+    ifstream in(fileName);
     if(!in)
     {
         cerr << "cannot open file: " << fileName << endl;
         return 0;
     }
 
-	string line;
+    string line;
     while(getline(in, line))
     {
         line = line.substr(0, line.find('\r'));
 
-		//ignore the empty line and comment line(start with '#')
-		if( line.empty() || line[0] == '#' )
-			continue;
-		unsigned int bytes = ctype_->getByteCount( line.c_str() );
+        //ignore the empty line and comment line(start with '#')
+        if( line.empty() || line[0] == '#' )
+            continue;
+        unsigned int bytes = ctype_->getByteCount( line.c_str() );
 
-		const unsigned char* uc = (const unsigned char*)line.c_str();
+        const unsigned char* uc = (const unsigned char*)line.c_str();
 
-		switch(bytes)
-		{
-			case 1:
-				seps_[1].insert( uc[0] );
-				break;
-			case 2:
-				seps_[2].insert( uc[0] << 8 | uc[1]);
-				break;
-			case 3:
-				seps_[3].insert( uc[0] << 16 | uc[1] << 8 | uc[2] );
-				break;
-			case 4:
-				seps_[4].insert( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
-				break;
-			default:
-				assert(false && "Cannot handle 'Character's length > 4'");
-				break;
-		}
-	}
-	in.close();
-	return 1;
+        switch(bytes)
+        {
+            case 1:
+                seps_[1].insert( uc[0] );
+                break;
+            case 2:
+                seps_[2].insert( uc[0] << 8 | uc[1]);
+                break;
+            case 3:
+                seps_[3].insert( uc[0] << 16 | uc[1] << 8 | uc[2] );
+                break;
+            case 4:
+                seps_[4].insert( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
+                break;
+            default:
+                assert(false && "Cannot handle 'Character's length > 4'");
+                break;
+        }
+    }
+    in.close();
+    return 1;
 }
 
 unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& ost)
@@ -911,35 +924,37 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 
     const int userNounIndex = posTable_.getIndexFromAlphaPOS(userNounPOS_);
     if(userNounIndex == -1)
-	{
-		cerr << "fail to get POS index of user noun." << endl;
-		return count;
-	}
+    {
+        cerr << "fail to get POS index of user noun." << endl;
+        return count;
+    }
 
     const char* userNounPOS = posTable_.getPOS(userNounIndex, POSTable::POS_FORMAT_FULL_CATEGORY);
     if(! userNounPOS)
-	{
-		cerr << "fail to get POS string of user noun." << endl;
-		return count;
-	}
-    // iconv.convert(userNounPOS) from dest to config
+    {
+        cerr << "fail to get POS string of user noun." << endl;
+        return count;
+    }
 
     vector<string> t;
     const int posSize = tokenizeCSV(userNounPOS, t);
     assert(posSize > 0 && "the user noun POS size must be positive");
 
-	ifstream in(userDicFile);
-	if( !in )
-	{
-		cerr << "fail to open user dictionary " << userDicFile << ", ignoring this file." << endl;
-		return count;
-	}
+    // tokenize word into each characters
+    CTypeTokenizer tokenizer(getCType());
+
+    ifstream in(userDicFile);
+    if( !in )
+    {
+        cerr << "fail to open user dictionary " << userDicFile << ", ignoring this file." << endl;
+        return count;
+    }
 
 #if JMA_DEBUG_PRINT
-	cout << "Converting user dictionary " << userDicFile << " ..." << endl;
+    cout << "Converting user dictionary " << userDicFile << " ..." << endl;
 #endif
 
-	string line, word, pattern;
+    string line, word, pattern;
     istringstream iss;
     while(getline(in, line))
     {
@@ -949,7 +964,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
         if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 
-        // iconv.convert(line) from user dict to config
+        // iconv.convert(line) from user dict to destination encoding
 #if JMA_DEBUG_PRINT
         cout << "line: " << line << endl;
 #endif
@@ -983,7 +998,49 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 
             if(isNumber(compVec[0].c_str()))
             {
-                // save index vec
+                MorphemeList decompList;
+                bool isAllNumber = true;
+                bool isValidCharCount = true;
+                tokenizer.assign(word.c_str());
+                for(unsigned int i=0; i<compVec.size(); ++i)
+                {
+                    if(! isNumber(compVec[i].c_str()))
+                    {
+                        isAllNumber = false;
+                        break;
+                    }
+
+                    Morpheme morp;
+                    int charCount = convertFromStr<int>(compVec[i]);
+                    for(int j=0; j<charCount; ++j)
+                    {
+                        const char* p = tokenizer.next();
+                        if(*p)
+                            morp.lexicon_ += p;
+                        else
+                        {
+                            isValidCharCount = false;
+                            break;
+                        }
+                    }
+
+                    if(! isValidCharCount)
+                        break;
+
+                    decompList.push_back(morp);
+                }
+
+                if(! isAllNumber)
+                {
+                    cerr << "invalid format, only digit is allowed in decomposition pattern: " << pattern << endl;
+                    continue;
+                }
+                // the word end should be reached
+                if(! isValidCharCount || tokenizer.next())
+                {
+                    cerr << "unmatched character numbers in line: " << line << endl;
+                    continue;
+                }
 
                 if(iss >> pattern)
                 {
@@ -993,10 +1050,32 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
                         continue;
                     }
 
-                    // save read vec
+                    if(compVec.size() != decompList.size())
+                    {
+                        cerr << "invalid format, the pronunciation pattern size is not equal to decomposition pattern size in line: " << line << endl;
+                        continue;
+                    }
+
+                    for(unsigned int i=0; i<compVec.size(); ++i)
+                    {
+                        decompList[i].readForm_ = compVec[i];
+                    }
 
                     hasRead = true;
                 }
+
+                decompMap_[word] = decompList;
+#if JMA_DEBUG_PRINT
+                cout << "word " << word << " is decomposed into: ";
+                for(unsigned int i=0; i<decompList.size(); ++i)
+                {
+                    cout << decompList[i].lexicon_;
+                    if(! decompList[i].readForm_.empty())
+                        cout << "/" << decompList[i].readForm_;
+                    cout << ", ";
+                }
+                cout << endl;
+#endif
             }
             else
                 hasRead = true;
@@ -1019,7 +1098,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 
         ost << endl;
         ++count;
-	}
+    }
 
     return count;
 }
