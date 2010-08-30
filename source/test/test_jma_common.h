@@ -12,9 +12,7 @@
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #define TEST_JMA_DEFAULT_SYSTEM_DICT "../../db/ipadic/bin_eucjp"
 
-#define TEST_JMA_DEFAULT_USER_DICT_CSV "../../db/userdic/ipa_eucjp.csv"
-
-#define TEST_JMA_DEFAULT_USER_DICT_TXT "../../db/userdic/ipa_eucjp.txt"
+#define TEST_JMA_DEFAULT_USER_DICT "../../db/userdic/user_noun.eucjp"
 
 #define TEST_JMA_DEFAULT_SENTENCE_CONFIG "../../db/config/sen-eucjp.config"
 
@@ -23,11 +21,8 @@
 /** default path of system dictionary directory */
 #define TEST_JMA_DEFAULT_SYSTEM_DICT "../db/ipadic/bin_eucjp"
 
-/** default path of user dictionary file in CSV format */
-#define TEST_JMA_DEFAULT_USER_DICT_CSV "../db/userdic/ipa_eucjp.csv"
-
-/** default path of user dictionary file in text format */
-#define TEST_JMA_DEFAULT_USER_DICT_TXT "../db/userdic/ipa_eucjp.txt"
+/** default path of user dictionary file */
+#define TEST_JMA_DEFAULT_USER_DICT "../db/userdic/user_noun.eucjp"
 
 /** default path of sentence separator configuration file */
 #define TEST_JMA_DEFAULT_SENTENCE_CONFIG "../db/config/sen-eucjp.config"

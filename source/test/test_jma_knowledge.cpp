@@ -13,7 +13,7 @@
 
 #include "jma_knowledge.h"
 #include "mecab.h"
-#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV, TEST_JMA_DEFAULT_SENTENCE_CONFIG, TEST_JMA_DEFAULT_STOPWORD_DICT
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT, TEST_JMA_DEFAULT_SENTENCE_CONFIG, TEST_JMA_DEFAULT_STOPWORD_DICT
 
 #include <iostream>
 #include <cassert>
@@ -33,7 +33,7 @@ int main()
     cout<<"Test the System and User Dictionaries. "<<endl;
     // set dictionary files
     const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
-    const char* userdict = TEST_JMA_DEFAULT_USER_DICT_CSV;
+    const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
     cout << "system dictionary: " << sysdict << endl;
     cout << "user dictionary: " << userdict << endl;
 

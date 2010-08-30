@@ -18,7 +18,7 @@
  */
 
 #include "ijma.h"
-#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT
 
 #include <iostream>
 #include <string>
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
     // set dictionary files
     string sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
-    string userdict = TEST_JMA_DEFAULT_USER_DICT_CSV;
+    string userdict = TEST_JMA_DEFAULT_USER_DICT;
     if(encode == Knowledge::ENCODE_TYPE_EUCJP)
     {
         sysdict += "/../bin_eucjp";

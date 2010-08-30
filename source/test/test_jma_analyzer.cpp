@@ -12,7 +12,7 @@
  */
 #include "jma_knowledge.h"
 #include "jma_analyzer.h"
-#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT_CSV, TEST_JMA_DEFAULT_USER_DICT_TXT
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT
 
 #include <iostream>
 #include <cassert>
@@ -31,16 +31,13 @@ int main()
 
     // set dictionary files
     const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
-    const char* userdict = TEST_JMA_DEFAULT_USER_DICT_CSV;
-    const char* userdict1 = TEST_JMA_DEFAULT_USER_DICT_TXT;
+    const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
     cout << "system dictionary: " << sysdict << endl;
-    cout << "user dictionary 0: " << userdict << endl;
-    cout << "user dictionary 1: " << userdict1 << endl;
+    cout << "user dictionary: " << userdict << endl;
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
     knowledge->addUserDict(userdict);
-    knowledge->addUserDict(userdict1);
     int result = knowledge->loadDict();
     if(result == 0)
     {
