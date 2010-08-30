@@ -41,11 +41,8 @@ const int READ_FORM_OFFSET_DEFAULT = 7;
 /** Default value of norm form feature offset */
 const int NORM_FORM_OFFSET_DEFAULT = 9;
 
-/** Default tokens size in a feature */
-const size_t FEATURE_TOKEN_SIZE_DEFAULT = 12;
-
-/** default pos in the user dictionary if not set or set to wrong (not exists) */
-const char* DEFAULT_POS_DEFAULT = "n";
+/** default pos of user defined noun if not set in "dicrc" */
+const char* USER_NOUN_POS_DEFAULT = "N-USER";
 
 /** Dictionary configure and definition files */
 const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
@@ -55,9 +52,6 @@ const char* DICT_BINARY_FILES[] = {"unk.dic", "char.bin", "sys.dic", "matrix.bin
 
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
-
-/** POS feature mapping file name */
-const char* POS_FEATURE_DEF_FILE = "pos-feature.def";
 
 /** POS combination rule file name */
 const char* POS_COMBINE_DEF_FILE = "compound.def";
@@ -83,6 +77,9 @@ const char* TXT_USER_DICT_MEMORY_FILE = "user.csv";
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
+/** the cost value of user defined noun, the smaller the value, the more likely user defined nouns are recognized */
+const int USER_NOUN_COST = -500;
+
 /**
  * Convert string to the value of type \e Target.
  * \param str source string
@@ -103,6 +100,68 @@ template<class Target> Target convertFromStr(const string& str)
     return result;
 }
 
+/**
+ * Tokenize CSV string to each components.
+ * \param str the string in CSV format, such as "1,2,3"
+ * \param compVec the vector to store each tokenized components, the original contents are removed, such as "1", "2", "3"
+ * \return the number of components
+ */
+unsigned int tokenizeCSV(const string& str, vector<string>& compVec)
+{
+    compVec.clear();
+
+    const char* delimit = ",";
+    string::size_type i, j;
+    i = 0;
+    while(i < str.size())
+    {
+        j = str.find_first_of(delimit, i);
+        if(j != string::npos)
+        {
+            compVec.push_back(str.substr(i, j-i));
+            i = j + 1;
+        }
+        else
+        {
+            compVec.push_back(str.substr(i));
+            i = j;
+        }
+    }
+
+#if JMA_DEBUG_PRINT
+	cout << "tokenize CSV from string (" << str << ") to ";
+    for(unsigned int i=0; i<compVec.size(); ++i)
+    {
+        cout << compVec[i] << ", ";
+    }
+    cout << endl;
+#endif
+
+    return compVec.size();
+}
+
+/**
+ * Check whether the string represents a decimal number.
+ * \param str the string to check
+ * \return true for number, false for not number
+ */
+bool isNumber(const char* str)
+{
+    const char* p = str;
+    while(*p)
+    {
+        if(*p < '0' || *p > '9')
+            return false;
+
+        ++p;
+    }
+
+    // in case of empty string
+    if(p == str)
+        return false;
+
+    return true;
+}
 }
 
 namespace jma
@@ -118,7 +177,7 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 
 JMA_Knowledge::JMA_Knowledge()
     : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0), normFormOffset_(0),
-    defaultFeature_(0), ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
+    ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
     dictionary_(JMA_Dictionary::instance())
 {
     onEncodeTypeChange( getEncodeType() );
@@ -184,6 +243,10 @@ bool JMA_Knowledge::compileUserDict()
         return false;
     }
 
+#if JMA_DEBUG_PRINT
+    cout << "user defined nouns are converted as:" << endl;
+    cout << osst.str() << endl;
+#endif
     if(! dictionary_->copyStrToDict(osst.str(), textUserDicName))
     {
         cerr << "fail to copy text user dictionary from stream to memory." << endl;
@@ -329,11 +392,8 @@ void JMA_Knowledge::loadDictConfig()
     value = getMapValue(configMap, "norm-form-feature-offset");
     normFormOffset_ = value ? convertFromStr<int>(*value) : NORM_FORM_OFFSET_DEFAULT;
 
-    value = getMapValue(configMap, "feature-token-size");
-    featureTokenSize_ = value ? convertFromStr<size_t>(*value) : FEATURE_TOKEN_SIZE_DEFAULT;
-
-    value = getMapValue(configMap, "default-pos");
-    defaultPOS_ = value ? *value : DEFAULT_POS_DEFAULT;
+    value = getMapValue(configMap, "user-noun-pos");
+    userNounPOS_ = value ? *value : USER_NOUN_POS_DEFAULT;
 
     value = getMapValue(configMap, "config-charset");
     configEncodeType_ = Knowledge::ENCODE_TYPE_NUM; // reset
@@ -352,16 +412,9 @@ void JMA_Knowledge::loadDictConfig()
     cout << "base form feature offset: " << baseFormOffset_ << endl;
     cout << "read form feature offset: " << readFormOffset_ << endl;
     cout << "norm form feature offset: " << normFormOffset_ << endl;
-    cout << "feature token size: " << featureTokenSize_ << endl;
-    cout << "defaut POS: " << defaultPOS_ << endl;
+    cout << "POS of user defined noun: " << userNounPOS_ << endl;
     cout << "config charset: " << configEncodeType_ << endl;
 #endif
-}
-
-bool JMA_Knowledge::loadPOSFeatureMapping()
-{
-	posFeatureMap_.clear();
-	return loadConfig0(POS_FEATURE_DEF_FILE, posFeatureMap_);
 }
 
 int JMA_Knowledge::loadDict()
@@ -418,14 +471,9 @@ int JMA_Knowledge::loadDict()
         cerr << "warning: as fails to load " << caseFileName << ", no mapping is defined to convert between lower and upper case characters." << endl;
     }
 
-    if(! loadPOSFeatureMapping() )
-    	cerr << "Fail to load POS - Feature Mapping, User dictionary can't work" << endl;
-    else
-    	defaultFeature_ = getMapValue(posFeatureMap_, defaultPOS_);
-
 #if JMA_DEBUG_PRINT
     cout << "JMA_Knowledge::loadDict()" << endl;
-    cout << "system dictionary path: " << systemDictPath_ << endl;
+    cout << "system dictionary path: " << systemDictPath_ << endl << endl;
 #endif
 
     if(hasUserDict())
@@ -546,9 +594,6 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
     // pos-id.def
     srcFiles.push_back(createFilePath(txtDirPath, POS_ID_DEF_FILE));
-
-    // pos-feature.def
-    srcFiles.push_back(createFilePath(txtDirPath, POS_FEATURE_DEF_FILE));
 
     // map-kana.def
     srcFiles.push_back(createFilePath(txtDirPath, KANA_MAP_DEF_FILE));
@@ -860,93 +905,120 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 	return 1;
 }
 
-bool JMA_Knowledge::isDictFeature( const char* str, bool includeWord )
-{
-	size_t tokenSize = includeWord ? 0 : 1;
-	while(*str)
-	{
-		if(*str == ',')
-			++tokenSize;
-		++str;
-	}
-	return tokenSize >= featureTokenSize_;
-}
-
 unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& ost)
 {
     unsigned int count = 0;
 
-	ifstream in(userDicFile);
-	if( !in )
+    const int userNounIndex = posTable_.getIndexFromAlphaPOS(userNounPOS_);
+    if(userNounIndex == -1)
 	{
-		cerr << "Can't Find User Dictionary " << userDicFile << ", and IGNORE this file." << endl;
+		cerr << "fail to get POS index of user noun." << endl;
 		return count;
 	}
 
-	cout<<"Converting User Dictionary " << userDicFile << " ..." << endl;
+    const char* userNounPOS = posTable_.getPOS(userNounIndex, POSTable::POS_FORMAT_FULL_CATEGORY);
+    if(! userNounPOS)
+	{
+		cerr << "fail to get POS string of user noun." << endl;
+		return count;
+	}
+    // iconv.convert(userNounPOS) from dest to config
 
-	string line;
+    vector<string> t;
+    const int posSize = tokenizeCSV(userNounPOS, t);
+    assert(posSize > 0 && "the user noun POS size must be positive");
+
+	ifstream in(userDicFile);
+	if( !in )
+	{
+		cerr << "fail to open user dictionary " << userDicFile << ", ignoring this file." << endl;
+		return count;
+	}
+
+#if JMA_DEBUG_PRINT
+	cout << "Converting user dictionary " << userDicFile << " ..." << endl;
+#endif
+
+	string line, word, pattern;
+    istringstream iss;
     while(getline(in, line))
     {
-		trimSelf(line);
-		if(line.empty())
-			continue;
+        // remove carriage return character
+        line = line.substr(0, line.find('\r'));
 
-		vector<string> vec;
-		stringToVector( line, vec );
-		if(vec.empty())
-			continue;
+        if (line.empty() || line[0] == ';' || line[0] == '#')
+            continue;
 
-		size_t vecSize = vec.size();
-		string& word = vec[0];
-		if( vecSize == 1 )
-		{
-			if( isDictFeature( word.c_str(), true) )
-				ost << word << endl;
-			else if( defaultFeature_ )
-				ost << vec[0] << "," << *defaultFeature_ << endl;
-            ++count;
-			continue;
-		}
+        // iconv.convert(line) from user dict to config
+#if JMA_DEBUG_PRINT
+        cout << "line: " << line << endl;
+#endif
 
-		set<string> usedFeatures;
-		for( size_t i = 1; i < vecSize; ++i )
-		{
-			string& posOrFec = vec[i];
-			// posOrFec is a feature itself
-			if( isDictFeature( posOrFec.c_str() ) )
-			{
-				//don't insert duplicate entry
-				if( usedFeatures.find(posOrFec) == usedFeatures.end() )
-				{
-					ost << word << "," << posOrFec << endl;
-                    ++count;
-					usedFeatures.insert(posOrFec);
-				}
-			}
-			else
-			{
-				string* fec = getMapValue( posFeatureMap_, posOrFec );
-				//don't insert duplicate entry
-				if( fec )
-				{
-					if( usedFeatures.find( *fec ) == usedFeatures.end() )
-					{
-						ost << word << "," << *fec << endl;
-                        ++count;
-						usedFeatures.insert( *fec );
-					}
-				}
-				else
-					cerr << "Can't find POS for " << posOrFec << endl;
-			}
-		}
+        iss.clear();
+        iss.str(line);
 
-		if( usedFeatures.empty() && defaultFeature_ )
-		{
-			ost << vec[0] << "," << *defaultFeature_ << endl;
-            ++count;
-		}
+        if(iss >> word)
+            ost << word << ",-1,-1," << USER_NOUN_COST;
+        else
+        {
+            cerr << "no word is defined in line: " << line << endl;
+            continue;
+        }
+
+        ost << "," << userNounPOS;
+        for(int i=posSize; i<readFormOffset_; ++i)
+        {
+            ost << ",*";
+        }
+
+        bool hasRead = false;
+        vector<string> compVec;
+        if(iss >> pattern)
+        {
+            if(tokenizeCSV(pattern, compVec) == 0)
+            {
+                cerr << "fail to tokenize from pattern: " << pattern << endl;
+                continue;
+            }
+
+            if(isNumber(compVec[0].c_str()))
+            {
+                // save index vec
+
+                if(iss >> pattern)
+                {
+                    if(tokenizeCSV(pattern, compVec) == 0)
+                    {
+                        cerr << "fail to tokenize from pattern: " << pattern << endl;
+                        continue;
+                    }
+
+                    // save read vec
+
+                    hasRead = true;
+                }
+            }
+            else
+                hasRead = true;
+        }
+
+        if(hasRead)
+        {
+            assert(compVec.size() && "the read form should not be empty.");
+
+            // combine compVec into whole read form
+            string wholeRead;
+            for(unsigned int i=0; i<compVec.size(); ++i)
+            {
+                wholeRead += compVec[i];
+            }
+            ost << "," << wholeRead;
+        }
+        else
+            ost << ",*";
+
+        ost << endl;
+        ++count;
 	}
 
     return count;

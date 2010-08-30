@@ -115,7 +115,6 @@ public:
      */
     const RuleNode* getCombineRule(int startPOS, const MeCab::Node* nextNode) const;
 
-private:
     /**
      * Get POS index code from POS string in alphabet format.
      * \param posStr POS string in alphabet format

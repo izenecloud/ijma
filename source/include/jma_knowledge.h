@@ -214,26 +214,12 @@ private:
     void loadDictConfig();
 
     /**
-     * Load the POS to feature mapping
-     * \return true for success, false for failure.
-     */
-    bool loadPOSFeatureMapping();
-
-    /**
-     * Convert the User's txt file to CSV format, also change POS to feature
+     * Convert the User's txt file to CSV format, which includes word, POS, read form.
      * \param userDicFile user dictionary file
      * \param ost csv output stream
      * \return how many entries are written into \e ost
      */
     unsigned int convertTxtToCSV(const char* userDicFile, ostream& ost);
-
-    /**
-     * Whether the str is the dictionary feature, if it is, do not convert
-     * \param str the string to be checked
-     * \param includedWord whether the str include the word
-     * \return true if the str is the dictionary feature
-     */
-    bool isDictFeature( const char* str, bool includeWord = false );
 
     /**
      * Create a unique temporary file and output its file name.
@@ -292,9 +278,6 @@ private:
     /** stop words set */
     set<string> stopWords_;
 
-    /** the pos to feature mapping */
-    map<string, string> posFeatureMap_;
-
     /** whether POS result is in the format of full category */
     bool isOutputFullPOS_;
 
@@ -310,14 +293,8 @@ private:
     /** the feature offset (starting from zero) of normalized form, which value is got from entry "norm-form-feature-offset" in "dicrc" in the directory of system dictionary in binary type */
     int normFormOffset_;
 
-    /** the tokens size in a feature */
-    size_t featureTokenSize_;
-
-    /** default pos in the user dictionary if not set or set to wrong (not exists) */
-    string defaultPOS_;
-
-    /** default feature which gained from defaultPOS_ */
-    string* defaultFeature_;
+    /** the POS of user defined nouns */
+    string userNounPOS_;
 
     /** The Character Type */
     JMA_CType* ctype_;

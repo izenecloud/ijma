@@ -106,14 +106,14 @@ bool ContextID::build() {
 int ContextID::lid(const char *l) const {
   std::map<std::string, int>::const_iterator it = left_.find(l);
   CHECK_DIE(it != left_.end())
-      << "cannot find LEFT-ID  for " << l;
+      << "cannot find LEFT-ID for " << l;
   return it->second;
 }
 
 int ContextID::rid(const char *r) const {
   std::map<std::string, int>::const_iterator it = right_.find(r);
   CHECK_DIE(it != right_.end())
-      << "cannot find RIGHT-ID  for " << r;
+      << "cannot find RIGHT-ID for " << r;
   return it->second;
 }
 }
