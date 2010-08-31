@@ -245,10 +245,10 @@ int main(int argc, char* argv[])
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
 
-    const char* userdict = "../db/userdic/user_noun.eucjp";
-    knowledge->addUserDict(userdict);
-    cout << "system dictionary: " << sysdict << endl;
-    cout << "user dictionary: " << userdict << endl;
+    //const char* userdict = "../db/userdic/user_noun.eucjp";
+    //knowledge->addUserDict(userdict);
+    //cout << "system dictionary: " << sysdict << endl;
+    //cout << "user dictionary: " << userdict << endl;
 
     int result = knowledge->loadDict();
     if(result == 0)

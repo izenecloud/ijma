@@ -199,12 +199,27 @@ public:
          * If a zero value is configured, compound words are decomposed into their components in above APIS,
          * output example: "長野/名詞,固有名詞,地域,一般  県/名詞,接尾,地域  ".
          *
-         * If the configuration file "compound.def" does not exist in system dictionary path,
-         * no words would be combined into compound words.
+         * The rules to combine into compound words are defined in the file "compound.def" under system dictionary path,
+         * if this file does not exist, no words would be combined into compound words.
          *
          * Default value: 1
          */
         OPTION_TYPE_COMPOUND_MORPHOLOGY,
+
+        /** Configure whether to decompose user defined compound into a sequence of nouns.
+         * If a non-zero value is configured, user defined compounds are decomposed into a sequence of nouns,
+         * it is valid for below APIs:
+         * \e runWithSentence(), \e runWithString(), \e runWithStream(),
+         * output example: "本田/名詞,ユーザ  総一郎/名詞,ユーザ  ".
+         *
+         * If a zero value is configured, user defined compounds are not decomposed in above APIS,
+         * output example: "本田総一郎/名詞,ユーザ  ".
+         *
+         * The decomposition pattern is defined in user dictionary, such as "本田総一郎  2,3".
+         *
+         * Default value: 0
+         */
+        OPTION_TYPE_DECOMPOSE_USER_NOUN,
 
         /** Configure whether to convert Japanese Katakana characters to their Hiragana equivalents.
          * If a non-zero value is configured, Katakana characters are converted to their Hiragana equivalents,

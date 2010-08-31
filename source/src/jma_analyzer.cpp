@@ -32,6 +32,116 @@ namespace
  * To avoid calling it forever, limit the maximum count to be (N * NBEST_LIMIT_SCALE_FACTOR).
  */
 const int NBEST_LIMIT_SCALE_FACTOR = 100;
+
+/**
+ * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to append morpheme to list. 
+ */
+class MorphemeToList
+{
+public:
+    /**
+     * Constructor.
+     * \param list the morpheme list
+     */
+    MorphemeToList(jma::MorphemeList& list) :morphList_(list) {}
+
+    /**
+     * The process method appends morpheme to list.
+     * \param morp the morpheme to append
+     */
+    void process(const jma::Morpheme& morp) { morphList_.push_back(morp); }
+
+private:
+    /** the morpheme list */
+    jma::MorphemeList& morphList_;
+};
+
+/**
+ * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to output morpheme to string. 
+ */
+class MorphemeToString
+{
+public:
+    /**
+     * Constructor.
+     * \param str the string to output
+     * \param isPOS whether output POS
+     * \param posDelimiter the delimiter between word and POS tag
+     * \param wordDelimiter the delimiter between each pair consisting of word and POS tag
+     */
+    MorphemeToString(std::string& str, bool isPOS, const char* posDelimiter, const char* wordDelimiter)
+        :buffer_(str), isPOS_(isPOS) , posDelimiter_(posDelimiter), wordDelimiter_(wordDelimiter) {}
+
+    /**
+     * The process method outputs morpheme to string.
+     * \param morp the morpheme to output
+     */
+    void process(const jma::Morpheme& morp)
+    {
+        buffer_ += morp.lexicon_;
+        if(isPOS_) {
+            buffer_ += posDelimiter_;
+            buffer_ += morp.posStr_;
+        }
+        buffer_ += wordDelimiter_;
+    }
+
+private:
+    /** the string buffer to output */
+    std::string& buffer_;
+
+    /** whether output POS */
+    bool isPOS_;
+
+    /** the delimiter between word and POS tag */
+    const char* posDelimiter_;
+
+    /** the delimiter between each pair consisting of word and POS tag */
+    const char* wordDelimiter_;
+};
+
+/**
+ * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to output morpheme to stream. 
+ */
+class MorphemeToStream
+{
+public:
+    /**
+     * Constructor.
+     * \param ost the output stream
+     * \param isPOS whether output POS
+     * \param posDelimiter the delimiter between word and POS tag
+     * \param wordDelimiter the delimiter between each pair consisting of word and POS tag
+     */
+    MorphemeToStream(std::ostream& ost, bool isPOS, const char* posDelimiter, const char* wordDelimiter)
+        :ost_(ost), isPOS_(isPOS) , posDelimiter_(posDelimiter), wordDelimiter_(wordDelimiter) {}
+
+    /**
+     * The process method outputs morpheme to stream.
+     * \param morp the morpheme to output
+     */
+    void process(const jma::Morpheme& morp)
+    {
+        ost_ << morp.lexicon_;
+        if(isPOS_) {
+            ost_ << posDelimiter_ << morp.posStr_;
+        }
+        ost_ << wordDelimiter_;
+    }
+
+private:
+    /** the output stream */
+    std::ostream& ost_;
+
+    /** whether output POS */
+    bool isPOS_;
+
+    /** the delimiter between word and POS tag */
+    const char* posDelimiter_;
+
+    /** the delimiter between each pair consisting of word and POS tag */
+    const char* wordDelimiter_;
+};
 }
 
 namespace jma
@@ -174,14 +284,8 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 	{
 		const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
 		MorphemeList list;
-        Morpheme morp;
-		for (MeCab::Node *node = bosNode->next; node->next; node=node->next)
-		{
-            node = combineNode(node, morp);
-			if(isFilter(morp))
-				continue;
-			list.push_back(morp);
-		}
+        MorphemeToList processor(list);
+        iterateNode(bosNode, processor);
 		sentence.addList(list, 1.0);
 	}
 	// N-best
@@ -203,14 +307,8 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 			if( !bosNode )
 				break;
 			MorphemeList list;
-            Morpheme morp;
-			for (MeCab::Node *node = bosNode->next; node->next; node=node->next)
-			{
-                node = combineNode(node, morp);
-                if(isFilter(morp))
-                    continue;
-				list.push_back(morp);
-			}
+            MorphemeToList processor(list);
+            iterateNode(bosNode, processor);
 
 			bool isDupl = false;
 			//check the current result with exits results
@@ -259,27 +357,12 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
         return 0;
     }
 
-	bool printPOS = isOutputPOS();
-
 	string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
-	const char* strPtr =  retStr.c_str();
-
-	const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
+	const MeCab::Node* bosNode = tagger_->parseToNode(retStr.c_str());
 
 	strBuf_.clear();
-    Morpheme morp;
-    for (MeCab::Node *node = bosNode->next; node->next; node=node->next){
-        node = combineNode(node, morp);
-        if(isFilter(morp))
-            continue;
-
-        strBuf_ += morp.lexicon_;
-        if(printPOS) {
-            strBuf_ += posDelimiter_;
-            strBuf_ += morp.posStr_;
-        }
-        strBuf_ += wordDelimiter_;
-    }
+    MorphemeToString processor(strBuf_, isOutputPOS(), posDelimiter_, wordDelimiter_);
+    iterateNode(bosNode, processor);
 
 	return strBuf_.c_str();
 }
@@ -294,8 +377,6 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
         cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
         return 0;
     }
-
-	bool printPOS = isOutputPOS();
 
 	ifstream in(inFileName);
 	if(!in)
@@ -312,24 +393,12 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 	}
 
     string line;
-    Morpheme morp;
     while (getline(in, line)) {
         string retStr = knowledge_->getCType()->replaceSpaces(line.c_str(), ' ');
-        const char* strPtr =  retStr.c_str();
+        const MeCab::Node* bosNode = tagger_->parseToNode(retStr.c_str());
 
-        const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
-
-        for (MeCab::Node *node = bosNode->next; node->next; node=node->next){
-            node = combineNode(node, morp);
-            if(isFilter(morp))
-                continue;
-
-            out << morp.lexicon_;
-            if(printPOS)
-                out << posDelimiter_ << morp.posStr_;
-            out << wordDelimiter_;
-        }
-
+        MorphemeToStream processor(out, isOutputPOS(), posDelimiter_, wordDelimiter_);
+        iterateNode(bosNode, processor);
         out << endl;
     }
 
@@ -493,6 +562,19 @@ MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result)
     }
 
     return node;
+}
+
+template<class MorphemeProcessor> void JMA_Analyzer::iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const
+{
+    Morpheme morp;
+    for(MeCab::Node *node = bosNode->next; node->next; node=node->next)
+    {
+        node = combineNode(node, morp);
+        if(isFilter(morp))
+            continue;
+
+        processor.process(morp);
+    }
 }
 
 std::string JMA_Analyzer::convertCharacters(const char* str) const

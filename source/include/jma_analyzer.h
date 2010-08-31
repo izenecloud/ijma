@@ -141,6 +141,13 @@ private:
     MeCab::Node* combineNode(MeCab::Node* startNode, Morpheme& result) const;
 
     /**
+     * Iterate MeCab nodes from the node next to \e bosNode, and until the node before and excluding the last node.
+     * \param bosNode the node as the begin of sentence
+     * \param processor the morpheme processor, in iteration, its method \e process() would be called with parameter \e Moepheme for each node
+     */
+    template<class MorphemeProcessor> void iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const;
+
+    /**
      * Check whether to filter out the morpheme.
      * \param morph the morpheme
      * \return true to filter out, false to reserve
