@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <utility> // std::pair
 
 namespace jma
 {
@@ -22,6 +23,17 @@ namespace jma
 class Knowledge
 {
 public:
+    /**
+     * Encode type of characters.
+     */
+    enum EncodeType
+    {
+        ENCODE_TYPE_EUCJP, ///< EUC-JP character type
+        ENCODE_TYPE_SJIS, ///< SHIFT-JIS character type
+        ENCODE_TYPE_UTF8, ///< UTF-8 character type
+        ENCODE_TYPE_NUM ///< the count of character types
+    };
+
     /**
      * Constructor.
      */
@@ -39,11 +51,13 @@ public:
     void setSystemDict(const char* dirPath);
 
     /**
-     * Add the file name of user dictionary file, which is in text format.
-     * This function could be called more than once, so that multiple user dictionaries could be added.
-     * \param fileName the file name
+     * Add the user dictionary file, which is in text format,
+     * the source encoding type of user dictionary file is also given in parameter, which is UTF-8 by default,
+     * this function could be called more than once, so that multiple user dictionaries could be added.
+     * \param fileName the file path of user dictionary
+     * \param type the source encoding type of user dictionary, UTF-8 is assumed if omitted
      */
-    void addUserDict(const char* fileName);
+    void addUserDict(const char* fileName, EncodeType type = ENCODE_TYPE_UTF8);
 
     /**
      * Set the part-of-speech tags as keywords.
@@ -89,17 +103,6 @@ public:
     virtual int encodeSystemDict(const char* txtDirPath, const char* binDirPath) = 0;
 
     /**
-     * Encode type of characters.
-     */
-    enum EncodeType
-    {
-        ENCODE_TYPE_EUCJP, ///< EUC-JP character type
-        ENCODE_TYPE_SJIS, ///< SHIFT-JIS character type
-        ENCODE_TYPE_UTF8, ///< UTF-8 character type
-        ENCODE_TYPE_NUM ///< the count of character types
-    };
-
-    /**
      * Set the character encode type.
      * If this function is not called, the default value returned by \e getEncodeType() is \e ENCODE_TYPE_EUCJP.
      * \param type the encode type
@@ -139,8 +142,11 @@ protected:
     /** the directory path of system dictionary files */
     std::string systemDictPath_;
 
+    /** user dictionary file type, it is a pair of file name and its encoding type */
+    typedef std::pair<std::string, EncodeType> UserDictFileType;
+
     /** the file names of user dictionaries */
-    std::vector<std::string> userDictNames_;
+    std::vector<UserDictFileType> userDictNames_;
 
     /** the part-of-speech index codes as keywords */
     std::set<int> keywordPOSSet_;

@@ -241,7 +241,7 @@ private:
      * \param ost csv output stream
      * \return how many entries are written into \e ost
      */
-    unsigned int convertTxtToCSV(const char* userDicFile, ostream& ost);
+    unsigned int convertTxtToCSV(const UserDictFileType& userDicFile, ostream& ost);
 
     /**
      * Create a unique temporary file and output its file name.

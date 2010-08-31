@@ -99,11 +99,11 @@ void Knowledge::setSystemDict(const char* dirPath)
     systemDictPath_ = dirPath;
 }
 
-void Knowledge::addUserDict(const char* fileName)
+void Knowledge::addUserDict(const char* fileName, EncodeType type)
 {
     assert(fileName);
 
-    userDictNames_.push_back(fileName);
+    userDictNames_.push_back(UserDictFileType(fileName, type));
 }
 
 void Knowledge::setKeywordPOS(const std::vector<int>& posVec)

@@ -245,8 +245,8 @@ int main(int argc, char* argv[])
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
 
-    //const char* userdict = "../db/userdic/user_noun.eucjp";
-    //knowledge->addUserDict(userdict);
+    //const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
+    //knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_EUCJP);
     //cout << "system dictionary: " << sysdict << endl;
     //cout << "user dictionary: " << userdict << endl;
 

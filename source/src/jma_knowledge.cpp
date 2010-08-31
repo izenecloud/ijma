@@ -14,6 +14,7 @@
 
 #include "mecab.h" // MeCab::Tagger
 #include "param.h" // MeCab::Param
+#include "iconv_utils.h" // MeCab::Iconv
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
@@ -210,7 +211,7 @@ bool JMA_Knowledge::compileUserDict()
         cout << "user dictionary: ";
         for(size_t i=0; i<userDictNum; ++i)
         {
-            cout << userDictNames_[i] << " ";
+            cout << userDictNames_[i].first << " ";
         }
         cout << endl;
     }
@@ -236,7 +237,7 @@ bool JMA_Knowledge::compileUserDict()
     // append source files of user dictionary
     unsigned int entryCount = 0;
     for(size_t i=0; i<userDictNum; ++i)
-        entryCount += convertTxtToCSV(userDictNames_[i].c_str(), osst);
+        entryCount += convertTxtToCSV(userDictNames_[i], osst);
 
 #if JMA_DEBUG_PRINT
     cout << entryCount << " entries in user dictionaries altogether." << endl;
@@ -923,7 +924,7 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
     return 1;
 }
 
-unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& ost)
+unsigned int JMA_Knowledge::convertTxtToCSV(const UserDictFileType& userDicFile, ostream& ost)
 {
     unsigned int count = 0;
 
@@ -948,15 +949,25 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
     // tokenize word into each characters
     CTypeTokenizer tokenizer(getCType());
 
-    ifstream in(userDicFile);
+    const char* srcEnc = Knowledge::encodeStr(userDicFile.second);
+    const char* destEnc = Knowledge::encodeStr(getEncodeType());
+    MeCab::Iconv iconv;
+    if(! iconv.open(srcEnc, destEnc))
+    {
+        cerr << "error to open encoding conversion from " << srcEnc << " to " << destEnc << endl;
+        return false;
+    }
+
+    const char* fileName = userDicFile.first.c_str();
+    ifstream in(fileName);
     if( !in )
     {
-        cerr << "fail to open user dictionary " << userDicFile << ", ignoring this file." << endl;
+        cerr << "fail to open user dictionary " << fileName << ", ignoring this file." << endl;
         return count;
     }
 
 #if JMA_DEBUG_PRINT
-    cout << "Converting user dictionary " << userDicFile << " ..." << endl;
+    cout << "Converting user dictionary " << fileName << " (" << srcEnc << " => " << destEnc << ") ..." << endl;
 #endif
 
     string line, word, pattern;
@@ -970,7 +981,11 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
         if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 
-        // iconv.convert(line) from user dict to destination encoding
+        if(! iconv.convert(&line))
+        {
+            cerr << "error to convert encoding from " << srcEnc << " to " << destEnc << " for line: " << line << endl;
+            continue;
+        }
 #if JMA_DEBUG_PRINT
         cout << "line: " << line << endl;
 #endif
