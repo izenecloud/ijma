@@ -114,16 +114,22 @@ private:
     bool isOutputPOS() const;
 
     /**
-     * Get POS output format, such as "名詞,一般", "NC-G", "名詞,一般,*,*", which format type is configured by \e Analyzer::setOption().
-     * \return POS output format
-     */
-    POSTable::POSFormat getPOSFormat() const;
-
-    /**
      * Check whether combine into compound words.
      * \return true to combine, false for not to combine.
      */
     bool isCombineCompound() const;
+
+    /**
+     * Check whether decompose user coumpound into nouns.
+     * \return true to decompose, false for not to decompose.
+     */
+    bool isDecomposeUserNound() const;
+
+    /**
+     * Get POS output format, such as "名詞,一般", "NC-G", "名詞,一般,*,*", which format type is configured by \e Analyzer::setOption().
+     * \return POS output format
+     */
+    POSTable::POSFormat getPOSFormat() const;
 
     /**
      * Convert from \e MeCab::Node to \e Morpheme.

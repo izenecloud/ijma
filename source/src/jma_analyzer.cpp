@@ -223,6 +223,11 @@ bool JMA_Analyzer::isCombineCompound() const
     return (getOption(OPTION_TYPE_COMPOUND_MORPHOLOGY) != 0);
 }
 
+bool JMA_Analyzer::isDecomposeUserNound() const
+{
+    return (getOption(OPTION_TYPE_DECOMPOSE_USER_NOUN) != 0);
+}
+
 POSTable::POSFormat JMA_Analyzer::getPOSFormat() const
 {
     POSTable::POSFormat type = POSTable::POS_FORMAT_DEFAULT;
@@ -567,13 +572,37 @@ MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result)
 template<class MorphemeProcessor> void JMA_Analyzer::iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const
 {
     Morpheme morp;
+	bool isDecompose = isDecomposeUserNound();
+    JMA_Knowledge::DecompMap::const_iterator iter;
     for(MeCab::Node *node = bosNode->next; node->next; node=node->next)
     {
         node = combineNode(node, morp);
-        if(isFilter(morp))
-            continue;
 
-        processor.process(morp);
+        if(isDecompose
+                && morp.posCode_ == knowledge_->getUserNounPOSIndex()
+                && (iter = decompMap_->find(morp.lexicon_)) != decompMap_->end())
+        {
+            // decompose into morpheme list
+            const MorphemeList& morphList = iter->second;
+            for(MorphemeList::const_iterator miter = morphList.begin(); miter!=morphList.end(); ++miter)
+            {
+                if(isFilter(*miter))
+                    continue;
+
+                Morpheme decomp(*miter);
+                decomp.baseForm_ = decomp.normForm_ = decomp.lexicon_; // no variant for user noun
+                decomp.posCode_ = morp.posCode_; // index of POS user noun
+                decomp.posStr_ = morp.posStr_; // string of POS user noun
+                processor.process(decomp);
+            }
+        }
+        else
+        {
+            if(isFilter(morp))
+                continue;
+
+            processor.process(morp);
+        }
     }
 }
 

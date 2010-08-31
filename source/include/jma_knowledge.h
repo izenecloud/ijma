@@ -165,6 +165,12 @@ public:
     int getNormFormOffset() const;
 
     /**
+     * Get the part-of-speech index code of user defined noun.
+     * \return the POS index code
+     */
+    int getUserNounPOSIndex() const;
+
+    /**
      * Check whether is a seperator of sentence.
      * \param p pointer to the character string
      * \return true for separator, false for non separator.

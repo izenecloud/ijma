@@ -17,7 +17,7 @@
 
 #include <iostream>
 #include <fstream> // ifstream, ofstream
-#include <sstream> // stringstream, ostringstream
+#include <sstream>
 #include <cstdlib> // mkstemp, atoi
 #include <strstream> // istrstream
 #include <cassert>
@@ -79,7 +79,7 @@ const char* TXT_USER_DICT_MEMORY_FILE = "user.csv";
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
 
 /** the cost value of user defined noun, the smaller the value, the more likely user defined nouns are recognized */
-const int USER_NOUN_COST = -500;
+const int USER_NOUN_COST = 0;
 
 /**
  * Convert string to the value of type \e Target.
@@ -670,6 +670,11 @@ int JMA_Knowledge::getNormFormOffset() const
     return normFormOffset_;
 }
 
+int JMA_Knowledge::getUserNounPOSIndex() const
+{
+    return posTable_.getIndexFromAlphaPOS(userNounPOS_);
+}
+
 //bool JMA_Knowledge::createTempFile(std::string& tempName)
 //{
 //#if defined(_WIN32) && !defined(__CYGWIN__)
@@ -922,7 +927,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 {
     unsigned int count = 0;
 
-    const int userNounIndex = posTable_.getIndexFromAlphaPOS(userNounPOS_);
+    const int userNounIndex = getUserNounPOSIndex();
     if(userNounIndex == -1)
     {
         cerr << "fail to get POS index of user noun." << endl;
@@ -956,6 +961,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 
     string line, word, pattern;
     istringstream iss;
+    ostringstream ostrs;
     while(getline(in, line))
     {
         // remove carriage return character
@@ -971,19 +977,20 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
 
         iss.clear();
         iss.str(line);
+        ostrs.str(""); // reset output string stream to empty
 
         if(iss >> word)
-            ost << word << ",-1,-1," << USER_NOUN_COST;
+            ostrs << word << ",-1,-1," << USER_NOUN_COST;
         else
         {
             cerr << "no word is defined in line: " << line << endl;
             continue;
         }
 
-        ost << "," << userNounPOS;
+        ostrs << "," << userNounPOS;
         for(int i=posSize; i<readFormOffset_; ++i)
         {
-            ost << ",*";
+            ostrs << ",*";
         }
 
         bool hasRead = false;
@@ -1014,8 +1021,7 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
                     int charCount = convertFromStr<int>(compVec[i]);
                     for(int j=0; j<charCount; ++j)
                     {
-                        const char* p = tokenizer.next();
-                        if(*p)
+                        if(const char* p = tokenizer.next())
                             morp.lexicon_ += p;
                         else
                         {
@@ -1035,7 +1041,8 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
                     cerr << "invalid format, only digit is allowed in decomposition pattern: " << pattern << endl;
                     continue;
                 }
-                // the word end should be reached
+
+                // should reach the word end
                 if(! isValidCharCount || tokenizer.next())
                 {
                     cerr << "unmatched character numbers in line: " << line << endl;
@@ -1091,12 +1098,12 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const char* userDicFile, ostream& os
             {
                 wholeRead += compVec[i];
             }
-            ost << "," << wholeRead;
+            ostrs << "," << wholeRead;
         }
         else
-            ost << ",*";
+            ostrs << ",*";
 
-        ost << endl;
+        ost << ostrs.str() << endl;
         ++count;
     }
 

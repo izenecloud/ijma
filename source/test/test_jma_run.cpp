@@ -273,6 +273,9 @@ int main(int argc, char* argv[])
     // disable compound words combination
     //analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, 0);
 
+    // decompose user defined compound into nouns
+    //analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, 1);
+
     // convert from Katakana to Hiragana
     //analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA, 1);
 
