@@ -69,6 +69,9 @@ const char* WIDTH_MAP_DEF_FILE = "map-width.def";
 /** Map file name to convert between lower and upper case characters */
 const char* CASE_MAP_DEF_FILE = "map-case.def";
 
+/** Sentence separator definition file name */
+const char* SENTENCE_SEPARATOR_DEF_FILE = "sent-sep.def";
+
 /** System dictionary archive */
 const char* DICT_ARCHIVE_FILE = "sys.bin";
 
@@ -489,6 +492,14 @@ int JMA_Knowledge::loadDict()
         cerr << "warning: as fails to load " << caseFileName << ", no mapping is defined to convert between lower and upper case characters." << endl;
     }
 
+    // file "sent-sep.def"
+    const char* sentSepFileName = SENTENCE_SEPARATOR_DEF_FILE;
+    // load sentence separator set
+    if(! loadSentenceSeparatorConfig(sentSepFileName, configEncodeType_, getEncodeType()))
+    {
+        cerr << "warning: as fails to load " << sentSepFileName << ", Analyzer::splitSentence() would not work correctly." << endl;
+    }
+
 #if JMA_DEBUG_PRINT
     cout << "JMA_Knowledge::loadDict()" << endl;
     cout << "system dictionary path: " << systemDictPath_ << endl << endl;
@@ -636,6 +647,9 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
     // map-case.def
     srcFiles.push_back(createFilePath(txtDirPath, CASE_MAP_DEF_FILE));
+
+    // sent-sep.def
+    srcFiles.push_back(createFilePath(txtDirPath, SENTENCE_SEPARATOR_DEF_FILE));
 
     // get binary file names
     configNum = sizeof(DICT_BINARY_FILES) / sizeof(DICT_BINARY_FILES[0]);
@@ -864,29 +878,57 @@ JMA_CType* JMA_Knowledge::getCType()
     return ctype_;
 }
 
-int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
+bool JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
 {
-    ifstream in(fileName);
-    if(!in)
+    const char* srcEnc = Knowledge::encodeStr(src);
+    const char* destEnc = Knowledge::encodeStr(dest);
+    MeCab::Iconv iconv;
+    if(! iconv.open(srcEnc, destEnc))
     {
-        cerr << "cannot open file: " << fileName << endl;
-        return 0;
+        cerr << "error to open encoding conversion from " << srcEnc << " to " << destEnc << endl;
+        cerr << "exiting JMA_Knowledge::loadSentenceSeparatorConfig()" << endl;
+        return false;
+    }
+
+    const DictUnit* dict = dictionary_->getDict(fileName);
+    if(! dict)
+    {
+        cerr << "fail to load sentence separator file " << fileName << endl;
+        return false;
+    }
+    istrstream ist(dict->text_, dict->length_);
+    if(! ist)
+    {
+        cerr << "fail to open string stream of sentence separator file " << fileName << endl;
+        return false;
     }
 
     // remove existing separators
     sentSeps_.clear();
 
     string line;
-    while(getline(in, line))
+    while(getline(ist, line))
     {
         line = line.substr(0, line.find('\r'));
         if(line.empty() || line[0] == '#')
             continue;
 
+        if(! iconv.convert(&line))
+        {
+            cerr << "error to convert encoding from " << srcEnc << " to " << destEnc << " for line: " << line << endl;
+            continue;
+        }
         sentSeps_.insert(line);
     }
 
-    return 1;
+#if JMA_DEBUG_PRINT
+    cout << "Sentence separators loaded from " << fileName << ": ";
+    for(set<string>::const_iterator it=sentSeps_.begin(); it!=sentSeps_.end(); ++it)
+        cout << *it;
+    cout << endl;
+#endif
+
+    return true;
 }
 
 unsigned int JMA_Knowledge::convertTxtToCSV(const UserDictFileType& userDicFile, std::ostream& ost)

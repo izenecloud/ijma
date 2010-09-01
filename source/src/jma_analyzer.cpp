@@ -255,12 +255,8 @@ void JMA_Analyzer::setKnowledge(Knowledge* pKnowledge)
     assert(knowledge_);
 
     tagger_ = knowledge_->createTagger();
-    // if runWith*() would be called, tagger_ should not be NULL,
-    // if only splitSentence() would be called, tagger_ could be NULL as no dictionary needs to be loaded.
-    if(tagger_)
-    {
-        tagger_->set_lattice_level(1);
-    }
+    assert(tagger_);
+    tagger_->set_lattice_level(1);
 
     posTable_ = &knowledge_->getPOSTable();
     kanaTable_ = &knowledge_->getKanaTable();

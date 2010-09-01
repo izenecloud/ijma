@@ -34,7 +34,7 @@ then
 fi
 
 echo ">>>>> Sentence split start" >> $LOG
-$JMA_PATH/bin/jma_split_sentence $RAW_INPUT $RAW_SENTENCE --encode utf8 --config $JMA_PATH/db/config/sen-utf8.config >>$LOG 2>&1
+$JMA_PATH/bin/jma_split_sentence $RAW_INPUT $RAW_SENTENCE --dict $JMA_PATH/db/ipadic/bin_utf8 >>$LOG 2>&1
 RET=$?
 if [ "$RET" != "0" ]
 then

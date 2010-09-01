@@ -14,8 +14,6 @@
 
 #define TEST_JMA_DEFAULT_USER_DICT "../../db/userdic/user_noun.eucjp"
 
-#define TEST_JMA_DEFAULT_SENTENCE_CONFIG "../../db/config/sen-eucjp.config"
-
 #define TEST_JMA_DEFAULT_STOPWORD_DICT "../../db/stopworddic/test-eucjp.txt"
 #else
 /** default path of system dictionary directory */
@@ -23,9 +21,6 @@
 
 /** default path of user dictionary file */
 #define TEST_JMA_DEFAULT_USER_DICT "../db/userdic/user_noun.eucjp"
-
-/** default path of sentence separator configuration file */
-#define TEST_JMA_DEFAULT_SENTENCE_CONFIG "../db/config/sen-eucjp.config"
 
 /** default path of stop word dictionary file */
 #define TEST_JMA_DEFAULT_STOPWORD_DICT "../db/stopworddic/test-eucjp.txt"

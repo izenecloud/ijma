@@ -86,14 +86,6 @@ public:
     virtual int loadStopWordDict(const char* fileName) = 0;
 
     /**
-	 * Load the sentence separator configuration file, which is in text format.
-	 * This file each separator character(only one character) per line.
-	 * \param fileName the file name
-	 * \return 0 for fail, 1 for success
-	 */
-	virtual int loadSentenceSeparatorConfig(const char* fileName) = 0;
-
-    /**
      * Encode the system dictionary files from text to binary file.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files

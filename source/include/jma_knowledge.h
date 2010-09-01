@@ -176,14 +176,6 @@ public:
      */
     JMA_CType* getCType();
 
-    /**
-     * Load the sentence separator configuration file, which is in text format.
-     * This file each separator character(only one character) per line.
-     * \param fileName the file name
-     * \return 0 for fail, 1 for success
-     */
-    virtual int loadSentenceSeparatorConfig(const char* fileName);
-
 private:
     /**
      * Whether any user dictionary is added by \e Knowledge::addUserDict().
@@ -261,6 +253,17 @@ private:
      * \return true for success, false for failure
      */
     bool fillBinaryEncodeType(const char* src, const char* dest, EncodeType binEncodeType) const;
+
+    /**
+     * Load the sentence separator configuration file, which is in text format.
+     * This file each separator character(only one character) per line.
+     * \param fileName the file name
+     * \param src source encode type of \e fileName
+     * \param dest destination encode type to convert
+     * \return true for success, false for failure
+     * \attention if this function is already called before, the separator previously loaded would be removed.
+     */
+    bool loadSentenceSeparatorConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest);
 
 private:
     /** the table of part-of-speech tags */

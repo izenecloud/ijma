@@ -1,7 +1,7 @@
 /** \file test_jma_run.cpp
  * Test JMA in Japanese word segmentation and POS tagging analysis.
  * Below is the usage examples:
- * The "DICT_PATH" in below examples is the dictionary path, which is "../db/jumandic/bin_eucjp" defautly.
+ * The "DICT_PATH" in below examples is the dictionary path, which is "../db/ipadic/bin_eucjp" defautly.
  * \code
  * To analyze a sentence from standard input and print 5 n-best results to standard output.
  * $ ./jma_run --sentence 5 [--dict DICT_PATH]

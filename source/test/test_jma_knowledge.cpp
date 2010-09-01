@@ -13,7 +13,7 @@
 
 #include "jma_knowledge.h"
 #include "mecab.h"
-#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT, TEST_JMA_DEFAULT_SENTENCE_CONFIG, TEST_JMA_DEFAULT_STOPWORD_DICT
+#include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT, TEST_JMA_DEFAULT_USER_DICT, TEST_JMA_DEFAULT_STOPWORD_DICT
 
 #include <iostream>
 #include <cassert>
@@ -68,10 +68,6 @@ int main()
     delete tagger;
 
     cout<<"\n#Test the Sentence Separator "<<endl;
-    const char* senConfig = TEST_JMA_DEFAULT_SENTENCE_CONFIG;
-    knowledge->loadSentenceSeparatorConfig(senConfig);
-    // comment the line below as "." is removed from "../db/config/sen-eucjp.config"
-    //assert( knowledge->isSentenceSeparator(".") );
     assert( knowledge->isSentenceSeparator("!") );
     assert( !knowledge->isSentenceSeparator("=") );
     assert( knowledge->isSentenceSeparator("¡£") );
