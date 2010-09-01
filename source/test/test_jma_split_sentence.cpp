@@ -84,11 +84,9 @@ int main(int argc, char* argv[])
     Knowledge* knowledge = factory->createKnowledge();
 
     // set encoding
-    knowledge->setEncodeType(encode);
+    //knowledge->setEncodeType(encode);
 
-    // below lines are commented out, as no dictionary is loaded
     //knowledge->setSystemDict(sysdict);
-    //knowledge->addUserDict(userdict);
     //int result = knowledge->loadDict();
 
     // load configure file

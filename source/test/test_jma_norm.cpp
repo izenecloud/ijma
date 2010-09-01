@@ -68,25 +68,14 @@ int main(int argc, char* argv[])
     Analyzer* analyzer = factory->createAnalyzer();
     Knowledge* knowledge = factory->createKnowledge();
 
-    // set encoding type from the dictionary path
-    string sysdictStr(sysdict);
-    size_t first = sysdictStr.find_last_of('_');
-    size_t last = sysdictStr.find_last_not_of('/');
-    string encodeStr = sysdictStr.substr(first+1, last-first);
-    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
-    if(encode != Knowledge::ENCODE_TYPE_NUM)
-    {
-        knowledge->setEncodeType(encode);
-    }
-
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
-    int result = knowledge->loadDict();
-    if(result == 0)
+    if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
+    cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
     analyzer->setKnowledge(knowledge);
@@ -97,8 +86,7 @@ int main(int argc, char* argv[])
     {
         s.setString(line.c_str());
 
-        int result = analyzer->runWithSentence(s);
-        if(result != 1)
+        if(analyzer->runWithSentence(s) != 1)
         {
             cerr << "fail in Analyzer::runWithSentence()" << endl;
             exit(1);

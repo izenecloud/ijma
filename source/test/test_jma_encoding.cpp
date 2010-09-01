@@ -71,9 +71,6 @@ int main(int argc, char* argv[])
     Analyzer* analyzer = factory->createAnalyzer();
     Knowledge* knowledge = factory->createKnowledge();
 
-    // set encoding
-    knowledge->setEncodeType(encode);
-
     // set dictionary files
     string sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
     string userdict = TEST_JMA_DEFAULT_USER_DICT;
@@ -95,12 +92,12 @@ int main(int argc, char* argv[])
     cout << "user dictionary: " << userdict << endl;
     knowledge->setSystemDict(sysdict.c_str());
     knowledge->addUserDict(userdict.c_str());
-    int result = knowledge->loadDict();
-    if(result == 0)
+    if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
+    cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
     analyzer->setKnowledge(knowledge);

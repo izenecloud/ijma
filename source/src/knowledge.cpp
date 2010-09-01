@@ -13,13 +13,11 @@
 
 using namespace std;
 
-namespace jma
-{
-
-const char* Knowledge::ENCODE_TYPE_STR_[] = {"EUC-JP", "SHIFT-JIS", "UTF-8"};
-
 namespace
 {
+/** the string of each encoding type */
+const char* ENCODE_TYPE_STR[jma::Knowledge::ENCODE_TYPE_NUM] = {"EUC-JP", "SHIFT-JIS", "UTF-8"};
+
 /**
  * Get a string in lower alphabets.
  * \param s the original string
@@ -40,22 +38,16 @@ string toLower(const char* s) {
 }
 } // namespace
 
+namespace jma
+{
+
 Knowledge::Knowledge()
-    : encodeType_(ENCODE_TYPE_EUCJP)
+    : encodeType_(ENCODE_TYPE_NUM)
 {
 }
 
 Knowledge::~Knowledge()
 {
-}
-
-void Knowledge::setEncodeType(EncodeType type)
-{
-    if( encodeType_ != type )
-    {
-		encodeType_ = type;
-        onEncodeTypeChange( type );
-    }
 }
 
 Knowledge::EncodeType Knowledge::getEncodeType() const
@@ -86,7 +78,7 @@ Knowledge::EncodeType Knowledge::decodeEncodeType(const char* encodeStr)
 const char* Knowledge::encodeStr(EncodeType encodeType)
 {
     if(encodeType < ENCODE_TYPE_NUM)
-        return ENCODE_TYPE_STR_[encodeType];
+        return ENCODE_TYPE_STR[encodeType];
 
     // unknown encoding type
     return 0;

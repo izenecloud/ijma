@@ -46,11 +46,14 @@ const int NORM_FORM_OFFSET_DEFAULT = 9;
 /** default pos of user defined noun if not set in "dicrc" */
 const char* USER_NOUN_POS_DEFAULT = "N-USER";
 
-/** Dictionary configure and definition files */
-const char* DICT_CONFIG_FILES[] = {"dicrc", "rewrite.def", "left-id.def", "right-id.def"};
+/** Dictionary definition files used to compile dictionary */
+const char* DICT_DEF_FILES[] = {"rewrite.def", "left-id.def", "right-id.def"};
 
 /** Dictionary binary files */
 const char* DICT_BINARY_FILES[] = {"unk.dic", "char.bin", "sys.dic", "matrix.bin"};
+
+/** Dictionary configure file, used in both source and binary dictionaries */
+const char* DICT_CONFIG_FILE = "dicrc";
 
 /** POS index definition file name */
 const char* POS_ID_DEF_FILE = "pos-id.def";
@@ -182,17 +185,12 @@ JMA_Knowledge::JMA_Knowledge()
     ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
     dictionary_(JMA_Dictionary::instance())
 {
-    onEncodeTypeChange( getEncodeType() );
 }
 
 JMA_Knowledge::~JMA_Knowledge()
 {
     dictionary_->close();
-
-    if(ctype_)
-    {
-        delete ctype_;
-    }
+    delete ctype_;
 }
 
 bool JMA_Knowledge::hasUserDict() const
@@ -346,54 +344,42 @@ const JMA_Knowledge::DecompMap& JMA_Knowledge::getDecompMap() const
     return decompMap_;
 }
 
-bool JMA_Knowledge::loadConfig0(const char *filename, map<string, string>& map) {
-    const DictUnit* dict = dictionary_->getDict(filename);
-    if(! dict)
-    {
-        cerr << "cannot find configuration file: " << filename << endl;
-        return false;
-    }
-
-    istrstream ist(dict->text_, dict->length_);
-    if(! ist)
-    {
-        cerr << "cannot read configuration file: " << filename << endl;
-        return false;
-    }
-
-    std::string line;
-    while (std::getline(ist, line)) {
-        // remove carriage return character
-        line = line.substr(0, line.find('\r'));
-
-        if (line.empty() || line[0] == ';' || line[0] == '#') continue;
-
-        size_t pos = line.find('=');
-        if(pos == std::string::npos)
-        {
-            cerr << "format error in configuration file: " << filename << ", line: " << line << endl;
-            return false;
-        }
-
-        size_t s1, s2;
-        for (s1 = pos+1; s1 < line.size() && isspace(line[s1]); s1++);
-        for (s2 = pos-1; static_cast<long>(s2) >= 0 && isspace(line[s2]); s2--);
-        //const std::string value = line.substr(s1, line.size() - s1);
-        //const std::string key   = line.substr(0, s2 + 1);
-        map[line.substr(0, s2 + 1)] = line.substr(s1, line.size() - s1);
-    }
-
-    return true;
-}
-
 void JMA_Knowledge::loadDictConfig()
 {
-    const char* configFile = DICT_CONFIG_FILES[0];
+    const char* configFile = DICT_CONFIG_FILE;
     map<string, string> configMap;
 
-    if(! loadConfig0(configFile, configMap))
+    bool isLoadConfig = false;
+    const DictUnit* dict = dictionary_->getDict(configFile);
+    if(dict)
     {
-        cerr << "warning: " << configFile << " not exists," << endl;
+        istrstream ist(dict->text_, dict->length_);
+        if(ist)
+        {
+            isLoadConfig = true;
+            string line, left, middle, right;
+            istringstream iss;
+            while(getline(ist, line))
+            {
+                // remove carriage return character
+                line = line.substr(0, line.find('\r'));
+
+                if (line.empty() || line[0] == ';' || line[0] == '#')
+                    continue;
+
+                iss.clear();
+                iss.str(line);
+                if(iss >> left >> middle >> right && middle == "=")
+                    configMap[left] = right;
+                else
+                    cerr << "format error in configuration file: " << configFile << ", ingoring line: " << line << endl;
+            }
+        }
+    }
+
+    if(! isLoadConfig)
+    {
+        cerr << "cannot load configuration file: " << configFile << endl;
         cerr << "default configuration value is used." << endl;
     }
 
@@ -420,6 +406,24 @@ void JMA_Knowledge::loadDictConfig()
         cerr << "unknown dictionary config charset, use default charset " << DEFAULT_CONFIG_ENCODE_TYPE << endl;
     }
 
+    value = getMapValue(configMap, "binary-charset");
+    EncodeType type = Knowledge::ENCODE_TYPE_NUM; // reset
+    if(value)
+        type = Knowledge::decodeEncodeType(value->c_str());
+
+    if(type == Knowledge::ENCODE_TYPE_NUM)
+    {
+        type = DEFAULT_CONFIG_ENCODE_TYPE;
+        cerr << "unknown dictionary config charset, use default charset " << DEFAULT_CONFIG_ENCODE_TYPE << endl;
+    }
+    // set binary encode type
+    if(encodeType_ != type)
+    {
+		encodeType_ = type;
+        delete ctype_;
+        ctype_ = JMA_CType::instance(encodeType_);
+    }
+
 #if JMA_DEBUG_PRINT
     cout << "JMA_Knowledge::loadDictConfig() loads:" << endl;
     cout << "configFile: " << configFile << endl;
@@ -427,7 +431,8 @@ void JMA_Knowledge::loadDictConfig()
     cout << "read form feature offset: " << readFormOffset_ << endl;
     cout << "norm form feature offset: " << normFormOffset_ << endl;
     cout << "POS of user defined noun: " << userNounPOS_ << endl;
-    cout << "config charset: " << configEncodeType_ << endl;
+    cout << "config charset: " << Knowledge::encodeStr(configEncodeType_) << endl;
+    cout << "binary charset: " << Knowledge::encodeStr(encodeType_) << endl;
 #endif
 }
 
@@ -600,11 +605,21 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     // source files to compile into archive
     vector<string> srcFiles;
 
-    // configure files
-    size_t configNum = sizeof(DICT_CONFIG_FILES) / sizeof(DICT_CONFIG_FILES[0]);
+    // dicrc
+    src = createFilePath(txtDirPath, DICT_CONFIG_FILE);
+    dest = createFilePath(binDirPath, DICT_CONFIG_FILE);
+    // fill "binary-charset" in dicrc
+    if(! fillBinaryEncodeType(src.c_str(), dest.c_str(), binEncodeType))
+    {
+        cerr << "fail to fill binary-charset from " << src << " to " << dest << endl;
+    }
+    srcFiles.push_back(dest);
+
+    // definition files
+    size_t configNum = sizeof(DICT_DEF_FILES) / sizeof(DICT_DEF_FILES[0]);
     for(size_t i=0; i<configNum; ++i)
     {
-        srcFiles.push_back(createFilePath(txtDirPath, DICT_CONFIG_FILES[i]));
+        srcFiles.push_back(createFilePath(txtDirPath, DICT_DEF_FILES[i]));
     }
 
     // pos-id.def
@@ -631,6 +646,11 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     cout << "compressing into archive file " << dest << endl;
     if(JMA_Dictionary::compile(srcFiles, dest.c_str()) == false)
         return 0;
+
+    // remove dicrc under binary path
+    dest = createFilePath(binDirPath, DICT_CONFIG_FILE);
+    if(! removeFile(dest))
+        cerr << "fail to delete temporary configuration file: " << dest << endl;
 
     // remove temporary binary files
     configNum = sizeof(DICT_BINARY_FILES) / sizeof(DICT_BINARY_FILES[0]);
@@ -834,12 +854,6 @@ std::string JMA_Knowledge::createFilePath(const char* dir, const char* file)
 JMA_CType* JMA_Knowledge::getCType()
 {
     return ctype_;
-}
-
-void JMA_Knowledge::onEncodeTypeChange(EncodeType type)
-{
-    delete ctype_;
-    ctype_ = JMA_CType::instance(type);
 }
 
 bool JMA_Knowledge::isSentenceSeparator(const char* p)
@@ -1124,6 +1138,60 @@ unsigned int JMA_Knowledge::convertTxtToCSV(const UserDictFileType& userDicFile,
     }
 
     return count;
+}
+
+bool JMA_Knowledge::fillBinaryEncodeType(const char* src, const char* dest, EncodeType binEncodeType) const
+{
+    ifstream ist(src);
+    if(! ist)
+    {
+        cerr << "cannot read configuration file: " << src << endl;
+        return false;
+    }
+
+    ofstream ost(dest);
+    if(! ost)
+    {
+        cerr << "cannot write configuration file: " << dest << endl;
+        return false;
+    }
+
+    string line, left, middle;
+    istringstream iss;
+    bool fill = false;
+    while(getline(ist, line))
+    {
+        // remove carriage return character
+        line = line.substr(0, line.find('\r'));
+
+        if(line.empty() || line[0] == ';' || line[0] == '#')
+            ost << line << endl;
+        else
+        {
+            iss.clear();
+            iss.str(line);
+            if(iss >> left >> middle && left == "binary-charset" && middle == "=")
+            {
+                ost << left << " " << middle << " " << Knowledge::encodeStr(binEncodeType) << endl;
+                fill = true;
+#if JMA_DEBUG_PRINT
+                cout << "JMA_Knowledge::fillBinaryEncodeType(), src: " << src << ", dest: " << dest << endl;
+                cout << left << " " << middle << " " << Knowledge::encodeStr(binEncodeType) << endl;
+                cout << endl;
+#endif
+            }
+            else
+                ost << line << endl;
+        }
+    }
+
+    if(fill)
+        return true;
+    else
+    {
+        cerr << "the field binary-charset is not found in configuration file: " << src << endl;
+        return false;
+    }
 }
 
 } // namespace jma

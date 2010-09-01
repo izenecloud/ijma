@@ -106,13 +106,6 @@ int main(int argc, char* argv[])
     // create instances
     JMA_Factory* factory = JMA_Factory::instance();
 
-    // set encoding type from the dictionary path
-    string sysdictStr(sysdict);
-    size_t first = sysdictStr.find_last_of('_');
-    size_t last = sysdictStr.find_last_not_of('/');
-    string encodeStr = sysdictStr.substr(first+1, last-first);
-    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
-
     // create instances
     Knowledge* knowledge = factory->createKnowledge();
     knowledge->setSystemDict(sysdict);
@@ -121,9 +114,7 @@ int main(int argc, char* argv[])
         cerr << "fail to load dictionary files "<< sysdict << endl;
         exit(1);
     }
-
-    if(encode != Knowledge::ENCODE_TYPE_NUM)
-        knowledge->setEncodeType(encode);
+    cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // create multi threads
     vector<AnalyzerThread> threadVec(threadNum);

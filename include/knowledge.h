@@ -104,13 +104,6 @@ public:
     virtual int encodeSystemDict(const char* txtDirPath, const char* binDirPath, EncodeType binEncodeType) = 0;
 
     /**
-     * Set the character encode type.
-     * If this function is not called, the default value returned by \e getEncodeType() is \e ENCODE_TYPE_EUCJP.
-     * \param type the encode type
-     */
-    void setEncodeType(EncodeType type);
-
-    /**
      * Get the character encode type.
      * \return the encode type
      */
@@ -133,13 +126,9 @@ public:
     static const char* encodeStr(EncodeType encodeType);
 
 protected:
-    /**
-     * Invoked when the encode type is changed (except for the initialization)
-     * \param type the new EncodeType
-     */
-    virtual void onEncodeTypeChange(EncodeType type) = 0;
+    /** character encode type of binary system dicitonary, it is also the encode type of string/stream to analyze */
+    EncodeType encodeType_;
 
-protected:
     /** the directory path of system dictionary files */
     std::string systemDictPath_;
 
@@ -151,13 +140,6 @@ protected:
 
     /** the part-of-speech index codes as keywords */
     std::set<int> keywordPOSSet_;
-
-private:
-    /** character encode type */
-    EncodeType encodeType_;
-
-    /** the string of each encoding type */
-    static const char* ENCODE_TYPE_STR_[ENCODE_TYPE_NUM];
 };
 
 } // namespace jma

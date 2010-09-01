@@ -199,13 +199,6 @@ public:
      */
     virtual int loadSentenceSeparatorConfig(const char* fileName);
 
-protected:
-    /**
-     * Invoked when the encode type is changed (except for the initialization)
-     * \param type the new EncodeType
-     */
-    virtual void onEncodeTypeChange(EncodeType type);
-
 private:
     /**
      * Whether any user dictionary is added by \e Knowledge::addUserDict().
@@ -221,14 +214,6 @@ private:
      * \post as the compilation result, \e binUserDic_ is the file name of the temporary user dictionary in binary format.
      */
     bool compileUserDict();
-
-    /**
-     * Load property config file, with format key = value
-     * \param filename the target file name
-     * \param map the return values are stored in this map
-     * \return true for success, false for failure.
-     */
-    bool loadConfig0(const char *filename, map<string, string>& map);
 
     /**
      * Load dictionary config file "dicrc" to get the values of entry defined by iJMA, such as "base-form-feature-offset" entry.
@@ -289,6 +274,15 @@ private:
      * \return the number of bytes the character val occupies
      */
     unsigned int getOccupiedBytes(unsigned int val);
+
+    /**
+     * Fill the binary encoding type of "binary-charset" from source "dicrc" to destination file.
+     * \param src the source "dicrc" file
+     * \param dest the destination "dicrc" file
+     * \param binEncodeType the binary encoding type
+     * \return true for success, false for failure
+     */
+    bool fillBinaryEncodeType(const char* src, const char* dest, EncodeType binEncodeType) const;
 
 private:
     /** the table of part-of-speech tags */

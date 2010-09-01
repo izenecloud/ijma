@@ -230,33 +230,20 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    // set encoding type from the dictionary path
-    string sysdictStr(sysdict);
-    size_t first = sysdictStr.find_last_of('_');
-    size_t last = sysdictStr.find_last_not_of('/');
-    string encodeStr = sysdictStr.substr(first+1, last-first);
-    Knowledge::EncodeType encode = Knowledge::decodeEncodeType(encodeStr.c_str());
-    if(encode != Knowledge::ENCODE_TYPE_NUM)
-    {
-        cout << "encoding type: " << encodeStr << endl;
-        knowledge->setEncodeType(encode);
-    }
-
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
+    cout << "system dictionary: " << sysdict << endl;
 
     //const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
     //knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_EUCJP);
-    //cout << "system dictionary: " << sysdict << endl;
     //cout << "user dictionary: " << userdict << endl;
 
-    int result = knowledge->loadDict();
-    if(result == 0)
+    if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
-    cout << "system dictionary: " << sysdict << endl;
+    cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
     analyzer->setKnowledge(knowledge);
