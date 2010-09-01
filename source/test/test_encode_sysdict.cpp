@@ -86,11 +86,8 @@ int main(int argc, char* argv[])
     JMA_Factory* factory = JMA_Factory::instance();
     Knowledge* knowledge = factory->createKnowledge();
 
-    // set encoding of destination files
-    knowledge->setEncodeType(encode);
-
     // encoding
-    int r = knowledge->encodeSystemDict(srcDir, destDir);
+    int r = knowledge->encodeSystemDict(srcDir, destDir, encode);
 
     delete knowledge;
 

@@ -534,7 +534,7 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
     return 1;
 }
 
-int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath)
+int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath, EncodeType binEncodeType)
 {
     assert(txtDirPath && binDirPath);
 
@@ -542,6 +542,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     cout << "JMA_Knowledge::encodeSystemDict()" << endl;
     cout << "path of source system dictionary: " << txtDirPath << endl;
     cout << "path of binary system directory: " << binDirPath << endl;
+    cout << "encoding type of binary system dictioanry: " << Knowledge::encodeStr(binEncodeType) << endl;
 #endif
 
     // check if the directory paths exist
@@ -566,9 +567,9 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
     // the source encoding type could be predefined by the "dictionary-charset" entry in "dicrc" file under source directory path,
     // if the source encoding type is not predefined in "dicrc", it would be "EUC-JP" defaultly.
-    // below is to set the destination encoding type, which is "EUC-JP" defaultly.
+    // below is to set the destination encoding type
     compileParam.push_back((char*)"-t");
-    compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
+    compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(binEncodeType)));
 
 #if JMA_DEBUG_PRINT
     cout << "parameter of mecab_dict_index() to compile system dictionary: ";
