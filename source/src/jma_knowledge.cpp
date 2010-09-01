@@ -10,7 +10,6 @@
 #include "sentence.h"
 #include "jma_dictionary.h"
 #include "tokenizer.h"
-#include "strutil.h"
 
 #include "mecab.h" // MeCab::Tagger
 #include "param.h" // MeCab::Param
@@ -419,7 +418,7 @@ void JMA_Knowledge::loadDictConfig()
     // set binary encode type
     if(encodeType_ != type)
     {
-		encodeType_ = type;
+        encodeType_ = type;
         delete ctype_;
         ctype_ = JMA_CType::instance(encodeType_);
     }
@@ -527,15 +526,19 @@ int JMA_Knowledge::loadStopWordDict(const char* fileName)
         return 0;
     }
 
+    // remove existing stop words
+    stopWords_.clear();
+
     string line;
     while(getline(in, line))
     {
         line = line.substr(0, line.find('\r'));
         if(line.empty())
             continue;
+
         stopWords_.insert(line);
     }
-    in.close();
+
     return 1;
 }
 
@@ -664,9 +667,14 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
     return 1;
 }
 
-bool JMA_Knowledge::isStopWord(const string& word) const
+bool JMA_Knowledge::isStopWord(const std::string& word) const
 {
     return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
+}
+
+bool JMA_Knowledge::isSentenceSeparator(const char* p) const
+{
+    return sentSeps_.find(p) != sentSeps_.end();
 }
 
 bool JMA_Knowledge::isKeywordPOS(int pos) const
@@ -856,45 +864,6 @@ JMA_CType* JMA_Knowledge::getCType()
     return ctype_;
 }
 
-bool JMA_Knowledge::isSentenceSeparator(const char* p)
-{
-    unsigned int bytes = ctype_->getByteCount(p);
-    const unsigned char* uc = (const unsigned char*)p;
-
-    switch(bytes)
-    {
-        case 1:
-            return seps_[1].contains( uc[0] );
-        case 2:
-            return seps_[2].contains( uc[0] << 8 | uc[1]);
-        case 3:
-            return seps_[3].contains( uc[0] << 16 | uc[1] << 8 | uc[2] );
-        case 4:
-            return seps_[4].contains( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
-        default:
-            assert(false && "Cannot handle Character's length > 4");
-    }
-
-    return false;
-}
-
-bool JMA_Knowledge::addSentenceSeparator(unsigned int val)
-{
-    return seps_[getOccupiedBytes(val)].insert(val);
-}
-
-unsigned int JMA_Knowledge::getOccupiedBytes(unsigned int val)
-{
-    unsigned int ret = 1;
-    while( val & 0xffffff00 )
-    {
-        val >>= 4;
-        ++ ret;
-    }
-    assert( ret > 0 && ret < 4 );
-    return ret;
-}
-
 int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
 {
     ifstream in(fileName);
@@ -904,42 +873,23 @@ int JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName)
         return 0;
     }
 
+    // remove existing separators
+    sentSeps_.clear();
+
     string line;
     while(getline(in, line))
     {
         line = line.substr(0, line.find('\r'));
-
-        //ignore the empty line and comment line(start with '#')
-        if( line.empty() || line[0] == '#' )
+        if(line.empty() || line[0] == '#')
             continue;
-        unsigned int bytes = ctype_->getByteCount( line.c_str() );
 
-        const unsigned char* uc = (const unsigned char*)line.c_str();
-
-        switch(bytes)
-        {
-            case 1:
-                seps_[1].insert( uc[0] );
-                break;
-            case 2:
-                seps_[2].insert( uc[0] << 8 | uc[1]);
-                break;
-            case 3:
-                seps_[3].insert( uc[0] << 16 | uc[1] << 8 | uc[2] );
-                break;
-            case 4:
-                seps_[4].insert( uc[0] << 24 | uc[1] << 16 | uc[2] << 8 | uc[3] );
-                break;
-            default:
-                assert(false && "Cannot handle 'Character's length > 4'");
-                break;
-        }
+        sentSeps_.insert(line);
     }
-    in.close();
+
     return 1;
 }
 
-unsigned int JMA_Knowledge::convertTxtToCSV(const UserDictFileType& userDicFile, ostream& ost)
+unsigned int JMA_Knowledge::convertTxtToCSV(const UserDictFileType& userDicFile, std::ostream& ost)
 {
     unsigned int count = 0;
 

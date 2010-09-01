@@ -18,7 +18,6 @@
  */
 
 #include "ijma.h"
-#include "strutil.h"
 
 #include <iostream>
 #include <fstream>
@@ -31,6 +30,8 @@
 using namespace std;
 using namespace jma;
 
+namespace
+{
 /**
  * Print the test usage.
  */
@@ -39,6 +40,23 @@ void printUsage()
     cerr << "Usage: ./jma_split_sentnece INPUT OUTPUT --encode [eucjp,sjis,utf8] --config CONFIG_PATH" << endl;
 }
 
+/**
+ * Remove the begining or trailing space characters.
+ * \param str the string to modify
+ */
+void trimString(string& str)
+{
+    const char* spaces = " \t\r\n";
+
+    string::size_type pos = str.find_last_not_of(spaces);
+    if(pos != string::npos)
+        str.erase(pos+1);
+
+    pos = str.find_first_not_of(spaces);
+    if(pos != 0)
+        str.erase(0, pos);
+}
+} // namespace
 /**
  * Main function.
  */
@@ -129,7 +147,8 @@ int main(int argc, char* argv[])
         for(size_t i=0; i<sentVec.size(); ++i)
         {
             string str(sentVec[i].getString());
-            trimSelf(str);
+            trimString(str);
+
             if(!str.empty())
                 to << str << endl;
         }

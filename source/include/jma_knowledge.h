@@ -10,7 +10,6 @@
 #define JMA_KNOWLEDGE_IMPL_H
 
 #include "knowledge.h"
-#include "generic_array.h"
 #include "jma_ctype.h"
 #include "pos_table.h"
 #include "char_table.h"
@@ -20,11 +19,6 @@
 #include <set>
 #include <map>
 #include <ostream>
-
-using std::string;
-using std::set;
-using std::map;
-using std::ostream;
 
 namespace MeCab
 {
@@ -42,8 +36,6 @@ class JMA_Dictionary;
 class JMA_Knowledge : public Knowledge
 {
 public:
-    typedef GenericArray<unsigned int> SepArray;
-
     /**
      * The map to decompose user defined noun. 
      * The key of the map is the user defined noun, such as "本田総一郎",
@@ -131,7 +123,14 @@ public:
      * \param word the word to be checked
      * \return whether the word is in the stop word list
      */
-    bool isStopWord(const string& word) const;
+    bool isStopWord(const std::string& word) const;
+
+    /**
+     * Check whether is a seperator of sentence.
+     * \param p pointer to the character string, it would check all the characters until null character
+     * \return true for separator, false for non separator.
+     */
+    bool isSentenceSeparator(const char* p) const;
 
     /**
      * Whether the specific part-of-speech tag is keyword
@@ -170,20 +169,6 @@ public:
      * \return the POS index code
      */
     int getUserNounPOSIndex() const;
-
-    /**
-     * Check whether is a seperator of sentence.
-     * \param p pointer to the character string
-     * \return true for separator, false for non separator.
-     */
-    bool isSentenceSeparator(const char* p);
-
-    /**
-     * Add the sentence separator, the duplicated one would be ignored (return false)
-     * \param val the sentence separator to be add
-     * \return true if the val not exists in the current sentence separators and add successfully
-     */
-    bool addSentenceSeparator(unsigned int val);
 
     /**
      * Get the current JMA_CType
@@ -227,7 +212,7 @@ private:
      * \param ost csv output stream
      * \return how many entries are written into \e ost
      */
-    unsigned int convertTxtToCSV(const UserDictFileType& userDicFile, ostream& ost);
+    unsigned int convertTxtToCSV(const UserDictFileType& userDicFile, std::ostream& ost);
 
     /**
      * Create a unique temporary file and output its file name.
@@ -269,13 +254,6 @@ private:
     static std::string createFilePath(const char* dir, const char* file);
 
     /**
-     * Get the number of bytes the character val occupies.
-     * \param val the character to be checked
-     * \return the number of bytes the character val occupies
-     */
-    unsigned int getOccupiedBytes(unsigned int val);
-
-    /**
      * Fill the binary encoding type of "binary-charset" from source "dicrc" to destination file.
      * \param src the source "dicrc" file
      * \param dest the destination "dicrc" file
@@ -292,7 +270,10 @@ private:
     std::string binUserDic_;
 
     /** stop words set */
-    set<string> stopWords_;
+    std::set<std::string> stopWords_;
+
+    /** sentence separators */
+    std::set<std::string> sentSeps_;
 
     /** whether POS result is in the format of full category */
     bool isOutputFullPOS_;
@@ -310,16 +291,10 @@ private:
     int normFormOffset_;
 
     /** the POS of user defined nouns */
-    string userNounPOS_;
+    std::string userNounPOS_;
 
     /** The Character Type */
     JMA_CType* ctype_;
-
-    /**
-     * Separator Arrays, index 0 is reserved, and index 1 ~ 4 represents
-     * character with 1 ~ 4 bytes separately.
-     */
-    SepArray seps_[5];
 
     /** character encode type of dictionary config files.
      * It is set by "config_charset" item in "dicrc" file.
