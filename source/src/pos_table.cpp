@@ -33,16 +33,9 @@ POSTable::~POSTable()
     delete ruleRoot_;
 }
 
-bool POSTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
+bool POSTable::loadConfig(const char* fileName, MeCab::Iconv& iconv)
 {
     assert(fileName);
-
-    MeCab::Iconv iconv;
-    if(! iconv.open(Knowledge::encodeStr(src), Knowledge::encodeStr(dest)))
-    {
-        cerr << "error to open encoding conversion from " << src << " to " << dest << endl;
-        return false;
-    }
 
     // remove the previous table if exists
     tableSize_ = 0;
@@ -97,7 +90,7 @@ bool POSTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowl
         // convert encoding
         if(! iconv.convert(&fullPOS))
         {
-            cerr << "error to convert encoding from " << src << " to " << dest << " for POS string " << fullPOS << endl;
+            cerr << "error to convert encoding for POS string " << fullPOS << endl;
             return false;
         }
         k = fullPOS.find('*');

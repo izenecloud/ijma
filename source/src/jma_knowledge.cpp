@@ -348,11 +348,11 @@ const JMA_Knowledge::DecompMap& JMA_Knowledge::getDecompMap() const
 
 void JMA_Knowledge::loadDictConfig()
 {
-    const char* configFile = DICT_CONFIG_FILE;
+    string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILE);
     map<string, string> configMap;
 
     bool isLoadConfig = false;
-    const DictUnit* dict = dictionary_->getDict(configFile);
+    const DictUnit* dict = dictionary_->getDict(configFile.c_str());
     if(dict)
     {
         istrstream ist(dict->text_, dict->length_);
@@ -450,10 +450,19 @@ int JMA_Knowledge::loadDict()
     // file "dicrc"
     loadDictConfig();
 
+    const char* srcEnc = Knowledge::encodeStr(configEncodeType_);
+    const char* destEnc = Knowledge::encodeStr(getEncodeType());
+    MeCab::Iconv configIconv;
+    if(! configIconv.open(srcEnc, destEnc))
+    {
+        cerr << "error to open encoding conversion from " << srcEnc << " to " << destEnc << endl;
+        return 0;
+    }
+
     // file "pos-id.def"
-    const char* posFileName = POS_ID_DEF_FILE;
+    string posFileName = createFilePath(systemDictPath_.c_str(), POS_ID_DEF_FILE);
     // load POS table
-    if(! posTable_.loadConfig(posFileName, configEncodeType_, getEncodeType()))
+    if(! posTable_.loadConfig(posFileName.c_str(), configIconv))
     {
         cerr << "fail in POSTable::loadConfig() to load " << posFileName << endl;
         return 0;
@@ -468,33 +477,33 @@ int JMA_Knowledge::loadDict()
     }
 
     // file "map-kana.def"
-    const char* kanaFileName = KANA_MAP_DEF_FILE;
+    string kanaFileName = createFilePath(systemDictPath_.c_str(), KANA_MAP_DEF_FILE);
     // load kana conversion map
-    if(! kanaTable_.loadConfig(kanaFileName, configEncodeType_, getEncodeType()))
+    if(! kanaTable_.loadConfig(kanaFileName.c_str(), configIconv))
     {
         cerr << "warning: as fails to load " << kanaFileName << ", no mapping is defined to convert between Hiragana and Katakana characters." << endl;
     }
 
     // file "map-width.def"
-    const char* widthFileName = WIDTH_MAP_DEF_FILE;
+    string widthFileName = createFilePath(systemDictPath_.c_str(), WIDTH_MAP_DEF_FILE);
     // load width conversion map
-    if(! widthTable_.loadConfig(widthFileName, configEncodeType_, getEncodeType()))
+    if(! widthTable_.loadConfig(widthFileName.c_str(), configIconv))
     {
         cerr << "warning: as fails to load " << widthFileName << ", no mapping is defined to convert between half and full width characters." << endl;
     }
 
     // file "map-case.def"
-    const char* caseFileName = CASE_MAP_DEF_FILE;
+    string caseFileName = createFilePath(systemDictPath_.c_str(), CASE_MAP_DEF_FILE);
     // load case conversion map
-    if(! caseTable_.loadConfig(caseFileName, configEncodeType_, getEncodeType()))
+    if(! caseTable_.loadConfig(caseFileName.c_str(), configIconv))
     {
         cerr << "warning: as fails to load " << caseFileName << ", no mapping is defined to convert between lower and upper case characters." << endl;
     }
 
     // file "sent-sep.def"
-    const char* sentSepFileName = SENTENCE_SEPARATOR_DEF_FILE;
+    string sentSepFileName = createFilePath(systemDictPath_.c_str(), SENTENCE_SEPARATOR_DEF_FILE);
     // load sentence separator set
-    if(! loadSentenceSeparatorConfig(sentSepFileName, configEncodeType_, getEncodeType()))
+    if(! loadSentenceSeparatorConfig(sentSepFileName.c_str(), configIconv))
     {
         cerr << "warning: as fails to load " << sentSepFileName << ", Analyzer::splitSentence() would not work correctly." << endl;
     }
@@ -877,18 +886,8 @@ JMA_CType* JMA_Knowledge::getCType()
     return ctype_;
 }
 
-bool JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
+bool JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName, MeCab::Iconv& iconv)
 {
-    const char* srcEnc = Knowledge::encodeStr(src);
-    const char* destEnc = Knowledge::encodeStr(dest);
-    MeCab::Iconv iconv;
-    if(! iconv.open(srcEnc, destEnc))
-    {
-        cerr << "error to open encoding conversion from " << srcEnc << " to " << destEnc << endl;
-        cerr << "exiting JMA_Knowledge::loadSentenceSeparatorConfig()" << endl;
-        return false;
-    }
-
     const DictUnit* dict = dictionary_->getDict(fileName);
     if(! dict)
     {
@@ -914,7 +913,7 @@ bool JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName, Knowledge:
 
         if(! iconv.convert(&line))
         {
-            cerr << "error to convert encoding from " << srcEnc << " to " << destEnc << " for line: " << line << endl;
+            cerr << "error to convert encoding for line: " << line << endl;
             continue;
         }
         sentSeps_.insert(line);

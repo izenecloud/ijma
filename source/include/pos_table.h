@@ -16,6 +16,11 @@
 #include <vector>
 #include <map>
 
+namespace MeCab
+{
+class Iconv;
+} // namespace MeCab
+
 namespace jma
 {
 
@@ -82,12 +87,11 @@ public:
      * Load the configuration file "pos-id.def", which is in text format.
      * This file contains the part-of-speech configuration, which format is "JapanesePOS index AlphabetPOS".
      * \param fileName the file name
-     * \param src source encode type of \e fileName
-     * \param dest destination encode type to convert
+     * \param iconv to convert the input file's encoding type to run time encoding type
      * \return true for success, false for fail
      * \attention if this function is already called before, the table previously loaded would be removed.
      */
-    bool loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest);
+    bool loadConfig(const char* fileName, MeCab::Iconv& iconv);
 
     /**
      * Load the combination rule file "compound.def", which is in text format.

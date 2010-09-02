@@ -23,6 +23,7 @@
 namespace MeCab
 {
 class Tagger;
+class Iconv;
 } // namespace MeCab
 
 namespace jma
@@ -258,12 +259,11 @@ private:
      * Load the sentence separator configuration file, which is in text format.
      * This file each separator character(only one character) per line.
      * \param fileName the file name
-     * \param src source encode type of \e fileName
-     * \param dest destination encode type to convert
+     * \param iconv to convert the input file's encoding type to run time encoding type
      * \return true for success, false for failure
      * \attention if this function is already called before, the separator previously loaded would be removed.
      */
-    bool loadSentenceSeparatorConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest);
+    bool loadSentenceSeparatorConfig(const char* fileName, MeCab::Iconv& iconv);
 
 private:
     /** the table of part-of-speech tags */

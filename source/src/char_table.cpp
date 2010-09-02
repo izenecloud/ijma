@@ -26,16 +26,9 @@ CharTable::CharTable()
 {
 }
 
-bool CharTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Knowledge::EncodeType dest)
+bool CharTable::loadConfig(const char* fileName, MeCab::Iconv& iconv)
 {
     assert(fileName);
-
-    MeCab::Iconv iconv;
-    if(! iconv.open(Knowledge::encodeStr(src), Knowledge::encodeStr(dest)))
-    {
-        cerr << "error to open encoding conversion from " << src << " to " << dest << endl;
-        return false;
-    }
 
     // remove the previous tables if exist
     mapToLeft_.clear();
@@ -88,12 +81,12 @@ bool CharTable::loadConfig(const char* fileName, Knowledge::EncodeType src, Know
         // convert encoding
         if(! iconv.convert(&left))
         {
-            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << left << endl;
+            cerr << "error to convert encoding for character " << left << endl;
             return false;
         }
         if(! iconv.convert(&right))
         {
-            cerr << "error to convert encoding from " << src << " to " << dest << " for character " << right << endl;
+            cerr << "error to convert encoding for character " << right << endl;
             return false;
         }
 
