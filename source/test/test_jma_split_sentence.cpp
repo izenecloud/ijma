@@ -53,6 +53,7 @@ void trimString(string& str)
         str.erase(0, pos);
 }
 } // namespace
+
 /**
  * Main function.
  */

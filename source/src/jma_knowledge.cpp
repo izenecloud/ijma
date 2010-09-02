@@ -184,7 +184,7 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 
 JMA_Knowledge::JMA_Knowledge()
     : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0), normFormOffset_(0),
-    ctype_(0), configEncodeType_(DEFAULT_CONFIG_ENCODE_TYPE),
+    ctype_(0), configEncodeType_(Knowledge::ENCODE_TYPE_NUM),
     dictionary_(JMA_Dictionary::instance())
 {
 }
@@ -398,7 +398,6 @@ void JMA_Knowledge::loadDictConfig()
     userNounPOS_ = value ? *value : USER_NOUN_POS_DEFAULT;
 
     value = getMapValue(configMap, "config-charset");
-    configEncodeType_ = Knowledge::ENCODE_TYPE_NUM; // reset
     if(value)
         configEncodeType_ = Knowledge::decodeEncodeType(value->c_str());
 
