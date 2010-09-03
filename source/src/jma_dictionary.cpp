@@ -7,20 +7,30 @@
  */
 
 #include "jma_dictionary.h"
+#include "file_utils.h"
 
 #include "mmap.h" // MeCab::Mmap
 #include "utils.h" // MeCab::read_static
+#include "scoped_ptr.h" // MeCab::scoped_array
 
 #include "zwrapper.h" // zlib::ZWrapper
 
 #include <iostream>
 #include <fstream>
+#include <strstream> // ostringstream
 #include <cstring>
 #include <cassert>
+
 using namespace std;
 
 namespace
 {
+/** System dictionary archive */
+const char* DICT_ARCHIVE_FILE = "sys.bin";
+
+/** Prefix of user dictionary file name */
+const char* USER_DICT_PREFIX = "userdic_";
+
 const unsigned int JMA_DICT_VERSION = 100;
 const unsigned int JMA_DICT_BLOCK_SIZE = 512;
 const unsigned int JMA_DICT_BLOCK_MASK = JMA_DICT_BLOCK_SIZE - 1;
@@ -49,6 +59,39 @@ inline string getFileName(const string& path)
         return path;
 
     return path.substr(last+1);
+}
+
+/**
+ * Extract directory path from file path.
+ * \param filePath the file path such as "/usr/bin/man", "c:\\windows\\winhelp.exe", or "man"
+ * \return the directory path such as "/usr/bin", "c:\\windows", "."
+ */
+inline string getDirPath(const string& filePath)
+{
+    const char* delimit = "/\\";
+
+    size_t last = filePath.find_last_of(delimit);
+    if(last == string::npos)
+        return ".";
+
+    last = filePath.find_last_not_of(delimit, last);
+    if(last == string::npos)
+        return ".";
+
+    return filePath.substr(0, last+1);
+}
+
+/**
+ * Create file name from user dictionary.
+ * \param prefix the prefix of file name, such as "userdic_"
+ * \param index the unique index of user dictionary
+ * \return the file name combining prefix and index, such as "userdic_1"
+ */
+inline string createFileName(const char* prefix, unsigned int index)
+{
+    ostringstream ost;
+    ost << prefix << index;
+    return ost.str();
 }
 
 class Buffer
@@ -130,85 +173,49 @@ JMA_Dictionary* JMA_Dictionary::instance()
 }
 
 JMA_Dictionary::JMA_Dictionary()
-    : sysDictAddr_(0), binUserDict_(0), txtUserDict_(0)
 {
 }
 
 JMA_Dictionary::~JMA_Dictionary()
 {
-    close();
-}
-
-void JMA_Dictionary::close()
-{
-    closeSysDict();
-    closeBinUserDict();
-    closeTxtUserDict();
-}
-
-void JMA_Dictionary::closeSysDict()
-{
-    dictMap_.clear();
-    delete[] sysDictAddr_;
-    sysDictAddr_ = 0;
-}
-
-void JMA_Dictionary::closeBinUserDict()
-{
-    if(binUserDict_)
+    mutex_.lock();
+    for(ArchiveMap::iterator it=archiveMap_.begin(); it!=archiveMap_.end(); ++it)
     {
-        delete[] binUserDict_->text_;
-        delete binUserDict_;
-        binUserDict_ = 0;
+        delete[] it->second.startAddr_;
     }
+    archiveMap_.clear();
+    mutex_.unlock();
 }
 
-void JMA_Dictionary::closeTxtUserDict()
+bool JMA_Dictionary::open(const char* dirName)
 {
-    if(txtUserDict_)
+    assert(dirName);
+
+    mutex_.lock();
+    ArchiveMap::iterator it = archiveMap_.find(dirName);
+    if(it != archiveMap_.end())
     {
-        delete[] txtUserDict_->text_;
-        delete txtUserDict_;
-        txtUserDict_ = 0;
+        it->second.refCount_++;
+        mutex_.unlock();
+        return true;
     }
-}
 
-void JMA_Dictionary::createEmptyBinaryUserDict(const char* fileName)
-{
-    assert(fileName);
-
-    closeBinUserDict();
-
-    binUserDict_ = new DictUnit;
-    binUserDict_->fileName_ = getFileName(fileName);
-}
-
-void JMA_Dictionary::createEmptyTextUserDict(const char* fileName)
-{
-    assert(fileName);
-
-    closeTxtUserDict();
-
-    txtUserDict_ = new DictUnit;
-    txtUserDict_->fileName_ = getFileName(fileName);
-}
-
-bool JMA_Dictionary::open(const char* fileName)
-{
-    assert(fileName);
-
-    closeSysDict();
+    // the archive to create
+    string archiveName = createFilePath(dirName, DICT_ARCHIVE_FILE);
+    DictArchive archive; // reference count is initialized to 1
 
     // mapping from compressed file into memory
     MeCab::Mmap<char> compressFile;
-    if(! compressFile.open(fileName))
+    if(! compressFile.open(archiveName.c_str()))
     {
-        cerr << "error: fail to memory map file " << fileName << endl;
+        cerr << "error: fail to memory map file " << archiveName << endl;
+        mutex_.unlock();
         return false;
     }
     if(compressFile.size() < JMA_DICT_BLOCK_SIZE)
     {
-        cerr << "error: dictionary file " << fileName << " is broken." << endl;
+        cerr << "error: dictionary file " << archiveName << " is broken." << endl;
+        mutex_.unlock();
         return false;
     }
 
@@ -220,7 +227,8 @@ bool JMA_Dictionary::open(const char* fileName)
     MeCab::read_static<unsigned int>(&ptr, version);
     if(version != JMA_DICT_VERSION)
     {
-        cerr << "error: dictionary file " << fileName << " is broken or its version is unsupported." << endl;
+        cerr << "error: dictionary file " << archiveName << " is broken or its version is unsupported." << endl;
+        mutex_.unlock();
         return false;
     }
     MeCab::read_static<unsigned int>(&ptr, fileCount);
@@ -228,34 +236,37 @@ bool JMA_Dictionary::open(const char* fileName)
     ptr = start + JMA_DICT_BLOCK_SIZE;
 
     // uncompress
-    sysDictAddr_ = new char[totalSize];
-    if(! sysDictAddr_)
+    MeCab::scoped_array<char> sysDictAddr(new char[totalSize]);
+    if(! sysDictAddr.get())
     {
-        cerr << "error: fail to allcate memory " << totalSize << " bytes to uncompress file " << fileName << endl;
+        cerr << "error: fail to allcate memory " << totalSize << " bytes to uncompress file " << archiveName << endl;
+        mutex_.unlock();
         return false;
     }
 
     zlib::ZWrapper zwrap;
     unsigned int uncompSize = totalSize;
-    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, sysDictAddr_, uncompSize))
+    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, sysDictAddr.get(), uncompSize))
     {
-        cerr << "error: fail to uncompress file " << fileName << endl;
+        cerr << "error: fail to uncompress file " << archiveName << endl;
+        mutex_.unlock();
         return false;
     }
     if(uncompSize != totalSize)
     {
         cerr << "error: uncompress size " << uncompSize << " , while it should be " << totalSize << endl;
+        mutex_.unlock();
         return false;
     }
 
     // read each file head
-    ptr = sysDictAddr_;
+    ptr = sysDictAddr.get();
     const char* content = ptr + JMA_DICT_BLOCK_SIZE * fileCount;
     for(unsigned int i=0; i<fileCount; ++i)
     {
         // file name is the 1st field in head section
         const char* head = ptr;
-        DictUnit& dict = dictMap_[head];
+        DictUnit& dict = archive.dictMap_[head];
         dict.fileName_ = head;
 
         ptr += JMA_DICT_FILE_NAME_SIZE;
@@ -269,47 +280,60 @@ bool JMA_Dictionary::open(const char* fileName)
     }
 
     // check end position
-    if(content != sysDictAddr_ + totalSize)
+    if(content != sysDictAddr.get() + totalSize)
     {
-        cerr << "error: dictionary file " << fileName << " is broken at end position." << endl;
+        cerr << "error: dictionary file " << archiveName << " is broken at end position." << endl;
+        mutex_.unlock();
         return false;
     }
+
+    // insert into map
+    archive.startAddr_ = sysDictAddr.unbind();
+    string dirPath = getDirPath(archiveName);
+    archiveMap_[dirPath] = archive;
+
+    mutex_.unlock();
     return true;
 }
 
-DictUnit* JMA_Dictionary::getDict(const char* fileName)
+bool JMA_Dictionary::close(const char* dirName)
+{
+    assert(dirName);
+
+    bool result = false;
+    mutex_.lock();
+    ArchiveMap::iterator it = archiveMap_.find(dirName);
+    if(it != archiveMap_.end())
+    {
+        it->second.refCount_--;
+        if(it->second.refCount_ == 0)
+        {
+            delete[] it->second.startAddr_;
+            archiveMap_.erase(it);
+        }
+        result = true;
+    }
+
+    mutex_.unlock();
+    return result;
+}
+
+const DictUnit* JMA_Dictionary::getDict(const char* fileName) const
 {
     assert(fileName);
 
-    string str = getFileName(fileName);
-    std::map<std::string, DictUnit>::iterator it = dictMap_.find(str);
-    if(it != dictMap_.end())
-        return &it->second;
+    const DictUnit* result = 0;
+    string dirStr = getDirPath(fileName);
+    ArchiveMap::const_iterator archiveIt = archiveMap_.find(dirStr);
+    if(archiveIt != archiveMap_.end())
+    {
+        string fileStr = getFileName(fileName);
+        DictMap::const_iterator dictIt = archiveIt->second.dictMap_.find(fileStr);
+        if(dictIt != archiveIt->second.dictMap_.end())
+            result = &dictIt->second;
+    }
 
-    if(binUserDict_ && binUserDict_->fileName_ == str)
-        return binUserDict_;
-
-    if(txtUserDict_ && txtUserDict_->fileName_ == str)
-        return txtUserDict_;
-
-    return 0;
-}
-
-bool JMA_Dictionary::copyStrToDict(const std::string& str, const char* fileName)
-{
-    DictUnit* dict = getDict(fileName);
-    if(! dict)
-        return false;
-
-    // in case of already allocated
-    delete[] dict->text_;
-
-    dict->length_ = str.size();
-    dict->text_ = new char[dict->length_];
-    if(str.copy(dict->text_, dict->length_) != dict->length_)
-        return false;
-
-    return true;
+    return result;
 }
 
 /**
@@ -433,6 +457,100 @@ bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const cha
 
     ofs.close();
     return true;
+}
+
+JMA_UserDictionary* JMA_UserDictionary::instance_;
+
+JMA_UserDictionary* JMA_UserDictionary::instance()
+{
+    if(instance_ == 0)
+    {
+        instance_ = new JMA_UserDictionary;
+    }
+
+    return instance_;
+}
+
+JMA_UserDictionary::JMA_UserDictionary()
+{
+}
+
+JMA_UserDictionary::~JMA_UserDictionary()
+{
+    mutex_.lock();
+    for(DictMap::iterator it=userDictMap_.begin(); it!=userDictMap_.end(); ++it)
+    {
+        delete[] it->second.text_;
+    }
+    userDictMap_.clear();
+    mutex_.unlock();
+}
+
+std::string JMA_UserDictionary::create()
+{
+    DictUnit newDict;
+
+    mutex_.lock();
+    string newName = createFileName(USER_DICT_PREFIX, userDictMap_.size());
+    newDict.fileName_ = newName;
+    userDictMap_[newName] = newDict;
+    mutex_.unlock();
+
+    return newName;
+}
+
+bool JMA_UserDictionary::release(const char* fileName)
+{
+    assert(fileName);
+
+    bool result = false;
+    mutex_.lock();
+    DictMap::iterator it = userDictMap_.find(fileName);
+    if(it != userDictMap_.end())
+    {
+        delete[] it->second.text_;
+        userDictMap_.erase(it);
+        result = true;
+    }
+    mutex_.unlock();
+
+    return result;
+}
+
+const DictUnit* JMA_UserDictionary::getDict(const char* fileName) const
+{
+    assert(fileName);
+
+    const DictUnit* result = 0;
+    DictMap::const_iterator it = userDictMap_.find(fileName);
+    if(it != userDictMap_.end())
+        result = &it->second;
+
+    return result;
+}
+
+bool JMA_UserDictionary::copyStrToDict(const std::string& str, const char* fileName)
+{
+    assert(fileName);
+
+    bool result = false;
+    mutex_.lock();
+    DictMap::iterator it = userDictMap_.find(fileName);
+    if(it != userDictMap_.end())
+    {
+        DictUnit* dict = &it->second;
+
+        // in case of already allocated
+        delete[] dict->text_;
+
+        dict->length_ = str.size();
+        dict->text_ = new char[dict->length_];
+        if(str.copy(dict->text_, dict->length_) == dict->length_)
+            result = true;
+    }
+    mutex_.unlock();
+
+    return result;
 }
 
 } // namespace jma

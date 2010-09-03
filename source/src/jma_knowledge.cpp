@@ -10,6 +10,7 @@
 #include "sentence.h"
 #include "jma_dictionary.h"
 #include "tokenizer.h"
+#include "file_utils.h"
 
 #include "mecab.h" // MeCab::Tagger
 #include "param.h" // MeCab::Param
@@ -18,16 +19,8 @@
 #include <iostream>
 #include <fstream> // ifstream, ofstream
 #include <sstream>
-#include <cstdlib> // mkstemp, atoi
 #include <strstream> // istrstream
 #include <cassert>
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#include <windows.h> // GetTempPath, GetTempFileName, FindFirstFile, FindClose
-#else
-#include <dirent.h> // opendir, closedir
-#include <unistd.h> // unlink
-#endif
 
 using namespace std;
 
@@ -74,12 +67,6 @@ const char* SENTENCE_SEPARATOR_DEF_FILE = "sent-sep.def";
 
 /** System dictionary archive */
 const char* DICT_ARCHIVE_FILE = "sys.bin";
-
-/** Binary user dictionary in memory */
-const char* BIN_USER_DICT_MEMORY_FILE = "user.bin";
-
-/** Text user dictionary in memory */
-const char* TXT_USER_DICT_MEMORY_FILE = "user.csv";
 
 /** default character encode type of dictionary config files */
 jma::Knowledge::EncodeType DEFAULT_CONFIG_ENCODE_TYPE = jma::Knowledge::ENCODE_TYPE_EUCJP;
@@ -185,13 +172,18 @@ inline string* getMapValue(map<string, string>& map, const string& key)
 JMA_Knowledge::JMA_Knowledge()
     : isOutputFullPOS_(false), baseFormOffset_(0), readFormOffset_(0), normFormOffset_(0),
     ctype_(0), configEncodeType_(Knowledge::ENCODE_TYPE_NUM),
-    dictionary_(JMA_Dictionary::instance())
+    dictionary_(JMA_Dictionary::instance()), userDictionary_(JMA_UserDictionary::instance())
 {
 }
 
 JMA_Knowledge::~JMA_Knowledge()
 {
-    dictionary_->close();
+    if(! systemDictPath_.empty())
+        dictionary_->close(systemDictPath_.c_str());
+
+    if(! binUserDic_.empty())
+        userDictionary_->release(binUserDic_.c_str());
+
     delete ctype_;
 }
 
@@ -225,14 +217,6 @@ bool JMA_Knowledge::compileUserDict()
     // remove existing decompostion map
     decompMap_.clear();
 
-    // just create an empty instance, it would be generated in mecab compiling
-    binUserDic_ = BIN_USER_DICT_MEMORY_FILE;
-    dictionary_->createEmptyBinaryUserDict(binUserDic_.c_str());
-
-    // create text user dictionary
-    const char* textUserDicName = TXT_USER_DICT_MEMORY_FILE;
-    dictionary_->createEmptyTextUserDict(textUserDicName);
-
     ostringstream osst;
     // append source files of user dictionary
     unsigned int entryCount = 0;
@@ -252,11 +236,19 @@ bool JMA_Knowledge::compileUserDict()
     cout << "user defined nouns are converted as:" << endl;
     cout << osst.str() << endl;
 #endif
-    if(! dictionary_->copyStrToDict(osst.str(), textUserDicName))
+
+    // create text user dictionary
+    string textUserDicName = userDictionary_->create();
+    if(! userDictionary_->copyStrToDict(osst.str(), textUserDicName.c_str()))
     {
         cerr << "fail to copy text user dictionary from stream to memory." << endl;
+        userDictionary_->release(textUserDicName.c_str());
         return false;
     }
+
+    // if already created, just overwrite it
+    if(binUserDic_.empty())
+        binUserDic_ = userDictionary_->create();
 
     // construct parameter to compile user dictionary
     vector<char*> compileParam;
@@ -276,7 +268,7 @@ bool JMA_Knowledge::compileUserDict()
     compileParam.push_back((char*)"-t");
     compileParam.push_back(const_cast<char*>(Knowledge::encodeStr(getEncodeType())));
 
-    compileParam.push_back(const_cast<char*>(textUserDicName));
+    compileParam.push_back(const_cast<char*>(textUserDicName.c_str()));
 
 #if JMA_DEBUG_PRINT
     cout << "parameter of mecab_dict_index() to compile user dictionary: ";
@@ -289,6 +281,9 @@ bool JMA_Knowledge::compileUserDict()
 
     // compile user dictionary files into binary type
     int compileResult = mecab_dict_index(compileParam.size(), &compileParam[0]);
+
+    // text user file is unnecessary after binary format is compiled
+    userDictionary_->release(textUserDicName.c_str());
     if(compileResult != 0)
     {
         cerr << "fail to compile user ditionary" << endl;
@@ -348,10 +343,10 @@ const JMA_Knowledge::DecompMap& JMA_Knowledge::getDecompMap() const
 
 void JMA_Knowledge::loadDictConfig()
 {
-    string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILE);
     map<string, string> configMap;
 
     bool isLoadConfig = false;
+    string configFile = createFilePath(systemDictPath_.c_str(), DICT_CONFIG_FILE);
     const DictUnit* dict = dictionary_->getDict(configFile.c_str());
     if(dict)
     {
@@ -440,10 +435,9 @@ void JMA_Knowledge::loadDictConfig()
 int JMA_Knowledge::loadDict()
 {
     // file "sys.bin"
-    string sysDicName = createFilePath(systemDictPath_.c_str(), DICT_ARCHIVE_FILE);
-    if(! dictionary_->open(sysDicName.c_str()))
+    if(! dictionary_->open(systemDictPath_.c_str()))
     {
-        cerr << "fail to open system dictionary: " << sysDicName << endl;
+        cerr << "fail to open system dictionary: " << systemDictPath_ << endl;
         return 0;
     }
 
@@ -725,160 +719,6 @@ int JMA_Knowledge::getNormFormOffset() const
 int JMA_Knowledge::getUserNounPOSIndex() const
 {
     return posTable_.getIndexFromAlphaPOS(userNounPOS_);
-}
-
-//bool JMA_Knowledge::createTempFile(std::string& tempName)
-//{
-//#if defined(_WIN32) && !defined(__CYGWIN__)
-    //// directory name for temporary file
-    //char dirName[MAX_PATH];
-
-    //// retrieve the directory path designated for temporary files
-    //DWORD dirResult = GetTempPath(MAX_PATH, dirName);
-    //if(dirResult == 0)
-    //{
-        //cerr << "fail in GetTempPath() to get the directory path for temporary file" << endl;
-        //return false;
-    //}
-
-    //// file name for temporary file
-    //char fileName[MAX_PATH];
-
-    //// create a unique temporary file
-    //UINT nameResult = GetTempFileName(dirName, "jma", 0, fileName);
-    //if(nameResult == 0)
-    //{
-        //cerr << "fail in GetTempFileName() to create a temporary file" << endl;
-        //return false;
-    //}
-
-    //tempName = fileName;
-//#else
-    //// file name for temporary file
-    //char fileName[] = "/tmp/jmaXXXXXX";
-
-    //// create a unique temporary file
-    //int tempFd = mkstemp(fileName);
-    //if(tempFd == -1)
-    //{
-        //cerr << "fail in mkstemp() to create a temporary file" << endl;
-        //return false;
-    //}
-
-    //tempName = fileName;
-//#endif
-
-    //return true;
-//}
-
-bool JMA_Knowledge::removeFile(const std::string& fileName)
-{
-    if(unlink(fileName.c_str()) == 0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool JMA_Knowledge::isDirExist(const char* dirPath)
-{
-    if(dirPath == 0)
-    {
-        return false;
-    }
-
-    bool result = false;
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    WIN32_FIND_DATA wfd;
-    HANDLE hFind;
-
-    // the parameter string in function "FindFirstFile()" would be invalid if it ends with a trailing backslash (\) or slash (/),
-    // so the trailing backslash or slash is removed if it exists
-    string dirStr(dirPath);
-    size_t len = dirStr.size();
-    if(len > 0 && (dirPath[len-1] == '\\'  || dirPath[len-1] == '/' ))
-    {
-        dirStr.erase(len-1, 1);
-    }
-
-    hFind = FindFirstFile(dirStr.c_str(), &wfd);
-    if(hFind != INVALID_HANDLE_VALUE)
-    {
-        result = true;
-    }
-    FindClose(hFind);
-#else
-    DIR *dir = opendir(dirPath);
-    if(dir)
-    {
-        result = true;
-    }
-    closedir(dir);
-#endif
-
-    return result;
-}
-
-bool JMA_Knowledge::copyFile(const char* src, const char* dest)
-{
-    assert(src && dest);
-
-    // open files
-    ifstream from(src, ios::binary);
-    if(! from)
-    {
-        cerr << "cannot open source file: " << src << endl;
-        return false;
-    }
-
-    ofstream to(dest, ios::binary);
-    if(! to)
-    {
-        cerr << "cannot open destinatioin file: " << dest << endl;
-        return false;
-    }
-
-    // copy characters
-    char ch;
-    while(from.get(ch))
-    {
-        to.put(ch);
-    }
-
-    // check file state
-    if(!from.eof() || !to)
-    {
-        cerr << "invalid file state after copy from " << src << " to " << dest << endl;
-        return false;
-    }
-
-    return true;
-}
-
-std::string JMA_Knowledge::createFilePath(const char* dir, const char* file)
-{
-    assert(file && "the file name is assumed as non empty");
-
-    string result = dir;
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    if(result.size() && result[result.size()-1] != '\\')
-    {
-        result += '\\';
-    }
-#else
-    if(result.size() && result[result.size()-1] != '/')
-    {
-        result += '/';
-    }
-#endif
-
-    result += file;
-    return result;
 }
 
 JMA_CType* JMA_Knowledge::getCType()

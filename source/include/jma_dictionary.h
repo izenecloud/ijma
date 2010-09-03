@@ -9,6 +9,8 @@
 #ifndef JMA_DICTIONARY_H
 #define JMA_DICTIONARY_H
 
+#include "mutex.h" // MeCab::Mutex
+
 #include <vector>
 #include <string>
 #include <map>
@@ -17,7 +19,7 @@ namespace jma
 {
 
 /**
- * DictUnit is one dictionary file.
+ * DictUnit is a dictionary file in archive.
  */
 struct DictUnit
 {
@@ -36,8 +38,35 @@ struct DictUnit
     DictUnit() : text_(0), length_(0) {}
 };
 
+/** mapping from dictionary file name to dictionary instance */
+typedef std::map<std::string, DictUnit> DictMap;
+
 /**
- * JMA_Dictionary is an archive for dictionary files.
+ * DictArchive is a system dictionary as an archive of dictionary files.
+ */
+struct DictArchive
+{
+    /** reference count,
+     * incremented by JMA_Dictionary::open(),
+     * decremented by JMA_Dictionary::close(),
+     * deleted when reached to 0 */
+    int refCount_;
+
+    /** the start address */
+    char* startAddr_;
+
+    /** mapping from dictionary file name (without path) to dictionary instance */
+    DictMap dictMap_;
+
+    /**
+     * Constructor.
+     * The reference count is initialized to 1.
+     */
+    DictArchive() : refCount_(1), startAddr_(0) {}
+};
+
+/**
+ * JMA_Dictionary is a collection of \e DictArchive shared by multiple threads.
  */
 class JMA_Dictionary
 {
@@ -49,43 +78,25 @@ public:
     static JMA_Dictionary* instance();
 
     /**
-     * Load the archive file.
-     * \param fileName the full file name including path
+     * Load the archive file "sys.bin" under \e dirName.
+     * \param dirName the directory name
      * \return true for success, false for failure
      */
-    bool open(const char* fileName);
+    bool open(const char* dirName);
 
     /**
-     * Close the opened system and user dictionary.
+     * Close the opened archive file "sys.bin" under \e dirName.
+     * \param dirName the directory name
+     * \return true for success, false for failure
      */
-    void close();
-
-    /**
-     * Create an empty binary user dictionary instance.
-     * \param fileName the file name, the path would be ignored and only file name is saved
-     */
-    void createEmptyBinaryUserDict(const char* fileName);
-
-    /**
-     * Create an empty text user dictionary instance.
-     * \param fileName the file name, the path would be ignored and only file name is saved
-     */
-    void createEmptyTextUserDict(const char* fileName);
+    bool close(const char* dirName);
 
     /**
      * Get a dictionary file.
-     * \param fileName the file name, the path would be ignored and only file name is used to find the dictionary file
+     * \param fileName the full file name including path
      * \return the pointer to dictionary file, 0 is returned if not loaded
      */
-    DictUnit* getDict(const char* fileName);
-
-    /**
-     * Copy the string content to dictionary.
-     * \param str the string content
-     * \param fileName the file name, the path would be ignored and only file name is used to find the dictionary file
-     * \return true for success, false for failure
-     */
-    bool copyStrToDict(const std::string& str, const char* fileName);
+    const DictUnit* getDict(const char* fileName) const;
 
     /**
      * Complile dictionary files \e srcVec into archive \e destFile.
@@ -107,36 +118,79 @@ protected:
     virtual ~JMA_Dictionary();
 
 private:
-    /**
-     * Close the system dictionary.
-     */
-    void closeSysDict();
-
-    /**
-     * Close binary user dictionary.
-     */
-    void closeBinUserDict();
-
-    /**
-     * Close text user dictionary.
-     */
-    void closeTxtUserDict();
-
-private:
     /** the instance of dictionary */
     static JMA_Dictionary* instance_;
 
-    /** the start address of system dictionary archive */
-    char* sysDictAddr_;
+    /** mapping from directory name to archive instance */
+    typedef std::map<std::string, DictArchive> ArchiveMap;
 
-    /** mapping from dictionary file name (without path) to dictionary instance */
-    std::map<std::string, DictUnit> dictMap_;
+    /** archive map instance */
+    ArchiveMap archiveMap_;
 
-    /** the binary user dictionary instance */
-    DictUnit* binUserDict_;
+    /** mutex for lock critical section */
+    mutable MeCab::Mutex mutex_;
+};
 
-    /** the text user dictionary instance */
-    DictUnit* txtUserDict_;
+/**
+ * JMA_UserDictionary is a collection of user dictionaries shared by multiple threads.
+ */
+class JMA_UserDictionary
+{
+public:
+    /**
+     * Get the instance of \e JMA_UserDictionary.
+     * \return the pointer to instance
+     */
+    static JMA_UserDictionary* instance();
+
+    /**
+     * Create an empty file in memory.
+     * \return the new file name
+     */
+    std::string create();
+
+    /**
+     * Destroy the created file.
+     * \param fileName the file name
+     * \return true for success, false for failure
+     */
+    bool release(const char* fileName);
+
+    /**
+     * Get a dictionary file.
+     * \param fileName the created file name
+     * \return the pointer to dictionary file, 0 is returned if not created
+     */
+    const DictUnit* getDict(const char* fileName) const;
+
+    /**
+     * Copy the string content to dictionary.
+     * \param str the string content
+     * \param fileName the created file name
+     * \return true for success, false for failure
+     */
+    bool copyStrToDict(const std::string& str, const char* fileName);
+
+protected:
+    /**
+     * Constructor.
+     */
+    JMA_UserDictionary();
+
+    /**
+     * Destructor.
+     */
+    virtual ~JMA_UserDictionary();
+
+private:
+    /** the instance of dictionary */
+    static JMA_UserDictionary* instance_;
+
+    /** mapping from created file name to user dictionary instance */
+    DictMap userDictMap_;
+
+    /** mutex for lock critical section */
+    mutable MeCab::Mutex mutex_;
 };
 
 } // namespace jma

@@ -20,7 +20,7 @@
 
 #include <sstream> // ostringstream, istringstream
 #include <string> // string
-#include "jma_dictionary.h" // JMA_Dictionary
+#include "jma_dictionary.h" // JMA_UserDictionary
 
 namespace MeCab {
 
@@ -147,13 +147,14 @@ bool Dictionary::compile(const Param &param,
 
   std::istringstream iss(UNK_DEF_DEFAULT);
 
+  jma::JMA_UserDictionary* jmaUserDictionary = jma::JMA_UserDictionary::instance();
   for (size_t i = 0; i < dics.size(); ++i) {
     std::ifstream ifs;
     std::istringstream user_iss; // for iJMA user dictionary in memory
     std::istream *is = 0;
 
     const char* filename = dics[i].c_str();
-    const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
+    const jma::DictUnit* dict = jmaUserDictionary->getDict(filename);
     if(dict) {
         user_iss.str(std::string(dict->text_, dict->length_));
         is = &user_iss;
@@ -340,7 +341,7 @@ bool Dictionary::compile(const Param &param,
   scoped_ptr<std::ostream> p_ost;
   std::ostringstream* p_strstream = 0;
   // check whether is user dict
-  jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(output);
+  const jma::DictUnit* dict = jmaUserDictionary->getDict(output);
   if(dict) {
     p_strstream = new std::ostringstream(std::ios::binary|std::ios::out);
     p_ost.reset(p_strstream);
@@ -380,7 +381,7 @@ bool Dictionary::compile(const Param &param,
 
   // allocate memory for user dict, and copy its content from stream to memory
   if(dict) {
-      bool result = jma::JMA_Dictionary::instance()->copyStrToDict(p_strstream->str(), output);
+      bool result = jmaUserDictionary->copyStrToDict(p_strstream->str(), output);
       CHECK_DIE(result) << "failed to copy binary user dictionary from stream to memory.";
   }
 

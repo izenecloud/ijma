@@ -47,6 +47,15 @@ template<class T> class scoped_array {
     delete [] ptr_;
     ptr_ = p;
   }
+  /**
+   * Unbind the pointer (for iJMA).
+   * \return the pointer binded before, then zero pointer is binded.
+   */
+  T* unbind() {
+    T* p = ptr_;
+    ptr_= 0;
+    return p;
+  }
   T & operator*() const   { return *ptr_; }
   T * operator->() const  { return ptr_;  }
   T * get() const         { return ptr_;  }

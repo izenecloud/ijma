@@ -14,7 +14,7 @@
 #include <fstream>
 #endif
 
-#include "jma_dictionary.h" // JMA_Dictionary
+#include "jma_dictionary.h" // JMA_Dictionary, JMA_UserDictionary
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -90,17 +90,18 @@ template <class T> class Mmap {
   bool loadArchiveSection(const char *filename) {
       const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
 
-      if (dict) {
-          isArchiveSection = true;
+      if (! dict)
+        dict = jma::JMA_UserDictionary::instance()->getDict(filename);
 
-          fileName = dict->fileName_;
-          length = dict->length_;
-          text = reinterpret_cast<T *>(dict->text_);
+      if (! dict)
+          return false;
 
-          return true;
-      }
+      isArchiveSection = true;
+      fileName = dict->fileName_;
+      length = dict->length_;
+      text = reinterpret_cast<T *>(dict->text_);
 
-      return false;
+      return true;
   }
 
  public:

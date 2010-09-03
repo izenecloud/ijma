@@ -30,6 +30,7 @@ namespace jma
 {
 
 class JMA_Dictionary;
+class JMA_UserDictionary;
 
 /**
  * JMA_Knowledge manages the linguistic information for Japanese morphological analysis.
@@ -208,45 +209,6 @@ private:
     unsigned int convertTxtToCSV(const UserDictFileType& userDicFile, std::ostream& ost);
 
     /**
-     * Create a unique temporary file and output its file name.
-     * It is commented out as the temporary file is replaced with memory.
-     * \param tempName the string to save the temporary file name
-     * \return true for success and \e tempName is set as the temporary file name. false for fail and \e tempName is not modified.
-     */
-    /*static bool createTempFile(std::string& tempName);*/
-
-    /**
-     * Delete the file on disk.
-     * \param fileName the name of the file to be deleted
-     * \return true for success and false for fail.
-     */
-    static bool removeFile(const std::string& fileName);
-
-    /**
-     * Check whether the directory exists.
-     * \param dirPath the directory path to be checked
-     * \return true for the direcotory exists, false for not exists.
-     */
-    static bool isDirExist(const char* dirPath);
-
-    /**
-     * Copy a file from source path to destination path.
-     * \param src the source path
-     * \param dest the destination path
-     * \return true for copy successfully, false for copy failed.
-     */
-    static bool copyFile(const char* src, const char* dest);
-
-    /**
-     * Create the complete file path from directory path and file name.
-     * \param dir the directory path
-     * \param file the file name
-     * \return the file path string consisting of directory path and file name.
-     * \pre the file name \e file is assumed as non empty.
-     */
-    static std::string createFilePath(const char* dir, const char* file);
-
-    /**
      * Fill the binary encoding type of "binary-charset" from source "dicrc" to destination file.
      * \param src the source "dicrc" file
      * \param dest the destination "dicrc" file
@@ -313,11 +275,14 @@ private:
     /** mapping table between lower and upper case characters */
     CharTable caseTable_;
 
-    /** the dictionary instance */
-    JMA_Dictionary* dictionary_;
-
     /** the instance of decomposition map */
     DecompMap decompMap_;
+
+    /** the system dictionary instance */
+    JMA_Dictionary* dictionary_;
+
+    /** the user dictionary instance */
+    JMA_UserDictionary* userDictionary_;
 };
 
 } // namespace jma
