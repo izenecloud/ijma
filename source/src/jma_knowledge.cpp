@@ -238,7 +238,12 @@ bool JMA_Knowledge::compileUserDict()
 #endif
 
     // create text user dictionary
-    string textUserDicName = userDictionary_->create();
+    string textUserDicName;
+    if(! userDictionary_->create(textUserDicName))
+    {
+        cerr << "fail to create an empty text user dictionary." << endl;
+        return false;
+    }
     if(! userDictionary_->copyStrToDict(osst.str(), textUserDicName.c_str()))
     {
         cerr << "fail to copy text user dictionary from stream to memory." << endl;
@@ -247,8 +252,11 @@ bool JMA_Knowledge::compileUserDict()
     }
 
     // if already created, just overwrite it
-    if(binUserDic_.empty())
-        binUserDic_ = userDictionary_->create();
+    if(binUserDic_.empty() && ! userDictionary_->create(binUserDic_))
+    {
+        cerr << "fail to create an empty binary user dictionary." << endl;
+        return false;
+    }
 
     // construct parameter to compile user dictionary
     vector<char*> compileParam;

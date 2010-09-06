@@ -145,9 +145,10 @@ public:
 
     /**
      * Create an empty file in memory.
-     * \return the new file name
+     * \param newName the new file name is set when return value is true
+     * \return true for success, false for failure
      */
-    std::string create();
+    bool create(std::string& newName);
 
     /**
      * Destroy the created file.
@@ -191,6 +192,9 @@ private:
 
     /** mutex for lock critical section */
     mutable MeCab::Mutex mutex_;
+
+    /** index number for each user file created */
+    unsigned int index_;
 };
 
 } // namespace jma

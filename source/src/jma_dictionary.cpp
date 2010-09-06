@@ -18,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <strstream> // ostringstream
+#include <utility> // make_pair
 #include <cstring>
 #include <cassert>
 
@@ -253,12 +254,13 @@ bool JMA_Dictionary::open(const char* dirName)
         return false;
     }
 
-    // insert into map
-    archive.startAddr_ = sysDictAddr.unbind();
-    archiveMap_[dirPath] = archive;
+    pair<ArchiveMap::iterator, bool> ret = archiveMap_.insert(make_pair(dirPath, archive));
+    // assign start address only when inserted successfully
+    if(ret.second)
+        ret.first->second.startAddr_ = sysDictAddr.unbind();
 
     mutex_.unlock();
-    return true;
+    return ret.second;
 }
 
 bool JMA_Dictionary::close(const char* dirName)
@@ -439,6 +441,7 @@ JMA_UserDictionary* JMA_UserDictionary::instance()
 }
 
 JMA_UserDictionary::JMA_UserDictionary()
+    : index_(0)
 {
 }
 
@@ -453,17 +456,17 @@ JMA_UserDictionary::~JMA_UserDictionary()
     mutex_.unlock();
 }
 
-std::string JMA_UserDictionary::create()
+bool JMA_UserDictionary::create(std::string& newName)
 {
     DictUnit newDict;
 
     mutex_.lock();
-    string newName = createFileName(USER_DICT_PREFIX, userDictMap_.size());
+    newName = createFileName(USER_DICT_PREFIX, index_++);
     newDict.fileName_ = newName;
-    userDictMap_[newName] = newDict;
+    pair<DictMap::iterator, bool> ret = userDictMap_.insert(make_pair(newName, newDict));
     mutex_.unlock();
 
-    return newName;
+    return ret.second;
 }
 
 bool JMA_UserDictionary::release(const char* fileName)

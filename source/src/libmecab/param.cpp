@@ -104,7 +104,7 @@ bool Param::open(int argc, char **argv, const Option *opts) {
 
 #define GOTO_ERROR(n) {                         \
     _errno = n;                                 \
-    goto ERROR; } while (0)
+    goto ERROR_LABEL; } while (0)
 
   if (argc <= 0) {
     system_name_ = "unknown";
@@ -186,7 +186,7 @@ bool Param::open(int argc, char **argv, const Option *opts) {
 
   return true;
 
-ERROR:
+ERROR_LABEL:
   switch (_errno) {
     case 0: WHAT << "unrecognized option `" << argv[ind] << "`"; break;
     case 1: WHAT << "`" << argv[ind] << "` requres an argument";  break;
