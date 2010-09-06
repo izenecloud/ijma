@@ -25,6 +25,13 @@
 namespace jma
 {
 
+/** the delimiter between directories and file names */
+#if defined(_WIN32) && !defined(__CYGWIN__)
+const char PATH_DELIMIT = '\\';
+#else
+const char PATH_DELIMIT = '/';
+#endif
+
 /**
  * Create a unique temporary file and output its file name.
  * It is commented out as the temporary file is replaced with memory.
@@ -108,7 +115,7 @@ inline bool isDirExist(const char* dirPath)
     // so the trailing backslash or slash is removed if it exists
     std::string dirStr(dirPath);
     size_t len = dirStr.size();
-    if(len > 0 && (dirPath[len-1] == '\\'  || dirPath[len-1] == '/' ))
+    if(len > 0 && (dirPath[len-1] == PATH_DELIMIT ))
     {
         dirStr.erase(len-1, 1);
     }
@@ -183,20 +190,68 @@ inline std::string createFilePath(const char* dir, const char* file)
 
     std::string result = dir;
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
-    if(result.size() && result[result.size()-1] != '\\')
+    if(result.size() && result[result.size()-1] != PATH_DELIMIT)
     {
-        result += '\\';
+        result += PATH_DELIMIT;
     }
-#else
-    if(result.size() && result[result.size()-1] != '/')
-    {
-        result += '/';
-    }
-#endif
 
     result += file;
     return result;
+}
+
+/**
+ * Extract file name from path string.
+ * \param path the path such as "/usr/bin/man", "c:\\windows\\winhelp.exe", or "man"
+ * \return the file name such as "man", "winhelp.exe"
+ */
+inline std::string getFileName(const std::string& path)
+{
+    size_t last = path.find_last_of(PATH_DELIMIT);
+
+    if(last == std::string::npos)
+        return path;
+
+    return path.substr(last+1);
+}
+
+/**
+ * Extract directory path from file path.
+ * \param filePath the file path such as "/usr/bin/man", "c:\\windows\\winhelp.exe", or "man"
+ * \return the directory path such as "/usr/bin", "c:\\windows", "."
+ */
+inline std::string getDirPath(const std::string& filePath)
+{
+    if(filePath.empty())
+        return "";
+
+    size_t last = filePath.find_last_of(PATH_DELIMIT);
+    if(last == std::string::npos)
+        return ".";
+
+    last = filePath.find_last_not_of(PATH_DELIMIT, last);
+    if(last == std::string::npos)
+        return ".";
+
+    return filePath.substr(0, last+1);
+}
+
+/**
+ * Normalize directory path.
+ * \param dirPath the directory path such as "/usr/bin/", "/usr/bin", "c:\\windows\\", "c:\\windows", "./", "."
+ * \return the normalized directory path such as "/usr/bin", "c:\\windows", "."
+ */
+inline std::string normalizeDirPath(const std::string& dirPath)
+{
+    if(dirPath.size() && dirPath[dirPath.size()-1] == PATH_DELIMIT)
+    {
+        size_t last = dirPath.find_last_not_of(PATH_DELIMIT);
+        if(last != std::string::npos)
+            return dirPath.substr(0, last+1);
+        else
+            return ""; // in case of invalid input of "/////";
+    }
+
+    return dirPath;
 }
 
 } // namespace jma

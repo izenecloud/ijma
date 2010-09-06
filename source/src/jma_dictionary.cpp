@@ -47,41 +47,6 @@ inline unsigned int roundBlockSize(unsigned int value)
 }
 
 /**
- * Extract file name from path string.
- * \param path the path such as "/usr/bin/man", "c:\\windows\\winhelp.exe", or "man"
- * \return the file name such as "man", "winhelp.exe"
- */
-inline string getFileName(const string& path)
-{
-    size_t last = path.find_last_of("/\\");
-
-    if(last == string::npos)
-        return path;
-
-    return path.substr(last+1);
-}
-
-/**
- * Extract directory path from file path.
- * \param filePath the file path such as "/usr/bin/man", "c:\\windows\\winhelp.exe", or "man"
- * \return the directory path such as "/usr/bin", "c:\\windows", "."
- */
-inline string getDirPath(const string& filePath)
-{
-    const char* delimit = "/\\";
-
-    size_t last = filePath.find_last_of(delimit);
-    if(last == string::npos)
-        return ".";
-
-    last = filePath.find_last_not_of(delimit, last);
-    if(last == string::npos)
-        return ".";
-
-    return filePath.substr(0, last+1);
-}
-
-/**
  * Create file name from user dictionary.
  * \param prefix the prefix of file name, such as "userdic_"
  * \param index the unique index of user dictionary
@@ -191,8 +156,11 @@ bool JMA_Dictionary::open(const char* dirName)
 {
     assert(dirName);
 
+    string archiveName = createFilePath(dirName, DICT_ARCHIVE_FILE);
+    string dirPath = normalizeDirPath(dirName);
+
     mutex_.lock();
-    ArchiveMap::iterator it = archiveMap_.find(dirName);
+    ArchiveMap::iterator it = archiveMap_.find(dirPath);
     if(it != archiveMap_.end())
     {
         it->second.refCount_++;
@@ -200,8 +168,6 @@ bool JMA_Dictionary::open(const char* dirName)
         return true;
     }
 
-    // the archive to create
-    string archiveName = createFilePath(dirName, DICT_ARCHIVE_FILE);
     DictArchive archive; // reference count is initialized to 1
 
     // mapping from compressed file into memory
@@ -289,7 +255,6 @@ bool JMA_Dictionary::open(const char* dirName)
 
     // insert into map
     archive.startAddr_ = sysDictAddr.unbind();
-    string dirPath = getDirPath(archiveName);
     archiveMap_[dirPath] = archive;
 
     mutex_.unlock();
@@ -301,8 +266,10 @@ bool JMA_Dictionary::close(const char* dirName)
     assert(dirName);
 
     bool result = false;
+    string dirPath = normalizeDirPath(dirName);
+
     mutex_.lock();
-    ArchiveMap::iterator it = archiveMap_.find(dirName);
+    ArchiveMap::iterator it = archiveMap_.find(dirPath);
     if(it != archiveMap_.end())
     {
         it->second.refCount_--;
@@ -313,8 +280,8 @@ bool JMA_Dictionary::close(const char* dirName)
         }
         result = true;
     }
-
     mutex_.unlock();
+
     return result;
 }
 
