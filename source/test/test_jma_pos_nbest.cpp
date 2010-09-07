@@ -90,22 +90,22 @@ void testWithSentence(Analyzer& analyzer, const string& str, ofstream& output)
  */
 void testWithStream(Analyzer& analyzer, const char* source, const char* dest)
 {
-	assert(source);
-	assert(dest);
+    assert(source);
+    assert(dest);
 
-	ifstream in(source);
-	if(! in)
-	{
-		cerr << "[Error] The input file " << source << " not exists!" << endl;
-		exit(1);
-	}
+    ifstream in(source);
+    if(! in)
+    {
+        cerr << "[Error] The input file " << source << " not exists!" << endl;
+        exit(1);
+    }
 
     ofstream out(dest);
-	if(! out)
-	{
-		cerr << "[Error] The output file " << dest << " could not be created!" << endl;
-		exit(1);
-	}
+    if(! out)
+    {
+        cerr << "[Error] The output file " << dest << " could not be created!" << endl;
+        exit(1);
+    }
 
     string line;
     while(getline(in, line))

@@ -56,35 +56,35 @@ int main()
 
     string line;
     do{
-    	cout<<"Enter ('exit' to exit): ";
-    	cin >> line;
-    	if(line == "exit")
-    		break;
-    	cout<<analyzer->runWithString(line.c_str())<<endl;
+        cout<<"Enter ('exit' to exit): ";
+        cin >> line;
+        if(line == "exit")
+            break;
+        cout<<analyzer->runWithString(line.c_str())<<endl;
     }while(true);
 
 #else
 
     Sentence s;
     string line;
-	do{
-		cout<<"Enter ('exit' to exit): ";
-		getline(cin, line);
-		if(line == "exit")
-			break;
-		s.setString(line.c_str());
-		analyzer->runWithSentence(s);
-		for(int i=0; i<s.getListSize(); ++i)
-		{
-			cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
-			for(int j=0; j<s.getCount(i); ++j)
-			{
-				cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
-			}
-			cout<<endl;
-		}
-		cout<<endl;
-	}while(true);
+    do{
+        cout<<"Enter ('exit' to exit): ";
+        getline(cin, line);
+        if(line == "exit")
+            break;
+        s.setString(line.c_str());
+        analyzer->runWithSentence(s);
+        for(int i=0; i<s.getListSize(); ++i)
+        {
+            cout<<"#"<<(i+1)<<" "<<s.getScore(i)<<" : ";
+            for(int j=0; j<s.getCount(i); ++j)
+            {
+                cout<< s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "@" << s.getBaseForm(i, j) << " ";
+            }
+            cout<<endl;
+        }
+        cout<<endl;
+    }while(true);
 #endif
 
     delete knowledge;

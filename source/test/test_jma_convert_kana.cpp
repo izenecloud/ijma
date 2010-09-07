@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
     string line;
     while(getline(cin, line))
     {
-        cout << analyzer->convertCharacters(line.c_str()) << endl << endl;
+        cout << analyzer->convertCharacters(line.c_str()) << endl;
     }
 
     delete knowledge;

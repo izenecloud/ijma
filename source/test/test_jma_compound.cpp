@@ -1,19 +1,21 @@
-/** \file test_jma_norm.cpp
- * Test to get normalization forms of Japanese words.
+/** \file test_jma_compound.cpp
+ * Test to combine morphemes into compound.
  * Below is the usage examples:
  * \code
- * Test to get normalization form.
- * $ ./test_jma_norm [--dict DICT_PATH]
+ * Specify whether to combine into compounds by command option "--comp",
+ * 1 for combine, 0 for not combine:
+ * $ ./test_jma_compound [--comp [0,1]] [--dict DICT_PATH]
  * \endcode
  * 
  * \author Jun Jiang
  * \version 0.1
- * \date Aug 24, 2010
+ * \date Sep 07, 2010
  */
 
 #include "ijma.h"
 #include "test_jma_common.h" // TEST_JMA_DEFAULT_SYSTEM_DICT
 
+#include <vector>
 #include <string>
 #include <iostream>
 #include <cassert>
@@ -28,7 +30,7 @@ using namespace jma;
  */
 void printUsage()
 {
-    cerr << "Usages:\t [--dict DICT_PATH]" << endl;
+    cerr << "Usages:\t [--comp [0,1]] [--dict DICT_PATH]" << endl;
 }
 
 /**
@@ -36,33 +38,30 @@ void printUsage()
  */
 int main(int argc, char* argv[])
 {
-    // set dictionary files
     const char* sysdict = TEST_JMA_DEFAULT_SYSTEM_DICT;
-    if(argc > 1)
+    int compOpt = 1;
+
+    for(int optIndex=1; optIndex+1<argc; optIndex+=2)
     {
-        if(! strcmp(argv[1], "--dict"))
+        if(! strcmp(argv[optIndex], "--comp"))
         {
-            if(argc < 3)
-            {
-                cerr << "no option value: " << argv[1] << endl;
-                printUsage();
-                exit(1);
-            }
-            sysdict = argv[2];
+            compOpt = atoi(argv[optIndex+1]);
         }
+        else if(! strcmp(argv[optIndex], "--dict"))
+            sysdict = argv[optIndex+1];
         else
         {
-            cerr << "unknown command option: " << argv[1] << endl;
+            cerr << "unknown option: " << argv[optIndex] << endl;
             printUsage();
             exit(1);
         }
     }
 
+    cout << "system dictionary: " << sysdict << endl;
+    cout << "combine into compound: " << compOpt << endl;
+
     // create factory
     JMA_Factory* factory = JMA_Factory::instance();
-
-    // ensure only one instance exists
-    assert(factory == JMA_Factory::instance());
 
     // create analyzer and knowledge
     Analyzer* analyzer = factory->createAnalyzer();
@@ -72,12 +71,16 @@ int main(int argc, char* argv[])
     knowledge->setSystemDict(sysdict);
     if(knowledge->loadDict() == 0)
     {
-        cerr << "fail to load dictionary files" << endl;
+        cerr << "error: fail to load dictionary files" << endl;
         exit(1);
     }
+    cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
     analyzer->setKnowledge(knowledge);
+
+    // set compound words combination
+    analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, compOpt);
 
     Sentence s;
     string line;
@@ -87,23 +90,20 @@ int main(int argc, char* argv[])
 
         if(analyzer->runWithSentence(s) != 1)
         {
-            cerr << "fail in Analyzer::runWithSentence()" << endl;
+            cerr << "error: fail in Analyzer::runWithSentence()" << endl;
             exit(1);
         }
 
         // get one-best result
         int i= s.getOneBestIndex();
         if(i == -1)
-        {
             cout << "no one-best result exists." << endl;
-        }
         else
         {
             for(int j=0; j<s.getCount(i); ++j)
-            {
-                cout << s.getNormForm(i, j) << "  ";
-            }
-            cout << endl;
+                cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
+
+            cout << endl << endl;
         }
     }
 

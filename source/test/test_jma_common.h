@@ -9,21 +9,13 @@
 #ifndef TEST_JMA_COMMON_H
 #define TEST_JMA_COMMON_H
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
-#define TEST_JMA_DEFAULT_SYSTEM_DICT "../../db/ipadic/bin_eucjp"
-
-#define TEST_JMA_DEFAULT_USER_DICT "../../db/userdic/user_noun.eucjp"
-
-#define TEST_JMA_DEFAULT_STOPWORD_DICT "../../db/stopworddic/test-eucjp.txt"
-#else
 /** default path of system dictionary directory */
-#define TEST_JMA_DEFAULT_SYSTEM_DICT "../db/ipadic/bin_eucjp"
+#define TEST_JMA_DEFAULT_SYSTEM_DICT "../db/ipadic/bin_utf8"
 
 /** default path of user dictionary file */
-#define TEST_JMA_DEFAULT_USER_DICT "../db/userdic/user_noun.eucjp"
+#define TEST_JMA_DEFAULT_USER_DICT "../db/userdic/user_noun.utf8"
 
 /** default path of stop word dictionary file */
-#define TEST_JMA_DEFAULT_STOPWORD_DICT "../db/stopworddic/test-eucjp.txt"
-#endif
+#define TEST_JMA_DEFAULT_STOPWORD_DICT "../db/stopworddic/stop.utf8"
 
 #endif // TEST_JMA_COMMON_H
