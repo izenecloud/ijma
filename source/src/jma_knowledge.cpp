@@ -1032,4 +1032,19 @@ bool JMA_Knowledge::fillBinaryEncodeType(const char* src, const char* dest, Enco
     }
 }
 
+int JMA_Knowledge::setKeywordPOS(const std::vector<std::string>& posVec)
+{
+    keywordPOSSet_.clear();
+
+    int posIndex;
+    for(vector<string>::const_iterator it=posVec.begin(); it!=posVec.end(); ++it)
+    {
+        posIndex = posTable_.getIndexFromAlphaPOS(*it);
+        if(posIndex != -1)
+            keywordPOSSet_.insert(posIndex);
+    }
+
+    return keywordPOSSet_.size();
+}
+
 } // namespace jma

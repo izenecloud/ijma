@@ -98,13 +98,4 @@ void Knowledge::addUserDict(const char* fileName, EncodeType type)
     userDictNames_.push_back(UserDictFileType(fileName, type));
 }
 
-void Knowledge::setKeywordPOS(const std::vector<int>& posVec)
-{
-    keywordPOSSet_.clear();
-    for(std::vector<int>::const_iterator it=posVec.begin(); it!=posVec.end(); ++it)
-    {
-        keywordPOSSet_.insert(*it);
-    }
-}
-
 } // namespace jma

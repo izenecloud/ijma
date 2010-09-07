@@ -11,7 +11,6 @@
 
 #include <string>
 #include <vector>
-#include <set>
 #include <utility> // std::pair
 
 namespace jma
@@ -60,16 +59,6 @@ public:
     void addUserDict(const char* fileName, EncodeType type = ENCODE_TYPE_UTF8);
 
     /**
-     * Set the part-of-speech tags as keywords.
-     * If this method is not called or \e posVec is empty,
-     * the results of \e Analyzer::runWith*() would contain all words.
-     * Otherwise, if \e posVec is not empty,
-     * the results of \e Analyzer::runWith*() would only contain the words with part-of-speech tags specified by this method.
-     * \param posVec the vector of part-of-speech index codes
-     */
-    void setKeywordPOS(const std::vector<int>& posVec);
-
-    /**
      * Load the dictionaries, which are set by \e setSystemDict() and \e addUserDict().
      * \return 0 for fail, 1 for success
      * \pre the directory path of system dictionary should be set by \e setSystemDict().
@@ -84,6 +73,18 @@ public:
      * \return 0 for fail, 1 for success
      */
     virtual int loadStopWordDict(const char* fileName) = 0;
+
+    /**
+     * Set the part-of-speech tags as keywords.
+     * If this method is not called or \e posVec is empty,
+     * the results of \e Analyzer::runWith*() would contain all words.
+     * Otherwise, if \e posVec is not empty,
+     * the results of \e Analyzer::runWith*() would only contain the words with part-of-speech tags specified by this method.
+     * \param posVec the vector of part-of-speech tags in alphabet format, such as "NC-G"
+     * \return the number of part-of-speech tags successfully set
+     * \attention This method should be called after \e loadDict(), otherwise no keyword part-of-speech tag would be set
+     */
+    virtual int setKeywordPOS(const std::vector<std::string>& posVec) = 0;
 
     /**
      * Encode the system dictionary files from text to binary file.
@@ -129,9 +130,6 @@ protected:
 
     /** the file names of user dictionaries */
     std::vector<UserDictFileType> userDictNames_;
-
-    /** the part-of-speech index codes as keywords */
-    std::set<int> keywordPOSSet_;
 };
 
 } // namespace jma

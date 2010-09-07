@@ -74,6 +74,18 @@ public:
     virtual int loadStopWordDict(const char* fileName);
 
     /**
+     * Set the part-of-speech tags as keywords.
+     * If this method is not called or \e posVec is empty,
+     * the results of \e Analyzer::runWith*() would contain all words.
+     * Otherwise, if \e posVec is not empty,
+     * the results of \e Analyzer::runWith*() would only contain the words with part-of-speech tags specified by this method.
+     * \param posVec the vector of part-of-speech tags in alphabet format, such as "NC-G"
+     * \return the number of part-of-speech tags successfully set
+     * \attention This method should be called after \e loadDict(), otherwise no keyword part-of-speech tag would be set
+     */
+    virtual int setKeywordPOS(const std::vector<std::string>& posVec);
+
+    /**
      * Encode the system dictionary files from text to binary file.
      * \param txtDirPath the directory path of text files
      * \param binDirPath the directory path of binary files
@@ -233,6 +245,9 @@ private:
 
     /** file name for binary user dictionary in memory */
     std::string binUserDic_;
+
+    /** the part-of-speech index codes as keywords */
+    std::set<int> keywordPOSSet_;
 
     /** stop words set */
     std::set<std::string> stopWords_;
