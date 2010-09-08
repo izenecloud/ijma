@@ -60,44 +60,82 @@ inline string createFileName(const char* prefix, unsigned int index)
     return ost.str();
 }
 
+/**
+ * Buffer is a memory block to copy contents from variables.
+ */
 class Buffer
 {
 public:
+    /**
+     * Constructor.
+     * \param s the block size
+     */
     Buffer(unsigned int s)
         : size_(s) {
         buffer_ = new char[size_];
         reset();
     }
 
+    /**
+     * Destructor.
+     */
     ~Buffer() {
         delete[] buffer_;
     }
 
+    /**
+     * Get the block start address.
+     * \return the start address
+     */
     const char* get() const {
         return buffer_;
     }
 
+    /**
+     * Get the block size.
+     * \return the block size
+     */
     unsigned int size() const {
         return size_;
     }
 
+    /**
+     * Get the number of bytes already copied into block.
+     * \return the number of bytes
+     */
     unsigned int pos() const {
         return pos_;
     }
 
+    /**
+     * Increase the number of bytes already copied into block.
+     * \param len the number to increase
+     */
     void advance(unsigned int len) {
         pos_ += len;
     }
 
+    /**
+     * Reset block contents to null.
+     */
     void reset() {
         pos_ = 0;
         memset(buffer_, 0, size_);
     }
 
+    /**
+     * Copy the content into block, the content size is decided by its type.
+     * \param p the pointer to content
+     */
     template<class T> void put(const T* p) {
         put(p, sizeof(T));
     }
 
+    /**
+     * Copy the content into block, the content size is decided by paramter \e len.
+     * \param p the pointer to content
+     * \param len the number of bytes to copy
+     */
     template<class T> void put(const T* p, unsigned int len) {
         if(len > size_ - pos_) {
             len = size_ - pos_;
@@ -107,6 +145,10 @@ public:
         pos_ += len;
     }
 
+    /**
+     * Copy contents from input stream, the contents are copied until it reaches the end of input stream, or no space is available in the block.
+     * \param ifs input stream
+     */
     void read(ifstream& ifs) {
         if(! ifs)
             return;
@@ -116,8 +158,13 @@ public:
     }
 
 private:
+    /** the block address */
     char* buffer_;
+
+    /** the block size */
     const unsigned int size_;
+
+    /** the number of bytes already copied into block */
     unsigned int pos_;
 };
 
