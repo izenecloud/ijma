@@ -9,7 +9,6 @@
 #include "jma_dictionary.h"
 #include "file_utils.h"
 
-#include "mmap.h" // MeCab::Mmap
 #include "utils.h" // MeCab::read_static
 #include "scoped_ptr.h" // MeCab::scoped_array
 
@@ -218,23 +217,43 @@ bool JMA_Dictionary::open(const char* dirName)
 
     DictArchive archive; // reference count is initialized to 1
 
-    // mapping from compressed file into memory
-    MeCab::Mmap<char> compressFile;
-    if(! compressFile.open(archiveName.c_str()))
+    // load compressed file into memory
+    ifstream ifs(archiveName.c_str(), ios::binary);
+    if(! ifs)
     {
         cerr << "error: fail to open file " << archiveName << endl;
         mutex_.unlock();
         return false;
     }
-    if(compressFile.size() < JMA_DICT_BLOCK_SIZE)
+    // get length of compressed file
+    ifs.seekg (0, ios::end);
+    streampos compressBufferSize = ifs.tellg();
+    ifs.seekg (0, ios::beg);
+    // at least one block size
+    if(compressBufferSize < JMA_DICT_BLOCK_SIZE)
     {
         cerr << "error: dictionary file " << archiveName << " is broken." << endl;
         mutex_.unlock();
         return false;
     }
+    // allocate memory
+    MeCab::scoped_array<char> compressBuffer(new char[compressBufferSize]);
+    if(! compressBuffer.get())
+    {
+        cerr << "error: fail to allocate memory in loading file " << archiveName << endl;
+        mutex_.unlock();
+        return false;
+    }
+    // read file data
+    ifs.read(compressBuffer.get(), compressBufferSize);
+    if(ifs.gcount() != compressBufferSize)
+    {
+        cerr << "error: fail to load " << compressBufferSize << " bytes from dictionary file " << archiveName << endl;
+        mutex_.unlock();
+        return false;
+    }
 
-    const char* start = compressFile.begin();
-    const char* ptr = start;
+    const char* ptr = compressBuffer.get();
 
     // read total head
     unsigned int version, fileCount, totalSize;
@@ -247,11 +266,11 @@ bool JMA_Dictionary::open(const char* dirName)
     }
     MeCab::read_static<unsigned int>(&ptr, fileCount);
     MeCab::read_static<unsigned int>(&ptr, totalSize);
-    ptr = start + JMA_DICT_BLOCK_SIZE;
+    ptr = compressBuffer.get() + JMA_DICT_BLOCK_SIZE;
 
     // uncompress
-    MeCab::scoped_array<char> sysDictAddr(new char[totalSize]);
-    if(! sysDictAddr.get())
+    MeCab::scoped_array<char> sysDictBuffer(new char[totalSize]);
+    if(! sysDictBuffer.get())
     {
         cerr << "error: fail to allcate memory " << totalSize << " bytes to uncompress file " << archiveName << endl;
         mutex_.unlock();
@@ -260,7 +279,7 @@ bool JMA_Dictionary::open(const char* dirName)
 
     zlib::ZWrapper zwrap;
     unsigned int uncompSize = totalSize;
-    if(! zwrap.uncompress(ptr, compressFile.end() - ptr, sysDictAddr.get(), uncompSize))
+    if(! zwrap.uncompress(ptr, compressBuffer.get() + compressBufferSize - ptr, sysDictBuffer.get(), uncompSize))
     {
         cerr << "error: fail to uncompress file " << archiveName << endl;
         mutex_.unlock();
@@ -274,7 +293,7 @@ bool JMA_Dictionary::open(const char* dirName)
     }
 
     // read each file head
-    ptr = sysDictAddr.get();
+    ptr = sysDictBuffer.get();
     const char* content = ptr + JMA_DICT_BLOCK_SIZE * fileCount;
     for(unsigned int i=0; i<fileCount; ++i)
     {
@@ -294,7 +313,7 @@ bool JMA_Dictionary::open(const char* dirName)
     }
 
     // check end position
-    if(content != sysDictAddr.get() + totalSize)
+    if(content != sysDictBuffer.get() + totalSize)
     {
         cerr << "error: dictionary file " << archiveName << " is broken at end position." << endl;
         mutex_.unlock();
@@ -304,7 +323,7 @@ bool JMA_Dictionary::open(const char* dirName)
     pair<ArchiveMap::iterator, bool> ret = archiveMap_.insert(make_pair(dirPath, archive));
     // assign start address only when inserted successfully
     if(ret.second)
-        ret.first->second.startAddr_ = sysDictAddr.unbind();
+        ret.first->second.startAddr_ = sysDictBuffer.unbind();
 
     mutex_.unlock();
     return ret.second;
