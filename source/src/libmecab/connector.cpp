@@ -87,8 +87,11 @@ bool Connector::compile(const char *ifile, const char *ofile) {
   std::vector<short> matrix(lsize * rsize);
   std::fill(matrix.begin(), matrix.end(), 0);
 
-  std::cout << "reading " << ifile << " ... "
-            << lsize << "x" << rsize << std::endl;
+// MODIFY START - JUN
+// below is commented out to disable print
+//std::cout << "reading " << ifile << " ... "
+//<< lsize << "x" << rsize << std::endl;
+// MODIFY END - JUN
 
   while (is->getline(buf, sizeof(buf))) {
     CHECK_DIE(tokenize2(buf, "\t ", column, 3) == 3)
@@ -97,7 +100,10 @@ bool Connector::compile(const char *ifile, const char *ofile) {
     const size_t r = std::atoi(column[1]);
     const int    c = std::atoi(column[2]);
     CHECK_DIE(l < lsize && r < rsize) << "index values are out of range";
-    progress_bar("emitting matrix      ", l + 1, lsize);
+// MODIFY START - JUN
+// below is commented out to disable print
+//progress_bar("emitting matrix      ", l + 1, lsize);
+// MODIFY END - JUN
     matrix[(l + lsize * r)] = static_cast<short>(c);
   }
 

@@ -175,7 +175,7 @@ bool JMA_Dictionary::open(const char* dirName)
     MeCab::Mmap<char> compressFile;
     if(! compressFile.open(archiveName.c_str()))
     {
-        cerr << "error: fail to memory map file " << archiveName << endl;
+        cerr << "error: fail to open file " << archiveName << endl;
         mutex_.unlock();
         return false;
     }

@@ -418,7 +418,7 @@ void JMA_Knowledge::loadDictConfig()
     if(type == Knowledge::ENCODE_TYPE_NUM)
     {
         type = DEFAULT_CONFIG_ENCODE_TYPE;
-        cerr << "unknown dictionary config charset, use default charset " << DEFAULT_CONFIG_ENCODE_TYPE << endl;
+        cerr << "unknown dictionary binary charset, use default charset " << DEFAULT_CONFIG_ENCODE_TYPE << endl;
     }
     // set binary encode type
     if(encodeType_ != type)
@@ -528,7 +528,7 @@ int JMA_Knowledge::loadDict()
     MeCab::Tagger* tagger = createTagger();
     if(! tagger)
     {
-        cerr << "fail to create MeCab::Tagger in JMA_Knowledge::loadDict()" << endl;
+        cerr << "fail to create tagger in JMA_Knowledge::loadDict()" << endl;
         return 0;
     }
 
@@ -610,6 +610,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 #endif
 
     // compile system dictionary files into binary type
+    cout << "compiling into binary format" << endl;
     int compileResult = mecab_dict_index(compileParam.size(), &compileParam[0]);
     if(compileResult != 0)
     {

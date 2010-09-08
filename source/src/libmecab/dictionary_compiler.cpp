@@ -146,7 +146,10 @@ class DictionaryComplier {
       }
     }
 
-    std::cout << "\ndone!\n";
+// MODIFY START - JUN
+// below is commented out to disable print
+//std::cout << "\ndone!\n";
+// MODIFY END - JUN
 
     return 0;
   }

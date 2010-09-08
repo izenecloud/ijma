@@ -133,8 +133,12 @@ if (condition) {} else \
   if (setjmp(what_.cond_) == 1) { \
     return value;  \
   } else \
-    wlog(&what_) & what_.stream_ << \
-    __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+    wlog(&what_) & what_.stream_
+
+// MODIFY START - JUN
+// below is commented out to disable print
+//<<  __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+// MODIFY END - JUN
 
 #define CHECK_0(condition)      CHECK_RETURN(condition, 0)
 #define CHECK_FALSE(condition)  CHECK_RETURN(condition, false)
@@ -145,14 +149,26 @@ if (condition) {} else \
     close(); \
     return false;  \
   } else \
-    wlog(&what_) & what_.stream_ << \
-    __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+    wlog(&what_) & what_.stream_
+
+// MODIFY START - JUN
+// below is commented out to disable print
+//<< __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+// MODIFY END - JUN
 
 #define CHECK_DIE(condition) \
-(condition) ? 0 : die() & std::cerr << __FILE__ << \
-"(" << __LINE__ << ") [" << #condition << "] "
+(condition) ? 0 : die() & std::cerr
+
+// MODIFY START - JUN
+// below is commented out to disable print
+//<< __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+// MODIFY END - JUN
 
 #define CHECK_WARN(condition) \
-(condition) ? 0 : warn() & std::cerr << __FILE__ << \
-"(" << __LINE__ << ") [" << #condition << "] "
+(condition) ? 0 : warn() & std::cerr
+
+// MODIFY START - JUN
+// below is commented out to disable print
+//<< __FILE__ << "(" << __LINE__ << ") [" << #condition << "] "
+// MODIFY END - JUN
 #endif

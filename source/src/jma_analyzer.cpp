@@ -33,6 +33,9 @@ namespace
  */
 const int NBEST_LIMIT_SCALE_FACTOR = 100;
 
+/** The error message for null tager. */
+const char* NULL_TAGGER_ERROR_MSG = "The tagger is not created, please insure that dictionary files are loaded successfully, adn Analyzer::setKnowledge() is called.";
+
 /**
  * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to append morpheme to list. 
  */
@@ -269,7 +272,7 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
     if(tagger_ == 0)
     {
-        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        cerr << NULL_TAGGER_ERROR_MSG << endl;
         return 0;
     }
 
@@ -354,7 +357,7 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
 {
     if(tagger_ == 0)
     {
-        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        cerr << NULL_TAGGER_ERROR_MSG << endl;
         return 0;
     }
 
@@ -375,7 +378,7 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
 
     if(tagger_ == 0)
     {
-        cerr << "MeCab::Tagger is not created, please insure that dictionary files are loaded successfully." << endl;
+        cerr << NULL_TAGGER_ERROR_MSG << endl;
         return 0;
     }
 

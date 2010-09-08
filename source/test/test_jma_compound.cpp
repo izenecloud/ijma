@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
             for(int j=0; j<s.getCount(i); ++j)
                 cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
 
-            cout << endl << endl;
+            cout << endl;
         }
     }
 

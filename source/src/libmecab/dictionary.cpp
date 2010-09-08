@@ -27,7 +27,11 @@ namespace MeCab {
 static const unsigned int DictionaryMagicID = 0xef718f77u;
 
 int progress_bar_darts(size_t current, size_t total) {
-  return progress_bar("emitting double-array", current, total);
+// MODIFY START - JUN
+// below is commented out to disable print
+//return progress_bar("emitting double-array", current, total);
+    return 1;
+// MODIFY END - JUN
 }
 
 bool Dictionary::open(const char *file,
@@ -173,7 +177,10 @@ bool Dictionary::compile(const Param &param,
       }
     }
 
-    std::cout << "reading " << dics[i] << " ... ";
+// MODIFY START - JUN
+// below is commented out to disable print
+//std::cout << "reading " << dics[i] << " ... ";
+// MODIFY END - JUN
 
     char line[BUF_SIZE];
     size_t num = 0;
@@ -273,7 +280,10 @@ bool Dictionary::compile(const Param &param,
       ++lexsize;
     }
 
-    std::cout << num << std::endl;
+// MODIFY START - JUN
+// below is commented out to disable print
+//std::cout << num << std::endl;
+// MODIFY END - JUN
   }
 
   if (wakati) fbuf.append("\0", 1);
