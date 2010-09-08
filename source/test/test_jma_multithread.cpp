@@ -41,6 +41,9 @@
 /** whether test user dictionary */
 #define TEST_USER_DICT 0
 
+/** whether pause for user input before destroy resources */
+#define PAUSE_BEFORE_DESTROY 0
+
 #if TEST_CASE_NUM == TEST_CASE_MULTI_SYS_DICT
 /** file names of input file and system dictionary */
 const int SYS_DICT_NUM = 3;
@@ -62,8 +65,6 @@ public:
     AnalyzerThread() : id_(-1), analyzer_(0), knowledge_(0) { }
 
     ~AnalyzerThread() {
-        cout << "destroy method of thread " << id_ << endl;
-
         delete analyzer_;
 #if TEST_CASE_NUM != TEST_CASE_SINGLE_KNOWLEDGE
         delete knowledge_;
@@ -198,18 +199,25 @@ int main(int argc, char* argv[])
     for(unsigned int i=0; i<threadNum; ++i)
         threadVec[i].join();
 
+#if PAUSE_BEFORE_DESTROY
     char ch;
+#endif
+
 #if TEST_CASE_NUM == TEST_CASE_SINGLE_KNOWLEDGE
+#if PAUSE_BEFORE_DESTROY
     cout << "before destroy single knowledge..." << endl;
     cin >> ch;
+#endif
     delete knowledge;
 #endif
 
+#if PAUSE_BEFORE_DESTROY
     cout << "before destroy all analyzers..." << endl;
     cin >> ch;
     threadVec.clear();
 
     cout << "wait for input to quit test case " << TEST_CASE_NUM << "..." << endl;
     cin >> ch;
+#endif
     return 0;
 }
