@@ -67,6 +67,7 @@ include_directories(./include)
 include_directories(./src/libmecab)
 include_directories(./src/libz)
 include_directories(./src/libiconv)
+include_directories(./libgtest/include)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../lib)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../bin)
@@ -92,3 +93,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(libgtest)
+add_subdirectory(unit_test)
