@@ -14,6 +14,7 @@
 #include <fstream>
 #include <cassert>
 #include <cstdlib> // mkstemp, atoi
+#include <cstring> // strchr
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #include <windows.h> // GetTempPath, GetTempFileName, FindFirstFile, FindClose
@@ -25,11 +26,14 @@
 namespace jma
 {
 
-/** the delimiter between directories and file names */
+/** the delimiter used to check whether is separator between directories and file names */
+#define PATH_DELIMIT_CHECK "/\\"
+
+/** the delimiter used to separate directories and file names */
 #if defined(_WIN32) && !defined(__CYGWIN__)
-const char PATH_DELIMIT = '\\';
+#define PATH_DELIMIT_CREATE '\\'
 #else
-const char PATH_DELIMIT = '/';
+#define PATH_DELIMIT_CREATE '/'
 #endif
 
 /**
@@ -115,7 +119,7 @@ inline bool isDirExist(const char* dirPath)
     // so the trailing backslash or slash is removed if it exists
     std::string dirStr(dirPath);
     size_t len = dirStr.size();
-    if(len > 0 && (dirPath[len-1] == PATH_DELIMIT ))
+    if(len > 0 && strchr(PATH_DELIMIT_CHECK, dirPath[len-1]))
     {
         dirStr.erase(len-1, 1);
     }
@@ -190,9 +194,9 @@ inline std::string createFilePath(const char* dir, const char* file)
 
     std::string result = dir;
 
-    if(result.size() && result[result.size()-1] != PATH_DELIMIT)
+    if(result.size() && strchr(PATH_DELIMIT_CHECK, result[result.size()-1]) == NULL)
     {
-        result += PATH_DELIMIT;
+        result += PATH_DELIMIT_CREATE;
     }
 
     result += file;
@@ -206,7 +210,7 @@ inline std::string createFilePath(const char* dir, const char* file)
  */
 inline std::string getFileName(const std::string& path)
 {
-    size_t last = path.find_last_of(PATH_DELIMIT);
+    size_t last = path.find_last_of(PATH_DELIMIT_CHECK);
 
     if(last == std::string::npos)
         return path;
@@ -224,11 +228,11 @@ inline std::string getDirPath(const std::string& filePath)
     if(filePath.empty())
         return "";
 
-    size_t last = filePath.find_last_of(PATH_DELIMIT);
+    size_t last = filePath.find_last_of(PATH_DELIMIT_CHECK);
     if(last == std::string::npos)
         return ".";
 
-    last = filePath.find_last_not_of(PATH_DELIMIT, last);
+    last = filePath.find_last_not_of(PATH_DELIMIT_CHECK, last);
     if(last == std::string::npos)
         return ".";
 
@@ -242,9 +246,9 @@ inline std::string getDirPath(const std::string& filePath)
  */
 inline std::string normalizeDirPath(const std::string& dirPath)
 {
-    if(dirPath.size() && dirPath[dirPath.size()-1] == PATH_DELIMIT)
+    if(dirPath.size() && strchr(PATH_DELIMIT_CHECK, dirPath[dirPath.size()-1]))
     {
-        size_t last = dirPath.find_last_not_of(PATH_DELIMIT);
+        size_t last = dirPath.find_last_not_of(PATH_DELIMIT_CHECK);
         if(last != std::string::npos)
             return dirPath.substr(0, last+1);
         else
