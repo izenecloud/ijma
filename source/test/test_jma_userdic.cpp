@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         else
         {
             for(int j=0; j<s.getCount(i); ++j)
-                cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
+                cout << s.getLexicon(i, j) << "(" << s.getBaseForm(i, j) << "," << s.getReadForm(i, j) << "," << s.getNormForm(i, j) << ")/" << s.getStrPOS(i, j) << "  ";
 
             cout << endl;
         }
