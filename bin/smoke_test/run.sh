@@ -1,5 +1,7 @@
 #!/bin/bash
 OUTPUT_DIR=smoke_test/output
+mkdir -p ${OUTPUT_DIR}
+rm -f ${OUTPUT_DIR}/*
 
 INPUT=smoke_test/input/run.utf8
 DICT=../db/ipadic/bin_utf8
