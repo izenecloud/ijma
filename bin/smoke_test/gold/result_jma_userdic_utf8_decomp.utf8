@@ -1,0 +1,11 @@
+system dictionary: ../db/ipadic/bin_utf8
+user dictionary: ../db/userdic/user_noun.utf8
+encoding type of user dictionary: utf8
+encoding type of system dictionary: UTF-8
+本田/名詞,ユーザ  総一郎/名詞,ユーザ  
+野球/名詞,ユーザ  選手権/名詞,ユーザ  大会/名詞,ユーザ  
+三菱/名詞,ユーザ  東京/名詞,ユーザ  UFJ/名詞,ユーザ  銀行/名詞,ユーザ  
+DRAGONBALL/名詞,ユーザ  
+百科事典/名詞,ユーザ  
+中国語/名詞,ユーザ  
+ソニー/名詞,ユーザ  

@@ -1,0 +1,11 @@
+system dictionary: ../db/ipadic/bin_utf8
+user dictionary: ../db/userdic/user_noun.eucjp
+encoding type of user dictionary: eucjp
+encoding type of system dictionary: UTF-8
+本田総一郎/名詞,ユーザ  
+野球選手権大会/名詞,ユーザ  
+三菱東京UFJ銀行/名詞,ユーザ  
+DRAGONBALL/名詞,ユーザ  
+百科事典/名詞,ユーザ  
+中国語/名詞,ユーザ  
+ソニー/名詞,ユーザ  

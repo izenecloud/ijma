@@ -1,0 +1,403 @@
+system dictionary: ../db/ipadic/bin_utf8
+keyword POS: NP-G NP-H NP-S NP-GN NP-O NP-P NP-C 
+encoding type of system dictionary: UTF-8
+帝国データバンク/NP-O  
+
+
+
+
+
+
+
+東京/NP-P  日経/NP-O  
+東京/NP-P  東証/NP-O  
+日経/NP-O  北京/NP-P  琴寄/NP-P  辰男/NP-GN  中国系/NP-G  
+中国/NP-C  アジア/NP-P  太平洋/NP-P  出光興産/NP-O  日本石油/NP-O  
+出光/NP-S  Ａ/NP-O  
+出光/NP-P  ロンドン/NP-P  尾形/NP-S  聡/NP-GN  彦/NP-O  英国/NP-C  イングランド銀行/NP-O  ＢＯＥ/NP-O  米国/NP-C  日本/NP-C  欧州/NP-P  
+ＢＯＥ/NP-O  英国/NP-C  
+英国/NP-C  
+欧州/NP-P  ＥＣＢ/NP-O  日/NP-C  米/NP-C  欧州/NP-P  
+英国/NP-C  ベルリン/NP-P  金井/NP-S  和之/NP-GN  ドイツ/NP-C  英/NP-C  フォード/NP-O  ウェッジウッド/NP-O  
+ＤＰＡ/NP-O  フォード/NP-O  ローゼンタール/NP-G  
+独/NP-C  日本/NP-C  トヨタ自動車/NP-O  韓国/NP-C  トヨタ/NP-O  トヨタ/NP-O  北米/NP-P  
+
+トヨタ/NP-O  タイ/NP-C  メキシコ/NP-C  トヨタ/NP-O  北米向け/NP-G  
+日産自動車/NP-O  三菱自動車/NP-O  トヨタ/NP-O  
+トヨタ/NP-O  
+トヨタ/NP-O  福田/NP-S  直之/NP-GN  大日向/NP-S  寛文/NP-GN  ソニー/NP-O  東芝/NP-O  
+ソニー/NP-O  
+ソニー/NP-O  
+ソニー/NP-O  
+ソニー/NP-O  東芝/NP-O  
+日立製作所/NP-O  ＮＥＣ/NP-O  シャープ/NP-O  東京/NP-P  米国/NP-C  日経/NP-O  
+東京/NP-P  東証/NP-O  
+日経/NP-O  
+東証/NP-O  東芝/NP-O  富士通/NP-O  東芝/NP-O  富士通/NP-O  
+富士通/NP-O  タイ/NP-C  フィリピン/NP-C  山形/NP-P  富士通/NP-O  山形県/NP-P  
+東芝/NP-O  富士通/NP-O  東芝/NP-O  富士通/NP-O  日立/NP-O  
+富士通/NP-O  米/NP-C  
+東芝/NP-O  山形/NP-P  富士通/NP-O  長野/NP-P  長野県/NP-P  東芝/NP-O  富士通/NP-O  日本銀行/NP-O  
+
+ワシントン/NP-P  西崎/NP-S  香/NP-GN  米/NP-C  下院/NP-O  民主党/NP-O  米国/NP-C  
+ブッシュ/NP-S  日本ケンタッキー・フライド・チキン/NP-O  イタリア/NP-C  関東/NP-P  関西圏/NP-G  ワシントン/NP-P  星野/NP-S  眞/NP-GN  三雄/NP-GN  ブッシュ/NP-S  米/NP-C  
+米国/NP-C  
+世界銀行/NP-O  米国/NP-C  ＩＭＦ/NP-O  米国/NP-C  
+
+マツダ/NP-O  
+マツダ/NP-O  山内/NP-S  孝/NP-GN  広島/NP-P  ニューヨーク/NP-P  丸石/NP-P  伸一/NP-GN  イタリア/NP-C  米/NP-C  クライスラー/NP-O  米紙/NP-G  クライスラー/NP-O  米国/NP-C  
+クライスラー/NP-O  クライスラー/NP-O  東京/NP-P  欧州/NP-P  日経/NP-O  日経/NP-O  東京/NP-P  東証/NP-O  米/NP-C  ＧＳ/NP-O  ジャパン/NP-C  ＵＳＪ/NP-O  ジェイ/NP-GN  ＴＯＢ/NP-O  ユー社/NP-G  大阪市/NP-P  
+
+ＵＳＪ/NP-O  
+ＵＳＪ/NP-O  大阪市/NP-P  東証/NP-O  マザーズ/NP-O  
+大阪市/NP-P  大阪/NP-P  ＷＴＣ/NP-O  ニューヨーク/NP-P  丸石/NP-P  伸一/NP-GN  米/NP-C  クライスラー/NP-O  伊/NP-C  欧米/NP-P  クライスラー/NP-O  米/NP-C  
+クライスラー/NP-O  米/NP-C  独/NP-C  クライスラー/NP-O  
+米/NP-C  クライスラー/NP-O  
+クライスラー/NP-O  米/NP-C  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  ＧＭ/NP-O  
+クライスラー/NP-O  欧州/NP-P  南米/NP-P  北米/NP-P  北米/NP-P  クライスラー/NP-O  
+ワシントン/NP-P  星野/NP-S  眞/NP-GN  三雄/NP-GN  米/NP-C  商務省/NP-O  
+
+ニューヨーク/NP-P  丸石/NP-P  伸一/NP-GN  米/NP-C  米/NP-C  
+ニューヨーク/NP-P  
+日本/NP-C  日本/NP-C  
+
+
+帝国データバンク/NP-O  
+
+
+福井県/NP-P  山梨県/NP-P  新潟/NP-P  島根/NP-P  福井県/NP-P  埼玉県/NP-P  千葉県/NP-P  神奈川県/NP-P  九電工/NP-O  橋田/NP-S  紘一/NP-GN  
+熊本県/NP-P  蒲島/NP-S  郁夫/NP-GN  
+橋田/NP-S  日本/NP-C  
+新日鉄/NP-O  増田/NP-S  規/NP-GN  一郎/NP-GN  
+ＪＦＥ/NP-O  住友金属工業/NP-O  神戸製鋼/NP-O  日新製鋼/NP-O  
+新日鉄/NP-O  ＪＦＥ/NP-O  神戸製鋼/NP-O  日新製鋼/NP-O  西宮/NP-P  兵庫県/NP-P  西宮市/NP-P  水島/NP-S  岡山県/NP-P  倉敷市/NP-P  
+瀬戸内海/NP-P  三菱自動車/NP-O  水島/NP-P  
+
+
+
+三菱/NP-O  
+ファミレス/NP-G  十人/NP-P  
+日本/NP-C  経団連/NP-O  
+
+ドイツ/NP-C  
+
+
+
+経団連/NP-O  欧州/NP-P  冨田/NP-S  佳/NP-GN  米/NP-C  ティファニー/NP-O  アンド/NP-G  日本/NP-C  ニューヨーク/NP-P  山川/NP-P  米/NP-C  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  
+ＧＭ/NP-O  米国/NP-C  
+ＧＭ/NP-O  米/NP-C  
+山崎製パン/NP-O  飯島/NP-S  延浩/NP-GN  
+ブルボン/NP-O  カンロ/NP-O  カンロ/NP-O  小林/NP-S  繁樹/NP-GN  
+東洋水産/NP-O  伊藤/NP-S  裕/NP-GN  香子/NP-GN  トヨタ自動車/NP-O  
+
+トヨタ/NP-O  
+
+トヨタ/NP-O  福田/NP-S  直之/NP-GN  
+
+高橋/NP-S  福子/NP-GN  ワシントン/NP-P  西崎/NP-S  香/NP-GN  オバマ/NP-G  米/NP-C  
+
+
+
+
+日本/NP-C  日本航空/NP-O  交通省/NP-O  
+全日空/NP-O  山本/NP-S  精/NP-GN  東京/NP-P  
+日本/NP-C  井村屋製菓/NP-O  米/NP-C  カリフォルニア州/NP-P  米国/NP-C  帝国データバンク/NP-O  福岡/NP-P  九州/NP-P  沖縄/NP-P  九州/NP-P  福岡市/NP-P  筑豊/NP-P  福岡県/NP-P  香春町/NP-P  ジャスダック/NP-O  
+一/NP-GN  
+源/NP-S  福岡市/NP-P  
+福岡市/NP-P  プレナス/NP-O  大分市/NP-P  福岡市/NP-P  
+栄食/NP-G  東京/NP-P  民主党/NP-O  小沢/NP-S  
+日経/NP-O  東京/NP-P  東証/NP-O  
+日経/NP-O  ＴＯＰＩＸ/NP-O  
+米国/NP-C  日経/NP-O  アジア/NP-P  
+小沢/NP-S  日本/NP-C  フォルクスワーゲン/NP-O  メルセデス・ベンツ/NP-O  ＢＭＷ/NP-O  ニューデリー/NP-P  高野/NP-P  インド/NP-C  
+
+
+インド/NP-C  
+ニューヨーク/NP-P  山川/NP-P  ニューヨーク/NP-P  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  
+ＧＭ/NP-O  米/NP-C  ＳＥＣ/NP-O  ＧＭ/NP-O  
+欧米/NP-P  
+アメリカ/NP-C  モルガン/NP-S  チェース/NP-O  
+中国/NP-C  東京/NP-P  米国/NP-C  日経/NP-O  東京/NP-P  東証/NP-O  
+日経/NP-O  ＴＯＰＩＸ/NP-O  
+日経/NP-O  
+中国/NP-C  米国/NP-C  
+米国/NP-C  
+東証/NP-O  東京/NP-P  東京/NP-P  
+日本/NP-C  日本/NP-C  日本/NP-C  
+大和証券/NP-O  中国/NP-C  トヨタ自動車/NP-O  
+トヨタ/NP-O  
+
+夏/NP-S  渡辺/NP-S  捷/NP-GN  昭/NP-GN  
+王将フードサービス/NP-O  ニューヨーク/NP-P  丸石/NP-P  伸一/NP-GN  ニューヨーク/NP-P  
+米/NP-C  米/NP-C  アメリカ/NP-C  
+ニューヨーク/NP-P  米国産/NP-P  英/NP-C  ルイス/NP-GN  ハミルトン/NP-S  マクラーレン/NP-O  メルセデス/NP-GN  英/NP-C  ＭＢＥ/NP-O  北京/NP-P  クリス/NP-GN  中国/NP-C  上海/NP-P  中国/NP-C  ＧＰ/NP-G  上海紙/NP-G  ホンダ/NP-O  中国/NP-C  
+中国/NP-C  ＧＰ/NP-G  冠/NP-S  中国/NP-C  シノペック/NP-G  
+中国/NP-C  ＧＰ/NP-G  ダカール/NP-P  アルゼンチン/NP-C  カルロス/NP-GN  スペイン/NP-C  フォルクスワーゲン/NP-O  トゥアレグ/NP-O  
+ニール/NP-GN  南アフリカ/NP-C  フォルクスワーゲン/NP-O  トゥアレグ/NP-O  日本勢/NP-G  三橋/NP-S  淳/NP-GN  トヨタ/NP-O  共同/NP-O  ホンダ/NP-O  英/NP-C  英/NP-C  ＢＢＣ/NP-O  
+リチャード/NP-GN  ブランソン/NP-H  共同/NP-O  トヨタ自動車/NP-O  トヨタ車体/NP-O  ダカール/NP-P  パリダカ/NP-G  
+アラコ/NP-O  
+パリダカ/NP-G  
+トヨタ車/NP-G  トヨタ系/NP-G  
+トヨタ/NP-O  ＧＡＺＯＯ/NP-O  ガズー/NP-G  
+ホンダ/NP-O  三菱自動車/NP-O  中川/NP-S  仁/NP-GN  トヨタ自動車/NP-O  トヨタ自動車/NP-O  豊田/NP-S  章男/NP-GN  豊田/NP-S  
+トヨタ/NP-O  
+トヨタ/NP-O  トヨタ/NP-O  豊田/NP-S  高田/NP-S  坦/NP-GN  
+トヨタ/NP-O  米/NP-C  日本/NP-C  福田/NP-S  直之/NP-GN  ニューヨーク/NP-P  山川/NP-P  米/NP-C  フォード・モーター/NP-O  
+フォード/NP-O  フォード/NP-O  
+フォード/NP-O  米/NP-C  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  クライスラー/NP-O  フォード/NP-O  ニューヨーク/NP-P  ワシントン/NP-P  山川/NP-P  米/NP-C  クライスラー/NP-O  カナダ/NP-C  ＣＡＷ/NP-O  クライスラー/NP-O  伊/NP-C  カナダ/NP-C  
+英/NP-C  ロイター/NP-O  
+カナダ紙/NP-G  クライスラー/NP-O  ニューヨーク/NP-P  山川/NP-P  米/NP-C  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  日本/NP-C  米/NP-C  
+フレデリック/NP-GN  ＣＥＯ/NP-O  デトロイト/NP-P  ＧＭ/NP-O  ＡＰ通信/NP-O  
+日本/NP-C  ＧＭ/NP-O  スウェーデン/NP-C  
+ＧＭ/NP-O  米/NP-C  三菱重工業/NP-O  ゼネラル・モーターズ/NP-O  ＧＭ/NP-O  米国/NP-C  インディアナ州/NP-P  
+ＧＭ/NP-O  三菱自動車/NP-O  米/NP-C  ＧＭ/NP-O  
+三菱重工業/NP-O  デトロイト/NP-P  山川/NP-P  米/NP-C  伊/NP-C  フィアット/NP-O  
+クライスラー/NP-O  
+
+全米/NP-P  ＵＡＷ/NP-O  
+クライスラー/NP-O  クライスラー車/NP-G  
+
+クライスラー/NP-O  ダッジ/NP-G  ＳＵＶ/NP-O  
+独/NP-C  ダイムラー・ベンツ/NP-O  米/NP-C  
+米/NP-C  日本/NP-C  
+成都/NP-S  中国/NP-C  四川省/NP-G  琴寄/NP-P  辰男/NP-GN  中国/NP-C  米国/NP-C  
+米国/NP-C  
+中国/NP-C  
+
+中国/NP-C  中国/NP-C  ケニヤ/NP-C  山川/NP-P  惣/NP-P  東京都/NP-P  文京区/NP-P  弥生/NP-G  昭和/NP-G  
+ケニヤ/NP-C  アフリカ/NP-P  日本/NP-C  
+古橋/NP-S  ノーベル/NP-H  湯川/NP-S  山川/NP-S  昭和/NP-G  成/NP-P  秀爾/NP-GN  
+
+山川/NP-S  
+Ｑ/NP-O  米国/NP-C  ケニヤ/NP-C  日比谷公会堂/NP-G  
+中村/NP-S  圭子/NP-GN  
+福島県/NP-P  
+渡辺/NP-S  日本/NP-C  黒田/NP-S  清輝/NP-GN  黒田/NP-S  清輝/NP-GN  フランス/NP-C  東京/NP-P  
+フランス/NP-C  明治/NP-G  渡/NP-S  仏/NP-C  パリ/NP-P  山本/NP-S  芳/NP-GN  藤/NP-S  雅三/NP-GN  林/NP-S  忠正/NP-GN  仏/NP-C  中/NP-C  
+藤/NP-S  山本/NP-S  久米/NP-S  桂一郎/NP-GN  
+フランス/NP-C  東京/NP-P  パリ/NP-P  日本/NP-C  智/NP-GN  パリ/NP-P  智/NP-GN  
+東京/NP-P  山梨/NP-S  絵美子/NP-GN  日本/NP-C  
+東京/NP-P  黒田/NP-S  清輝/NP-GN  小川/NP-S  雪/NP-GN  
+みうら/NP-S  じゅん/NP-GN  
+滋賀県/NP-P  彦根城/NP-G  
+北海道/NP-P  東京都/NP-P  杉並区/NP-P  横浜/NP-P  戸塚駅/NP-P  
+
+野澤/NP-S  智行/NP-GN  
+奈良県/NP-P  司/NP-GN  
+ニッポン/NP-C  赤田/NP-S  康/NP-GN  七番/NP-P  徳島県/NP-P  鳴門市/NP-P  羽生/NP-S  善治/NP-GN  深浦/NP-S  康/NP-GN  和歌山県/NP-P  白浜町/NP-P  ベルリン/NP-P  高橋/NP-S  昌宏/NP-GN  ベルリン/NP-P  日本/NP-C  トム/NP-GN  日本/NP-C  陳/NP-S  コー/NP-GN  梅/NP-S  蘭/NP-GN  芳/NP-P  安藤/NP-S  政信/NP-GN  園子/NP-GN  温/NP-P  橋口/NP-S  亮輔/NP-GN  日本/NP-C  五番/NP-P  金沢市/NP-P  久保/NP-S  利明/NP-GN  佐藤/NP-S  康光/NP-GN  新潟市/NP-P  日本/NP-C  東京/NP-P  講談社/NP-O  柳/NP-S  広司/NP-GN  角川書店/NP-O  曽根/NP-S  圭介/NP-GN  田中/NP-S  啓文/NP-GN  司/NP-S  昭/NP-GN  光文社/NP-O  栗原/NP-S  裕一郎/NP-GN  新曜社/NP-G  東京/NP-P  第一ホテル/NP-O  東京/NP-P  ＮＨＫ/NP-O  鬼太郎/NP-GN  水木/NP-S  しげる/NP-GN  武/NP-S  良/NP-GN  昭和/NP-G  東京都/NP-P  調布市/NP-P  武/NP-S  良/NP-GN  御宿/NP-S  ＮＨＫ/NP-O  山本/NP-S  むつみ/NP-GN  
+武/NP-S  良/NP-GN  キンチョール/NP-G  豊川/NP-S  悦司/NP-GN  
+豊川/NP-S  キン/NP-G  
+小林/NP-S  裕一/NP-GN  ペルヴィスダンス/NP-G  ｋｙｏ/NP-O  ｋｙｏ/NP-O  
+ｋｙｏ/NP-O  ｋｙｏ/NP-O  
+豊川/NP-S  交通省/NP-O  群馬県/NP-P  東京/NP-P  石原/NP-S  慎太郎/NP-GN  東京/NP-P  定塚/NP-P  
+八/NP-P  千葉/NP-P  埼玉/NP-P  茨城/NP-P  栃木/NP-P  群馬/NP-P  
+東京都/NP-P  新潟/NP-P  佐渡島/NP-P  
+佐渡/NP-P  新潟/NP-P  東京電力/NP-O  甲府市/NP-P  下向山町/NP-P  東電/NP-O  川崎市/NP-P  東京都/NP-P  江東区/NP-P  豊洲/NP-P  築地/NP-P  
+
+東京電機大/NP-O  原島/NP-S  文雄/NP-GN  
+ピレン/NP-O  
+築地/NP-P  
+築地/NP-P  一村/NP-S  京都/NP-P  雲ケ畑/NP-P  
+新潟/NP-P  加/NP-C  温/NP-P  高知/NP-P  高知/NP-P  日本/NP-C  宮古/NP-P  沖縄/NP-P  
+環境省/NP-O  東京都/NP-P  港区/NP-P  ワシントン/NP-P  勝田/NP-S  敏彦/NP-GN  米紙/NP-G  ニューヨーク・タイムズ/NP-O  米/NP-C  ＥＰＡ/NP-O  ブッシュ/NP-S  
+米/NP-C  最高裁/NP-O  ブッシュ/NP-S  
+ＥＰＡ/NP-O  ジャクソン/NP-S  最高裁/NP-O  
+ＥＰＡ/NP-O  カリフォルニア州/NP-P  
+日本/NP-C  
+国連/NP-O  ＵＮＥＰ/NP-O  
+
+北極/NP-P  
+
+百/NP-P  
+
+スウェーデン/NP-C  スズキ/NP-O  
+メチル/NP-G  
+米国/NP-C  米国/NP-C  
+米国/NP-C  
+
+シャークプロジェクト/NP-G  
+北極/NP-P  カナダ/NP-C  グリーンランド/NP-P  
+ＵＮＥＰ/NP-O  ナイロビ/NP-P  
+欧州/NP-P  米国/NP-C  欧州/NP-P  ＥＵ/NP-O  
+
+中国/NP-C  
+
+
+ブラジル/NP-C  ベネズエラ/NP-C  インド/NP-C  インドネシア/NP-C  パプアニューギニア/NP-C  ジンバブウェ/NP-C  フィリピン/NP-C  ミンダナオ島/NP-G  ディワタ山/NP-P  
+
+ＵＮＥＰ/NP-O  
+北極/NP-P  
+ＵＮＥＰ/NP-O  
+水俣/NP-P  
+熊本県/NP-P  
+ＷＨＯ/NP-O  
+労働省/NP-O  
+日本/NP-C  
+
+
+
+日/NP-C  中/NP-C  
+
+日本/NP-C  
+
+
+
+
+
+
+
+
+
+恵子/NP-GN  
+ケケタン/NP-G  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+毎日/NP-O  
+
+
+
+
+
+
+労働省/NP-O  
+
+
+
+
+
+東京都/NP-P  世田谷区/NP-P  
+東京都/NP-P  
+高橋/NP-S  福子/NP-GN  宇都宮市/NP-P  
+
+
+
+
+千葉市/NP-P  美浜/NP-P  美浜区/NP-P  
+可児市/NP-P  ブラジル/NP-C  フィリピン人/NP-G  
+日本/NP-C  
+
+ブラジル人/NP-G  清水/NP-O  日本/NP-C  高木/NP-S  文子/NP-GN  福岡県/NP-P  九州歯科大学/NP-O  北九州市/NP-P  小倉北区/NP-P  九州歯科大/NP-O  
+九州歯科大/NP-O  
+
+関西大/NP-O  吹田市/NP-P  関西大/NP-O  北陽/NP-O  大阪市/NP-P  東淀川区/NP-P  関西大/NP-O  北陽/NP-O  北陽高/NP-G  市原/NP-S  研/NP-GN  福井/NP-P  米粉/NP-G  福井/NP-P  米粉/NP-G  
+米粉/NP-G  米粉/NP-G  米粉/NP-G  
+
+タナカ/NP-O  越前市/NP-P  田中/NP-S  眞一/NP-GN  四国/NP-P  徳島市/NP-P  応神町古川/NP-P  白鴎大学/NP-O  海原/NP-S  純子/NP-GN  
+
+鹿児島/NP-P  
+
+
+
+埼玉県/NP-P  杉戸町/NP-P  昌平/NP-P  小池/NP-S  仁/NP-GN  
+
+旦/NP-P  
+
+昌平高/NP-G  昌平/NP-P  
+京都/NP-P  京都/NP-P  千葉/NP-P  大阪/NP-P  東京/NP-P  千葉/NP-P  正/NP-GN  東京/NP-P  
+聖徳大/NP-O  東京/NP-P  京都/NP-P  立正大/NP-O  
+杏林大/NP-O  東京/NP-P  大西/NP-S  史晃/NP-GN  
+
+野依/NP-P  良治/NP-GN  
+
+
+お茶の水/NP-P  九州/NP-P  
+
+横浜/NP-P  豊橋/NP-P  京都/NP-P  金沢/NP-P  兵庫/NP-P  
+葉山/NP-S  梢/NP-GN  山上/NP-S  浩/NP-GN  二郎/NP-GN  同志社大/NP-O  京都市/NP-P  神戸学院大/NP-O  神戸市/NP-P  
+同志社大/NP-O  
+神戸学院大/NP-O  修/NP-GN  
+同志社大/NP-O  奥村/NP-S  正雄/NP-GN  神戸学院大/NP-O  
+北海道大/NP-O  千葉大/NP-O  一橋大/NP-O  
+全教/NP-O  
+全教/NP-O  
+
+
+
+日本/NP-C  
+全教/NP-O  上野/NP-S  創/NP-GN  
+
+
+
+
+浅沼/NP-S  茂/NP-GN  東京学芸大/NP-O  葉山/NP-S  梢/NP-GN  ブラジル人/NP-G  愛知/NP-P  岐阜/NP-P  群馬/NP-P  滋賀/NP-P  ブラジル人/NP-G  日本/NP-C  
+日本/NP-C  ブラジル人/NP-G  
+ブラジル人/NP-G  ブラジル人/NP-G  
+ポルトガル語/NP-G  ポルトガル語/NP-G  ブラジル人/NP-G  上野/NP-S  創/NP-GN  福岡県/NP-P  九州歯科大学/NP-O  北九州市/NP-P  小倉北区/NP-P  九州歯科大/NP-O  
+九州歯科大/NP-O  
+
+南極/NP-P  南極/NP-P  昭和/NP-G  南極/NP-P  南極/NP-P  南極/NP-P  
+昭和/NP-G  日本/NP-C  
+http/NP-O  info/NP-O  h/NP-O  kyouinhaken/NP-O  東京都/NP-P  立川市/NP-P  緑町/NP-P  中山/NP-S  由美/NP-GN  グーグル/NP-G  
+マイ/NP-GN  マップ/NP-O  徳島県/NP-P  鹿児島/NP-P  宮崎県/NP-P  
+徳島/NP-P  宮崎/NP-P  鹿児島/NP-P  
+マイ/NP-GN  グーグル/NP-G  日本/NP-C  松村/NP-S  四谷/NP-P  大塚/NP-P  
+
+Ａ/NP-O  Ｃ/NP-O  
+
+
+ひまわり/NP-G  
+
+
+宮沢/NP-S  賢治/NP-GN  
+
+
+
+
+
+
+賢治/NP-GN  Ａ/NP-O  Ｂ/NP-O  Ｃ/NP-O  賢治/NP-GN  Ａ/NP-O  岩手県/NP-P  賢治/NP-GN  Ｃ/NP-O  Ｃ/NP-O  賢治/NP-GN  
+
+
+
+
+
+コ山/NP-P  
+
+
+
+跡見/NP-S  
+
+Ａ/NP-O  Ｂ/NP-O  Ｃ/NP-O  あいこ/NP-GN  
+東京農業大学/NP-O  第一高等学校/NP-O  
+
+
+ア/NP-G  
+イ/NP-G  
+ウ/NP-G  
+エ/NP-G  
+オ/NP-G  
+カ/NP-G  
+城西/NP-P  川越/NP-P  
+
+日本国/NP-C  
+
+
+
+
+本郷/NP-S  
+
+
+
+ア/NP-G  Ａ/NP-O  パー/NP-G  Ｂ/NP-O  Ａ/NP-O  Ｃ/NP-O  イ/NP-G  パー/NP-G  
+
+日本国/NP-C  日本/NP-C  正義/NP-GN  四谷/NP-P  大塚/NP-P  
+
+
+
+
+
+逗子/NP-P  開成/NP-P  
+
+
