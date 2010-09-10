@@ -1,3 +1,5 @@
+include_directories(../libgtest/include)
+
 FILE(GLOB_RECURSE unit_test_SRC "*.cpp")
 
 MESSAGE(STATUS "unit_test_SRC: " ${unit_test_SRC})

@@ -29,6 +29,9 @@ endif()
 project(gtest CXX C)
 cmake_minimum_required(VERSION 2.6.4)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 if (MSVC)
   # For MSVC, CMake sets certain flags to defaults we want to override.
   # This replacement code is taken from sample in the CMake Wiki at
