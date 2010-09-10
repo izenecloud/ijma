@@ -1,55 +1,135 @@
-// Copyright 2005, Google Inc.
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//     * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//     * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//     * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-// A sample program demonstrating using Google C++ testing framework.
-//
-// Author: wan@google.com (Zhanyong Wan)
-
-
-// This sample shows how to write a simple unit test for a function,
-// using Google C++ testing framework.
-//
-// Writing a unit test using Google C++ testing framework is easy as 1-2-3:
-
-
-// Step 1. Include necessary header files such that the stuff your
-// test logic needs is declared.
-//
-// Don't forget gtest.h, which declares the testing framework.
+/** \file unittest_analyzer.cpp
+ * Unit test of class Analyzer.
+ * 
+ * \author Jun Jiang
+ * \version 0.1
+ * \date Sep 10, 2010
+ */
 
 #include <gtest/gtest.h>
 #include <analyzer.h>
-#include <jma_factory.h>
+#include <jma_analyzer.h>
 
+using namespace jma;
 
-// Tests factorial of negative numbers.
-TEST(AnalyzerTest, Create) {
-  jma::Analyzer* analyzer = jma::JMA_Factory::instance()->createAnalyzer();
-  ASSERT_TRUE(analyzer != NULL);
+TEST(AnalyzerTest, getOptionDefault) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_POS_TAGGING));
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY));
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_HALF_WIDTH));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_FULL_WIDTH));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_LOWER_CASE));
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_UPPER_CASE));
+
+    delete analyzer;
+}
+
+TEST(AnalyzerTest, setOption) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_POS_TAGGING));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, -1);
+    EXPECT_EQ(-1, analyzer->getOption(Analyzer::OPTION_TYPE_POS_TAGGING));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 5);
+    EXPECT_EQ(5, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 3.3);
+    EXPECT_EQ(3.3, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 1000);
+    EXPECT_EQ(1000, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 0);
+    EXPECT_EQ(1000, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST)) << "invalid nbest value should take no effect";
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, -5);
+    EXPECT_EQ(1000, analyzer->getOption(Analyzer::OPTION_TYPE_NBEST)) << "invalid nbest value should take no effect";
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, -1);
+    EXPECT_EQ(-1, analyzer->getOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, 0);
+    EXPECT_EQ(0, analyzer->getOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, -1);
+    EXPECT_EQ(-1, analyzer->getOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_HALF_WIDTH, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_HALF_WIDTH));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_FULL_WIDTH, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_FULL_WIDTH));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_LOWER_CASE, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_LOWER_CASE));
+
+    analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_UPPER_CASE, 1);
+    EXPECT_EQ(1, analyzer->getOption(Analyzer::OPTION_TYPE_CONVERT_TO_UPPER_CASE));
+
+    delete analyzer;
+}
+
+TEST(AnalyzerTest, getPOSDelimiterDefault) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    EXPECT_STREQ("/", analyzer->getPOSDelimiter());
+
+    delete analyzer;
+}
+
+TEST(AnalyzerTest, setPOSDelimiter) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    analyzer->setPOSDelimiter("#");
+    EXPECT_STREQ("#", analyzer->getPOSDelimiter());
+
+    delete analyzer;
+}
+
+TEST(AnalyzerTest, getWordDelimiterDefault) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    EXPECT_STREQ("  ", analyzer->getWordDelimiter());
+
+    delete analyzer;
+}
+
+TEST(AnalyzerTest, setWordDelimiter) {
+    Analyzer* analyzer = new JMA_Analyzer;
+    ASSERT_TRUE(analyzer != NULL);
+
+    analyzer->setWordDelimiter("@");
+    EXPECT_STREQ("@", analyzer->getWordDelimiter());
+
+    delete analyzer;
 }

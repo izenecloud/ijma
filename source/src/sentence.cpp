@@ -20,7 +20,7 @@ Morpheme::Morpheme()
 }
 
 Morpheme::Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm, const std::string& normForm)
-	: lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm), readForm_(readForm), normForm_(normForm)
+    : lexicon_(lexicon), posCode_(posCode), posStr_(posStr), baseForm_(baseForm), readForm_(readForm), normForm_(normForm)
 {
 
 }
@@ -31,7 +31,7 @@ Sentence::Sentence()
 
 Sentence::Sentence(const char* pString)
 {
-	raw_ = pString;
+    raw_ = pString;
 }
 
 void Sentence::setString(const char* pString)
@@ -88,7 +88,7 @@ const char* Sentence::getNormForm(int nPos, int nIdx) const
 
 const MorphemeList* Sentence::getMorphemeList(int nPos) const
 {
-	return &candidates_[nPos];
+    return &candidates_[nPos];
 }
 
 double Sentence::getScore(int nPos) const
@@ -98,13 +98,13 @@ double Sentence::getScore(int nPos) const
 
 void Sentence::setScore(int nPos, double nScore)
 {
-	scores_[nPos] = nScore;
+    scores_[nPos] = nScore;
 }
 
 int Sentence::getOneBestIndex(void) const
 {
     if(scores_.empty())
-	return -1;
+        return -1;
 
     assert(scores_.size() > 0 && scores_.size() == candidates_.size());
 

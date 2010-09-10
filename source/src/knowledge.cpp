@@ -57,6 +57,8 @@ Knowledge::EncodeType Knowledge::getEncodeType() const
 
 Knowledge::EncodeType Knowledge::decodeEncodeType(const char* encodeStr)
 {
+    assert(encodeStr);
+
     string lower = toLower(encodeStr);
     if(lower == "euc-jp" || lower == "eucjp")
     {

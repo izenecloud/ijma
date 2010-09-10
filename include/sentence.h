@@ -56,15 +56,15 @@ struct Morpheme
     Morpheme();
 
     /**
-	 * Constructor.
-	 * \param lexicon the lexicon string value
-	 * \param posCode the index code of part-of-speech tag
-	 * \param posStr the POS string value
-	 * \param baseForm the base form string value
+     * Constructor.
+     * \param lexicon the lexicon string value
+     * \param posCode the index code of part-of-speech tag
+     * \param posStr the POS string value
+     * \param baseForm the base form string value
      * \param readForm the reading form string value
      * \param normForm the normalized form string value
-	 */
-	Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm, const std::string& normForm);
+     */
+    Morpheme(const std::string& lexicon, int posCode, const std::string& posStr, const std::string& baseForm, const std::string& readForm, const std::string& normForm);
 };
 
 /** A list of morphemes. */
@@ -114,17 +114,15 @@ typedef std::vector<Morpheme> MorphemeList;
 class Sentence
 {
 public:
+    /**
+     * Default Constructor
+     */
+    Sentence();
 
-	/**
-	 * Default Constructor
-	 */
-	Sentence();
-
-	/**
-	 * Constructor with initial sentence string
-	 */
-	Sentence(const char* pString);
-
+    /**
+     * Constructor with initial sentence string
+     */
+    Sentence(const char* pString);
 
     /**
      * Set the raw sentence string.

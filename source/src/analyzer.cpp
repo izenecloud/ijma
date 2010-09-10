@@ -44,9 +44,7 @@ void Analyzer::setOption(OptionType nOption, double nValue)
 {
     // check nbest value range
     if(nOption == OPTION_TYPE_NBEST && nValue < 1)
-    {
-	return;
-    }
+        return;
 
     options_[nOption] = nValue;
 }
