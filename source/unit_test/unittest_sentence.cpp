@@ -13,7 +13,7 @@
 using namespace jma;
 using namespace std;
 
-TEST(Sentence, morphemeDefault) {
+TEST(SentenceTest, morphemeDefault) {
     Morpheme morpheme;
 
     EXPECT_EQ("", morpheme.lexicon_);
@@ -24,7 +24,7 @@ TEST(Sentence, morphemeDefault) {
     EXPECT_EQ("", morpheme.normForm_);
 }
 
-TEST(Sentence, getDefault) {
+TEST(SentenceTest, getDefault) {
     Sentence sent;
 
     EXPECT_STREQ("", sent.getString());
@@ -32,7 +32,7 @@ TEST(Sentence, getDefault) {
     EXPECT_EQ(-1, sent.getOneBestIndex());
 }
 
-TEST(Sentence, getValue) {
+TEST(SentenceTest, getValue) {
     Sentence sent;
 
     MorphemeList morphList1;
@@ -43,25 +43,35 @@ TEST(Sentence, getValue) {
     MorphemeList morphList2;
     morphList2.push_back(Morpheme("lexicon21", 3, "adj", "base21", "read21", "norm21"));
     morphList2.push_back(Morpheme("lexicon22", 4, "adv", "base22", "read22", "norm22"));
+    morphList2.push_back(Morpheme("lexicon23", 5, "punct", "base23", "read23", "norm23"));
     sent.addList(morphList2, 0.8);
 
-    EXPECT_EQ(2, sent.getListSize());
+    MorphemeList morphList3;
+    sent.addList(morphList3);
+
+    EXPECT_EQ(3, sent.getListSize());
     EXPECT_EQ(1, sent.getOneBestIndex());
 
     int i = sent.getOneBestIndex();
-    EXPECT_EQ(2, sent.getCount(i));
+    EXPECT_EQ(3, sent.getCount(i));
     EXPECT_STREQ("lexicon21", sent.getLexicon(i, 0));
     EXPECT_STREQ("lexicon22", sent.getLexicon(i, 1));
+    EXPECT_STREQ("lexicon23", sent.getLexicon(i, 2));
     EXPECT_EQ(3, sent.getPOS(i, 0));
     EXPECT_EQ(4, sent.getPOS(i, 1));
+    EXPECT_EQ(5, sent.getPOS(i, 2));
     EXPECT_STREQ("adj", sent.getStrPOS(i, 0));
     EXPECT_STREQ("adv", sent.getStrPOS(i, 1));
+    EXPECT_STREQ("punct", sent.getStrPOS(i, 2));
     EXPECT_STREQ("base21", sent.getBaseForm(i, 0));
     EXPECT_STREQ("base22", sent.getBaseForm(i, 1));
+    EXPECT_STREQ("base23", sent.getBaseForm(i, 2));
     EXPECT_STREQ("read21", sent.getReadForm(i, 0));
     EXPECT_STREQ("read22", sent.getReadForm(i, 1));
+    EXPECT_STREQ("read23", sent.getReadForm(i, 2));
     EXPECT_STREQ("norm21", sent.getNormForm(i, 0));
     EXPECT_STREQ("norm22", sent.getNormForm(i, 1));
+    EXPECT_STREQ("norm23", sent.getNormForm(i, 2));
     EXPECT_EQ(0.8, sent.getScore(i));
     sent.setScore(i, 0.64);
     EXPECT_EQ(0.64, sent.getScore(i));
@@ -83,4 +93,7 @@ TEST(Sentence, getValue) {
     EXPECT_EQ(0.2, sent.getScore(i));
     sent.setScore(i, 0.32);
     EXPECT_EQ(0.32, sent.getScore(i));
+
+    i = 2;
+    EXPECT_EQ(0, sent.getCount(i));
 }

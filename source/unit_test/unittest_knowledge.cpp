@@ -12,7 +12,7 @@
 
 using namespace jma;
 
-TEST(Knowledge, getEncodeTypeDefault) {
+TEST(KnowledgeTest, getEncodeTypeDefault) {
     Knowledge* knowledge = new JMA_Knowledge;
 
     ASSERT_TRUE(knowledge);
@@ -22,7 +22,7 @@ TEST(Knowledge, getEncodeTypeDefault) {
     delete knowledge;
 }
 
-TEST(Knowledge, decodeEncodeType) {
+TEST(KnowledgeTest, decodeEncodeType) {
     EXPECT_EQ(Knowledge::ENCODE_TYPE_UTF8, Knowledge::decodeEncodeType("UTF-8"));
     EXPECT_EQ(Knowledge::ENCODE_TYPE_UTF8, Knowledge::decodeEncodeType("UTF8"));
     EXPECT_EQ(Knowledge::ENCODE_TYPE_UTF8, Knowledge::decodeEncodeType("utf-8"));
@@ -41,7 +41,7 @@ TEST(Knowledge, decodeEncodeType) {
     EXPECT_EQ(Knowledge::ENCODE_TYPE_NUM, Knowledge::decodeEncodeType("EUCKR"));
 }
 
-TEST(Knowledge, encodeStr) {
+TEST(KnowledgeTest, encodeStr) {
     EXPECT_STREQ("UTF-8", Knowledge::encodeStr(Knowledge::ENCODE_TYPE_UTF8));
     EXPECT_STREQ("EUC-JP", Knowledge::encodeStr(Knowledge::ENCODE_TYPE_EUCJP));
     EXPECT_STREQ("SHIFT-JIS", Knowledge::encodeStr(Knowledge::ENCODE_TYPE_SJIS));

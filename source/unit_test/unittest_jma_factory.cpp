@@ -13,7 +13,7 @@
 
 using namespace jma;
 
-TEST(JMAFactoryTest, instance) {
+TEST(JMA_FactoryTest, instance) {
     JMA_Factory* factory = JMA_Factory::instance();
 
     EXPECT_TRUE(factory);
@@ -25,7 +25,7 @@ TEST(JMAFactoryTest, instance) {
     EXPECT_EQ(factory, factory2) << "JMA_Factory::instance() should return singleton value";
 }
 
-TEST(JMAFactoryTest, create) {
+TEST(JMA_FactoryTest, create) {
     JMA_Factory* factory = JMA_Factory::instance();
 
     ASSERT_TRUE(factory);
