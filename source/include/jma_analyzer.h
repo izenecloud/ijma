@@ -43,8 +43,9 @@ public:
     /**
      * Set the \e Knowledge for analysis.
      * \param pKnowledge the pointer of \e Knowledge
+     * \return 0 for fail, 1 for success
      */
-    virtual void setKnowledge(Knowledge* pKnowledge);
+    virtual int setKnowledge(Knowledge* pKnowledge);
 
     /**
      * Execute the morphological analysis based on a sentence.
@@ -88,12 +89,12 @@ public:
     virtual std::string convertCharacters(const char* str) const;
 
 private:
-	/**
-	 * Get feature string from list.
-	 * \param featureList the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
+    /**
+     * Get feature string from list.
+     * \param featureList the feature list, like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ"
      * \param featureOffset the feature offset indexed from zero, each feature is delimited by comma ","
-	 * \param retVal to store the feature string
-	 */
+     * \param retVal to store the feature string
+     */
     void getFeatureStr(const char* featureList, int featureOffset, std::string& retVal) const;
 
     /**
@@ -161,11 +162,11 @@ private:
     bool isFilter(const Morpheme& morph) const;
 
 private:
-	/** hold the JMA_Knowledge Object */
-	JMA_Knowledge* knowledge_;
+    /** hold the JMA_Knowledge Object */
+    JMA_Knowledge* knowledge_;
 
-	/** the tagger from Mecab (created by JMA_Knowledge, owned by JMA_Analyzer) */
-	MeCab::Tagger* tagger_;
+    /** the tagger from Mecab (created by JMA_Knowledge, owned by JMA_Analyzer) */
+    MeCab::Tagger* tagger_;
 
     std::string strBuf_;
 

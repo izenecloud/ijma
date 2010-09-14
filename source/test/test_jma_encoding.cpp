@@ -100,7 +100,11 @@ int main(int argc, char* argv[])
     cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // analyze string
     const char* str = "abc";

@@ -87,8 +87,9 @@ public:
     /**
      * Set the \e Knowledge for analysis.
      * \param pKnowledge the pointer of \e Knowledge
+     * \return 0 for fail, 1 for success
      */
-    virtual void setKnowledge(Knowledge* pKnowledge) = 0;
+    virtual int setKnowledge(Knowledge* pKnowledge) = 0;
 
     /**
      * Execute the morphological analysis based on a sentence.

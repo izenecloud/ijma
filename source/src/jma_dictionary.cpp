@@ -494,6 +494,17 @@ bool JMA_Dictionary::compile(const std::vector<std::string>& srcFiles, const cha
     return true;
 }
 
+void JMA_Dictionary::debugPrint() const
+{
+    cout << "JMA_Dictionary::debugPrint()" << endl;
+    cout << "archiveMap_.size(): " << archiveMap_.size() << endl;
+    for(ArchiveMap::const_iterator it=archiveMap_.begin(); it!=archiveMap_.end(); ++it)
+    {
+        cout << it->first << ", ref count: " << it->second.refCount_ << endl;
+    }
+    cout << endl;
+}
+
 JMA_UserDictionary* JMA_UserDictionary::instance_;
 
 JMA_UserDictionary* JMA_UserDictionary::instance()
@@ -587,6 +598,17 @@ bool JMA_UserDictionary::copyStrToDict(const std::string& str, const char* fileN
     mutex_.unlock();
 
     return result;
+}
+
+void JMA_UserDictionary::debugPrint() const
+{
+    cout << "JMA_UserDictionary::debugPrint()" << endl;
+    cout << "userDictMap_.size(): " << userDictMap_.size() << endl;
+    for(DictMap::const_iterator it=userDictMap_.begin(); it!=userDictMap_.end(); ++it)
+    {
+        cout << it->first << ", ref count must be 1." << endl;
+    }
+    cout << endl;
 }
 
 } // namespace jma

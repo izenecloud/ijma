@@ -38,15 +38,18 @@ int main()
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
     knowledge->addUserDict(userdict);
-    int result = knowledge->loadDict();
-    if(result == 0)
+    if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
 
     JMA_Analyzer* analyzer = new JMA_Analyzer;
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
     analyzer->setOption(Analyzer::OPTION_TYPE_NBEST, 5);
     analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 1);
 

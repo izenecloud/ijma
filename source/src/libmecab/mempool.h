@@ -8,29 +8,46 @@
 #define MECAB_MEM_POOL_H
 
 #include <map>
+#include <iostream>
 #ifndef MECAB_WITHOUT_SHARE_DIC
 
 #include "mutex.h"
+#include "jma_dictionary.h" // JMA_Dictionary, JMA_UserDictionary
 
-#define MMAP_OPEN(type, map, file, mode) do {                   \
-    MemoryPool<std::string, Mmap<type> >& pool__ =              \
-        getMemoryPool<std::string, Mmap<type> >();              \
-    map = pool__.get((file));                                   \
-    pool__.lock();                                              \
-    if (map->begin() == 0 && !map->open(file.c_str(), mode)) {  \
-      WHAT << map->what();                                      \
-      pool__.unlock();                                          \
-      close();                                                  \
-      return false;                                             \
-    }                                                           \
-    pool__.unlock();                                            \
-  } while (0)
+// use MeCab::MemoryPool only when that file has not been pooled in jma::JMA_Dictionary and jma::JMA_UserDictionary
+#define MMAP_OPEN(type, map, file, mode) do {                                           \
+    const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(file.c_str()); \
+    if(! dict)                                                                          \
+        dict = jma::JMA_UserDictionary::instance()->getDict(file.c_str());              \
+    if (dict) {                                                     \
+        map = new Mmap<type>(*dict);                                \
+    } else {                                                        \
+        MemoryPool<std::string, Mmap<type> >& pool__ =              \
+        getMemoryPool<std::string, Mmap<type> >();                  \
+        map = pool__.get((file));                                   \
+        pool__.lock();                                              \
+        if (map->begin() == 0 && !map->open(file.c_str(), mode)) {  \
+            WHAT << map->what();                                    \
+            pool__.unlock();                                        \
+            close();                                                \
+            return false;                                           \
+        }                                                           \
+        pool__.unlock();                                            \
+    }                                                               \
+} while (0)
 
-#define MMAP_CLOSE(type, map) do {                      \
-    MemoryPool<std::string, Mmap<type> >& pool__ =      \
-        getMemoryPool<std::string, Mmap<type> >();      \
-    pool__.release(map);                                \
-    map = 0; } while (0)
+#define MMAP_CLOSE(type, map) do {                          \
+    if (map) {                                              \
+        if (map->isArchive()) {                             \
+            delete map;                                     \
+        } else {                                            \
+            MemoryPool<std::string, Mmap<type> >& pool__ =  \
+            getMemoryPool<std::string, Mmap<type> >();      \
+            pool__.release(map);                            \
+        }                                                   \
+        map = 0;                                            \
+    }                                                       \
+} while (0)
 
 namespace MeCab {
 
@@ -97,6 +114,16 @@ template <typename _Key, typename _Value> class MemoryPool {
     }
 
     mutex_.unlock();
+  }
+
+  void debugPrint() const {
+      std::cout << "MemoryPool::debugPrint()" << std::endl;
+      std::cout << "rpool_.size(): " << rpool_.size() << std::endl;
+      for(typename std::map<_Value*, std::pair<_Key, size_t> >::const_iterator it=rpool_.begin(); it!=rpool_.end(); ++it)
+      {
+          std::cout << it->second.first << ", ref count: " << it->second.second << std::endl;
+      }
+      std::cout << std::endl;
   }
 };
 

@@ -42,15 +42,18 @@ int main()
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
-    int result = knowledge->loadDict();
-    if(result == 0)
+    if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;
         exit(1);
     }
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // analyze string
     const char* str = "abc";

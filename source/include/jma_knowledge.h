@@ -180,7 +180,7 @@ public:
 
     /**
      * Get the part-of-speech index code of user defined noun.
-     * \return the POS index code
+     * \return the POS index code, -1 for not defined.
      */
     int getUserNounPOSIndex() const;
 

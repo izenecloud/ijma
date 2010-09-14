@@ -9,7 +9,7 @@
 #ifndef TEST_JMA_COMMON_H
 #define TEST_JMA_COMMON_H
 
-/** default path of system dictionary directory */
+/** default path of system dictionary binary directory */
 #define TEST_JMA_DEFAULT_SYSTEM_DICT "../db/ipadic/bin_utf8"
 
 /** default path of user dictionary file */
@@ -17,5 +17,8 @@
 
 /** default path of stop word dictionary file */
 #define TEST_JMA_DEFAULT_STOPWORD_DICT "../db/stopworddic/stop.utf8"
+
+/** default path of system dictionary source directory */
+#define TEST_JMA_DEFAULT_SYSTEM_DICT_SOURCE "../db/ipadic/src"
 
 #endif // TEST_JMA_COMMON_H

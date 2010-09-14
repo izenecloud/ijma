@@ -77,7 +77,11 @@ int main(int argc, char* argv[])
     cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // set compound words combination
     analyzer->setOption(Analyzer::OPTION_TYPE_COMPOUND_MORPHOLOGY, compOpt);
@@ -96,15 +100,12 @@ int main(int argc, char* argv[])
 
         // get one-best result
         int i= s.getOneBestIndex();
-        if(i == -1)
-            cout << "no one-best result exists." << endl;
-        else
+        if(i != -1)
         {
             for(int j=0; j<s.getCount(i); ++j)
                 cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
-
-            cout << endl;
         }
+        cout << endl;
     }
 
     delete knowledge;

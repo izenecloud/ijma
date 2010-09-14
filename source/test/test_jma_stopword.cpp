@@ -81,7 +81,11 @@ int main(int argc, char* argv[])
     }
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     Sentence s;
     string line;

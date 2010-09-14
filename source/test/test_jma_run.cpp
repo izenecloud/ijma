@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     cout << "system dictionary: " << sysdict << endl;
 
     //const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
-    //knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_EUCJP);
+    //knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_UTF8);
     //cout << "user dictionary: " << userdict << endl;
 
     if(knowledge->loadDict() == 0)
@@ -246,7 +246,11 @@ int main(int argc, char* argv[])
     cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // no POS output
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);

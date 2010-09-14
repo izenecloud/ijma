@@ -14,7 +14,7 @@
 #include <fstream>
 #endif
 
-#include "jma_dictionary.h" // JMA_Dictionary, JMA_UserDictionary
+#include "jma_dictionary.h" // DictUnit
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -87,23 +87,6 @@ template <class T> class Mmap {
   // for jma dictionary archive
   bool isArchiveSection;
 
-  bool loadArchiveSection(const char *filename) {
-      const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
-
-      if (! dict)
-        dict = jma::JMA_UserDictionary::instance()->getDict(filename);
-
-      if (! dict)
-          return false;
-
-      isArchiveSection = true;
-      fileName = dict->fileName_;
-      length = dict->length_;
-      text = reinterpret_cast<T *>(dict->text_);
-
-      return true;
-  }
-
  public:
   T&       operator[](size_t n)       { return *(text + n); }
   const T& operator[](size_t n) const { return *(text + n); }
@@ -117,15 +100,14 @@ template <class T> class Mmap {
   size_t file_size()          { return length; }
   bool empty()                { return(length == 0); }
 
+  bool isArchive() const { return isArchiveSection; }
+  Mmap(const jma::DictUnit& dict): text(reinterpret_cast<T *>(dict.text_)), length(dict.length_), fileName(dict.fileName_), isArchiveSection(true) {}
+
   // This code is imported from sufary, develoved by
   //  TATUO Yamashita <yto@nais.to> Thanks!
 #if defined(_WIN32) && !defined(__CYGWIN__)
   bool open(const char *filename, const char *mode = "r") {
     this->close();
-
-    // check jma dictionary archive
-    if (loadArchiveSection(filename))
-        return true;
 
     unsigned long mode1, mode2, mode3;
     fileName = std::string(filename);
@@ -209,10 +191,6 @@ template <class T> class Mmap {
 
   bool open(const char *filename, const char *mode = "r") {
     this->close();
-
-    // check jma dictionary archive
-    if (loadArchiveSection(filename))
-        return true;
 
     struct stat st;
     fileName = std::string(filename);

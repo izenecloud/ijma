@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     knowledge->setSystemDict(dictPath.c_str());
 #if TEST_USER_DICT
     const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
-    knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_EUCJP);
+    knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_UTF8);
     cout << "user dictionary: " << userdict << endl;
 #endif
     if(knowledge->loadDict() == 0)
@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
         knowledge->setSystemDict(newDict.c_str());
 #if TEST_USER_DICT
         const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
-        knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_EUCJP);
+        knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_UTF8);
         cout << "user dictionary: " << userdict << endl;
 #endif
         if(knowledge->loadDict() == 0)
@@ -188,7 +188,11 @@ int main(int argc, char* argv[])
 #endif
 
         threadVec[i].knowledge_ = knowledge;
-        threadVec[i].analyzer_->setKnowledge(knowledge);
+        if(threadVec[i].analyzer_->setKnowledge(knowledge) == 0)
+        {
+            cerr << "fail to set knowledge" << endl;
+            exit(1);
+        }
     }
 
     // run

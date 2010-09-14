@@ -694,7 +694,7 @@ int JMA_Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPa
 
 bool JMA_Knowledge::isStopWord(const std::string& word) const
 {
-    return stopWords_.find(word) != stopWords_.end() || ctype_->isSpace(word.c_str());
+    return stopWords_.find(word) != stopWords_.end() || (ctype_ && ctype_->isSpace(word.c_str()));
 }
 
 bool JMA_Knowledge::isSentenceSeparator(const char* p) const

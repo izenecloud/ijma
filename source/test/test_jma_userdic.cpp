@@ -84,7 +84,11 @@ int main(int argc, char* argv[])
     cout << "encoding type of system dictionary: " << Knowledge::encodeStr(knowledge->getEncodeType()) << endl;
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // decompose user defined compound into nouns
     analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, decompOpt);

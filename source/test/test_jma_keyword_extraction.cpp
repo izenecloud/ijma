@@ -88,7 +88,11 @@ int main(int argc, char* argv[])
     }
 
     // set knowledge
-    analyzer->setKnowledge(knowledge);
+    if(analyzer->setKnowledge(knowledge) == 0)
+    {
+        cerr << "fail to set knowledge" << endl;
+        exit(1);
+    }
 
     // output POS in alphabet format
     analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
@@ -107,15 +111,12 @@ int main(int argc, char* argv[])
 
         // get one-best result
         int i= s.getOneBestIndex();
-        if(i == -1)
-            cout << "no one-best result exists." << endl;
-        else
+        if(i != -1)
         {
             for(int j=0; j<s.getCount(i); ++j)
                 cout << s.getLexicon(i, j) << "/" << s.getStrPOS(i, j) << "  ";
-
-            cout << endl;
         }
+        cout << endl;
     }
 
     delete knowledge;

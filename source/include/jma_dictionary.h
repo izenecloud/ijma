@@ -106,6 +106,11 @@ public:
      */
     static bool compile(const std::vector<std::string>& srcFiles, const char* destFile);
 
+    /**
+     * Print status for debug use.
+     */
+    void debugPrint() const;
+
 protected:
     /**
      * Constructor.
@@ -118,6 +123,8 @@ protected:
     virtual ~JMA_Dictionary();
 
 private:
+    friend class JMA_KnowledgeTest;
+
     /** the instance of dictionary */
     static JMA_Dictionary* instance_;
 
@@ -171,6 +178,11 @@ public:
      * \return true for success, false for failure
      */
     bool copyStrToDict(const std::string& str, const char* fileName);
+
+    /**
+     * Print status for debug use.
+     */
+    void debugPrint() const;
 
 protected:
     /**
