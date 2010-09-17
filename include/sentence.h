@@ -230,10 +230,10 @@ public:
 
     /**
      * Add a candidate result of morphological analysis.
-     * \param morphemeList the candidate result
+     * \param morphemeList the candidate result. After this function call, this parameter content would be cleared as its original content is swapped into \e candidates_.
      * \param score the score value of the candidate
      */
-    void addList(const MorphemeList& morphemeList, double score = 0.0);
+    void addList(MorphemeList& morphemeList, double score = 0.0);
 
 private:
     /** the raw sentence string */

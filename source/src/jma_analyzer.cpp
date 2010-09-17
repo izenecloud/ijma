@@ -12,6 +12,7 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <cstring> // strlen
 #include <algorithm> // find
 
@@ -25,6 +26,9 @@ using namespace std;
 
 namespace
 {
+/** Base N-Best Score */
+const int BASE_NBEST_SCORE = 200;
+
 /** The scale factor for the limitation count of nbest.
  * As the NBest candidates of \e JMA_Analyzer::runWithSentence() is requred to be unique on segmentation/POS,
  * while \e MeCab::Tagger::nextNode() gives results differing in segementation, POS, base form, reading, etc,
@@ -32,6 +36,9 @@ namespace
  * To avoid calling it forever, limit the maximum count to be (N * NBEST_LIMIT_SCALE_FACTOR).
  */
 const int NBEST_LIMIT_SCALE_FACTOR = 100;
+
+/** The limit size for parse input. */
+const unsigned int LIMIT_PARSE_LENGTH = 8192;
 
 /**
  * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to append morpheme to list. 
@@ -57,91 +64,85 @@ private:
 };
 
 /**
- * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to output morpheme to string. 
+ * In JMA_Analyzer::iterateSentence(), used as SentenceProcessor to append sentence to list. 
  */
-class MorphemeToString
+class SentenceToList
 {
 public:
     /**
      * Constructor.
-     * \param str the string to output
-     * \param isPOS whether output POS
-     * \param posDelimiter the delimiter between word and POS tag
-     * \param wordDelimiter the delimiter between each pair consisting of word and POS tag
+     * \param list the sentence list
      */
-    MorphemeToString(std::string& str, bool isPOS, const char* posDelimiter, const char* wordDelimiter)
-        :buffer_(str), isPOS_(isPOS) , posDelimiter_(posDelimiter), wordDelimiter_(wordDelimiter) {}
+    SentenceToList(vector<jma::Sentence>& list) :sentList_(list) {}
 
     /**
-     * The process method outputs morpheme to string.
-     * \param morp the morpheme to output
+     * The process method appends sentence to list.
+     * \param str the sentence string to append
      */
-    void process(const jma::Morpheme& morp)
-    {
-        buffer_ += morp.lexicon_;
-        if(isPOS_) {
-            buffer_ += posDelimiter_;
-            buffer_ += morp.posStr_;
-        }
-        buffer_ += wordDelimiter_;
+    void process(const char* str) {
+        assert(str);
+
+        sentList_.push_back(jma::Sentence());
+        sentList_.back().setString(str);
     }
 
 private:
-    /** the string buffer to output */
-    std::string& buffer_;
-
-    /** whether output POS */
-    bool isPOS_;
-
-    /** the delimiter between word and POS tag */
-    const char* posDelimiter_;
-
-    /** the delimiter between each pair consisting of word and POS tag */
-    const char* wordDelimiter_;
+    /** the sentence list */
+    vector<jma::Sentence>& sentList_;
 };
 
 /**
- * In JMA_Analyzer::iterateNode(), used as MorphemeProcessor to output morpheme to stream. 
+ * In JMA_Analyzer::iterateSentence(), used as SentenceProcessor to analyze each sentence and append the analysis result to buffer. 
  */
-class MorphemeToStream
+class SentenceToAnalyzerBuffer
 {
 public:
     /**
      * Constructor.
-     * \param ost the output stream
-     * \param isPOS whether output POS
-     * \param posDelimiter the delimiter between word and POS tag
-     * \param wordDelimiter the delimiter between each pair consisting of word and POS tag
+     * \param analyzer the sentence analyzer
+     * \param buf the result buffer
      */
-    MorphemeToStream(std::ostream& ost, bool isPOS, const char* posDelimiter, const char* wordDelimiter)
-        :ost_(ost), isPOS_(isPOS) , posDelimiter_(posDelimiter), wordDelimiter_(wordDelimiter) {}
+    SentenceToAnalyzerBuffer(jma::JMA_Analyzer& analyzer, string& buf)
+        :analyzer_(analyzer), buffer_(buf) {}
 
     /**
-     * The process method outputs morpheme to stream.
-     * \param morp the morpheme to output
+     * The process method analyzes sentence to buffer.
+     * \param str the sentence string
      */
-    void process(const jma::Morpheme& morp)
-    {
-        ost_ << morp.lexicon_;
-        if(isPOS_) {
-            ost_ << posDelimiter_ << morp.posStr_;
+    void process(const char* str) {
+        assert(str);
+
+        jma::Sentence sentence(str);
+        analyzer_.runOneBest(sentence);
+
+        // get result only if it exists
+        if(sentence.getListSize()) {
+            assert(sentence.getListSize() == 1 && "one best analyze should contain only one result");
+
+            int index = 0;
+            bool isPOS = analyzer_.isOutputPOS();
+            const char* posDelim = analyzer_.getPOSDelimiter();
+            const char* wordDelim = analyzer_.getWordDelimiter();
+
+            for(int j=0; j<sentence.getCount(index); ++j) {
+                buffer_ += sentence.getLexicon(index, j);
+                if(isPOS) {
+                    buffer_ += posDelim;
+                    buffer_ += sentence.getStrPOS(index, j);
+                }
+                buffer_ += wordDelim;
+            }
         }
-        ost_ << wordDelimiter_;
     }
 
 private:
-    /** the output stream */
-    std::ostream& ost_;
+    /** the sentence analyzer */
+    jma::JMA_Analyzer& analyzer_;
 
-    /** whether output POS */
-    bool isPOS_;
-
-    /** the delimiter between word and POS tag */
-    const char* posDelimiter_;
-
-    /** the delimiter between each pair consisting of word and POS tag */
-    const char* wordDelimiter_;
+    /** the result buffer */
+    string& buffer_;
 };
+
 }
 
 namespace jma
@@ -280,83 +281,17 @@ int JMA_Analyzer::runWithSentence(Sentence& sentence)
 {
     assert(knowledge_ && knowledge_->getCType() && tagger_);
 
-    bool printPOS = isOutputPOS();
-    int N = (int)getOption(Analyzer::OPTION_TYPE_NBEST);
-    const int maxCount = N * NBEST_LIMIT_SCALE_FACTOR;
+    int N = static_cast<int>(getOption(Analyzer::OPTION_TYPE_NBEST));
+    assert(N > 0 && "the nbest option should be positive");
 
-    string retStr = knowledge_->getCType()->replaceSpaces(sentence.getString(), ' ');
-    const char* strPtr =  retStr.c_str();
-
-    //one best
-    if(N <= 1)
+    if(N == 1)
     {
-        const MeCab::Node* bosNode = tagger_->parseToNode( strPtr );
-        MorphemeList list;
-        MorphemeToList processor(list);
-        iterateNode(bosNode, processor);
-
-        // ignore empty result
-        if(! list.empty())
-            sentence.addList(list, 1.0);
+        runOneBest(sentence);
     }
-    // N-best
     else
     {
-        double totalScore = 0;
-
-        if( !tagger_->parseNBestInit( strPtr ) )
-        {
-            cerr << "[Error] Cannot parseNBestInit on the " << strPtr << endl;
+        if(! runNBest(sentence, N))
             return 0;
-        }
-
-        long base = 0;
-        // j to count steps to avoid iterating forever
-        for (int j=0; sentence.getListSize()<N && j<maxCount; ++j)
-        {
-            const MeCab::Node* bosNode = tagger_->nextNode();
-            if( !bosNode )
-                break;
-            MorphemeList list;
-            MorphemeToList processor(list);
-            iterateNode(bosNode, processor);
-
-            // ignore empty result
-            if(list.empty())
-                continue;
-
-            bool isDupl = false;
-            //check the current result with exits results
-            for( int listOffset = sentence.getListSize() - 1 ; listOffset >= 0; --listOffset )
-            {
-                if( isSameMorphemeList( sentence.getMorphemeList(listOffset), &list, printPOS ) )
-                {
-                    isDupl = true;
-                    break;
-                }
-            }
-            //ignore the duplicate results
-            if( isDupl )
-                continue;
-
-            long score = tagger_->nextScore();
-            if( sentence.getListSize() == 0 )
-            {
-                if(score > 0 )
-                    base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
-                else
-                    base = score - BASE_NBEST_SCORE;
-            }
-
-            double dScore = 1.0 / (score - base );
-            totalScore += dScore;
-            sentence.addList( list, dScore );
-        }
-
-        for ( int j = 0; j < sentence.getListSize(); ++j )
-        {
-            sentence.setScore(j, sentence.getScore(j) / totalScore );
-        }
     }
 
     return 1;
@@ -367,12 +302,9 @@ const char* JMA_Analyzer::runWithString(const char* inStr)
     assert(knowledge_ && knowledge_->getCType() && tagger_);
     assert(inStr);
 
-    string retStr = knowledge_->getCType()->replaceSpaces(inStr, ' ');
-    const MeCab::Node* bosNode = tagger_->parseToNode(retStr.c_str());
-
     strBuf_.clear();
-    MorphemeToString processor(strBuf_, isOutputPOS(), posDelimiter_, wordDelimiter_);
-    iterateNode(bosNode, processor);
+    SentenceToAnalyzerBuffer processor(*this, strBuf_);
+    iterateSentence(inStr, processor);
 
     return strBuf_.c_str();
 }
@@ -398,17 +330,9 @@ int JMA_Analyzer::runWithStream(const char* inFileName, const char* outFileName)
     }
 
     string line;
-    while (getline(in, line)) {
-        string retStr = knowledge_->getCType()->replaceSpaces(line.c_str(), ' ');
-        const MeCab::Node* bosNode = tagger_->parseToNode(retStr.c_str());
+    while(getline(in, line))
+        out << runWithString(line.c_str()) << endl;
 
-        MorphemeToStream processor(out, isOutputPOS(), posDelimiter_, wordDelimiter_);
-        iterateNode(bosNode, processor);
-        out << endl;
-    }
-
-    in.close();
-    out.close();
     return 1;
 }
 
@@ -417,47 +341,8 @@ void JMA_Analyzer::splitSentence(const char* paragraph, std::vector<Sentence>& s
     assert(knowledge_ && knowledge_->getCType());
     assert(paragraph);
 
-    Sentence result;
-    string sentenceStr;
-    CTypeTokenizer tokenizer( knowledge_->getCType() );
-    tokenizer.assign(paragraph);
-    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
-    {
-        if( knowledge_->isSentenceSeparator(p) )
-        {
-            sentenceStr += p;
-
-            result.setString(sentenceStr.c_str());
-            sentences.push_back(result);
-
-            sentenceStr.clear();
-        }
-        /*// white-space characters are also used as sentence separator,
-        // but they are ignored in the sentence result
-        else if(ctype_->isSpace(p))
-        {
-            if(! sentenceStr.empty())
-            {
-                result.setString(sentenceStr.c_str());
-                sentences.push_back(result);
-
-                sentenceStr.clear();
-            }
-        }*/
-        else
-        {
-            sentenceStr += p;
-        }
-    }
-
-    // in case the last character is not space or sentence separator
-    if(! sentenceStr.empty())
-    {
-        result.setString(sentenceStr.c_str());
-        sentences.push_back(result);
-
-        sentenceStr.clear();
-    }
+    SentenceToList processor(sentences);
+    iterateSentence(paragraph, processor);
 }
 
 void JMA_Analyzer::getFeatureStr(const char* featureList, int featureOffset, std::string& retVal) const
@@ -569,7 +454,8 @@ MeCab::Node* JMA_Analyzer::combineNode(MeCab::Node* startNode, Morpheme& result)
     return node;
 }
 
-template<class MorphemeProcessor> void JMA_Analyzer::iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const
+template<class MorphemeProcessor>
+void JMA_Analyzer::iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const
 {
     Morpheme morp;
     bool isDecompose = isDecomposeUserNound();
@@ -661,6 +547,210 @@ bool JMA_Analyzer::isFilter(const Morpheme& morph) const
         return true;
 
     return false;
+}
+
+template<class SentenceProcessor>
+void JMA_Analyzer::iterateSentence(const char* paragraph, SentenceProcessor& processor)
+{
+    assert(paragraph);
+
+    string sentenceStr;
+    CTypeTokenizer tokenizer(knowledge_->getCType());
+    tokenizer.assign(paragraph);
+
+    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
+    {
+        if(knowledge_->isSentenceSeparator(p))
+        {
+            sentenceStr += p;
+
+            processor.process(sentenceStr.c_str());
+            sentenceStr.clear();
+        }
+        else
+        {
+            sentenceStr += p;
+        }
+    }
+
+    // in case the last character is not sentence separator
+    if(! sentenceStr.empty())
+    {
+        processor.process(sentenceStr.c_str());
+        sentenceStr.clear();
+    }
+}
+
+void JMA_Analyzer::splitLimitSize(const char* str, std::vector<std::string>& limitStrVec, unsigned int limitSize) const
+{
+    string limitStr;
+    CTypeTokenizer tokenizer(knowledge_->getCType());
+    tokenizer.assign(str);
+    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
+    {
+        // white-space characters are removed
+        if(knowledge_->getCType()->isSpace(p))
+        {
+            continue;
+        }
+        else if(limitStr.length() + strlen(p) >= limitSize)
+        {
+            limitStrVec.push_back(limitStr);
+            limitStr.clear();
+        }
+        else
+        {
+            limitStr += p;
+        }
+
+    }
+
+    // the rest characters
+    if(! limitStr.empty())
+    {
+        limitStrVec.push_back(limitStr);
+        limitStr.clear();
+    }
+}
+
+void JMA_Analyzer::runOneBest(Sentence& sentence) const
+{
+    vector<string> limitStrVec;
+    splitLimitSize(sentence.getString(), limitStrVec, LIMIT_PARSE_LENGTH);
+
+    MorphemeList list;
+    MorphemeToList processor(list);
+
+    for(vector<string>::const_iterator it=limitStrVec.begin(); it!=limitStrVec.end(); ++it)
+    {
+        const MeCab::Node* bosNode = tagger_->parseToNode(it->c_str());
+        iterateNode(bosNode, processor);
+    }
+
+    // ignore empty result
+    if(! list.empty())
+        sentence.addList(list, 1.0);
+}
+
+bool JMA_Analyzer::runNBest(Sentence& sentence, int nbest) const
+{
+    assert(nbest > 1);
+
+    vector<string> limitStrVec;
+    splitLimitSize(sentence.getString(), limitStrVec, LIMIT_PARSE_LENGTH);
+
+    bool isPOS = isOutputPOS();
+    const int maxCount = nbest * NBEST_LIMIT_SCALE_FACTOR;
+
+    // nbest result for whole input
+    vector<MorphemeList> totalNBestVec;
+    vector<double> totalScoreVec;
+
+    for(vector<string>::const_iterator it=limitStrVec.begin(); it!=limitStrVec.end(); ++it)
+    {
+        if(!tagger_->parseNBestInit(it->c_str()))
+        {
+            cerr << "error: fail to init nbest analyze on string: " << *it << endl;
+            return false;
+        }
+
+        // nbest result for each buffer
+        vector<MorphemeList> limitNBestVec;
+        vector<double> limitScoreVec;
+        long base = 0;
+        // j to count steps to avoid iterating forever
+        for (int j=0; limitNBestVec.size()<static_cast<unsigned int>(nbest) && j<maxCount; ++j)
+        {
+            const MeCab::Node* bosNode = tagger_->nextNode();
+            if( !bosNode )
+                break;
+
+            MorphemeList list;
+            MorphemeToList processor(list);
+            iterateNode(bosNode, processor);
+
+            // ignore empty result
+            if(list.empty())
+                continue;
+
+            bool isDupl = false;
+            // check the current result with previous results
+            for(vector<MorphemeList>::const_reverse_iterator rit=limitNBestVec.rbegin(); rit<limitNBestVec.rend(); ++rit)
+            {
+                if(isSameMorphemeList(&*rit, &list, isPOS))
+                {
+                    isDupl = true;
+                    break;
+                }
+            }
+            // ignore the duplicate results
+            if(isDupl)
+                continue;
+
+            long score = tagger_->nextScore();
+            if(limitNBestVec.empty())
+            {
+                if(score > 0 )
+                    base = score > BASE_NBEST_SCORE ? score - BASE_NBEST_SCORE : 0;
+                else
+                    base = score - BASE_NBEST_SCORE;
+            }
+
+            double dScore = 1.0 / (score - base );
+            limitNBestVec.push_back(MorphemeList());
+            limitNBestVec.back().swap(list);
+            limitScoreVec.push_back(dScore);
+        }
+        assert(limitNBestVec.size() && "the nbest limit results should not be empty");
+        assert(limitNBestVec.size() == limitScoreVec.size() && "the size of nbest and score limit results should be equal");
+
+        // concatenate buffer result to whole result
+        if(totalNBestVec.empty())
+        {
+            totalNBestVec.swap(limitNBestVec);
+            totalScoreVec.swap(limitScoreVec);
+        }
+        else
+        {
+            const unsigned int totalSize = totalNBestVec.size();
+            const unsigned int limitSize = limitNBestVec.size();
+
+            // append 1st candidate until total size and limit size are equal
+            if(totalSize < limitSize)
+            {
+                totalNBestVec.insert(totalNBestVec.end(), limitSize-totalSize, totalNBestVec.front());
+                totalScoreVec.insert(totalScoreVec.end(), limitSize-totalSize, totalScoreVec.front());
+            }
+            else if(limitSize < totalSize)
+            {
+                limitNBestVec.insert(limitNBestVec.end(), totalSize-limitSize, limitNBestVec.front());
+                limitScoreVec.insert(limitScoreVec.end(), totalSize-limitSize, limitScoreVec.front());
+            }
+
+            // concatenate limit to total
+            const unsigned int newTotalSize = totalNBestVec.size();
+            assert(limitNBestVec.size() == newTotalSize && totalScoreVec.size() == newTotalSize
+                    && limitScoreVec.size() == newTotalSize && "the size of total and limit nbest results should be equal");
+            for(unsigned int i=0; i<newTotalSize; ++i)
+            {
+                totalNBestVec[i].insert(totalNBestVec[i].end(), limitNBestVec[i].begin(), limitNBestVec[i].end());
+                totalScoreVec[i] += limitScoreVec[i];
+            }
+        }
+    }
+    assert(totalNBestVec.size() == totalScoreVec.size() && "the size of nbest and score total results should be equal");
+
+    double totalScore = 0;
+    for(unsigned int i=0; i<totalScoreVec.size(); ++i)
+        totalScore += totalScoreVec[i];
+    // normalize denominator
+    if(totalScore == 0)
+        totalScore = 1;
+
+    for(unsigned int i=0; i<totalNBestVec.size(); ++i)
+        sentence.addList(totalNBestVec[i], totalScoreVec[i]/totalScore);
+
+    return true;
 }
 
 } // namespace jma

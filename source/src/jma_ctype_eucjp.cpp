@@ -60,34 +60,4 @@ bool JMA_CType_EUCJP::isSpace(const char* p) const
     return false;
 }
 
-string JMA_CType_EUCJP::replaceSpaces(const char* str, char replacement)
-{
-	unsigned char replace = (unsigned char)replacement;
-	const unsigned char* uc = (const unsigned char*)str;
-	string ret(str);
-	unsigned char* c2 = (unsigned char*)ret.data();
-
-    const unsigned int length = ret.size();
-    for(unsigned int i=0; i<length;)
-	{
-		if(uc[i] < 0x80)
-		{
-			if(isspace(uc[i]))
-				c2[i] = replace;
-            ++i;
-		}
-		else
-		{
-			//full-width space in EUC-JP
-			if(uc[i] == 0xa1 && uc[i+1] == 0xa1)
-			{
-				c2[i] = c2[i+1] = replace;
-			}
-			i += 2;
-		}
-	}
-
-	return ret;
-}
-
 }

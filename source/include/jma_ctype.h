@@ -53,14 +53,6 @@ public:
     virtual bool isSpace(const char* p) const = 0;
 
     /**
-     * Replace space characters with replacement character
-     * \param str the input string
-     * \param replacement the character to replace the space characters
-     * \return the output string
-     */
-    virtual string replaceSpaces(const char* str, char replacement) = 0;
-
-    /**
      * Get the number of the characters in the p
      * \param p pointer to the string to be checked
      * \return the number of the characters in the p

@@ -36,6 +36,8 @@
 using namespace std;
 using namespace jma;
 
+//#define IS_PAUSE
+
 namespace
 {
     /** command options */
@@ -118,6 +120,7 @@ void testWithString(Analyzer* analyzer)
     string line;
     while(getline(cin, line))
     {
+        line += "\nbbb";
         cout << endl << "result:" << endl << analyzer->runWithString(line.c_str()) << endl;
         cout << endl << "please input string ended with newline:" << endl;
     }
@@ -289,6 +292,12 @@ int main(int argc, char* argv[])
         double dif = (double)(etime - stime) / CLOCKS_PER_SEC;
         cout << "knowledge loading time: " << dif << endl;
 
+#ifdef IS_PAUSE
+        char ch;
+        cout << "before analyze..." << endl;
+        cin >> ch;
+#endif
+
         testWithStream(analyzer, argv[2], argv[3]);
 
         dif = (double)(clock() - etime) / CLOCKS_PER_SEC;
@@ -304,9 +313,20 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+#ifdef IS_PAUSE
+    char ch;
+    cout << "before destroy..." << endl;
+    cin >> ch;
+#endif
+
     // destroy instances
     delete knowledge;
     delete analyzer;
+
+#ifdef IS_PAUSE
+    cout << "after destroy..." << endl;
+    cin >> ch;
+#endif
 
     return 0;
 }

@@ -15,9 +15,6 @@
 #include "pos_table.h"
 #include "mecab.h" // MeCab::Node, Tagger
 
-/** Base N-Best Score */
-#define BASE_NBEST_SCORE 200
-
 namespace jma
 {
 
@@ -88,6 +85,32 @@ public:
      */
     virtual std::string convertCharacters(const char* str) const;
 
+    /**
+     * Check whether output POS.
+     * \return true for output POS, false for not to output POS.
+     */
+    bool isOutputPOS() const;
+
+    /**
+     * Execute the one-best morphological analysis based on a sentence.
+     * \param sentence the instance containing the raw sentence string and also to save the analysis result
+     * \pre the raw sentence string could be got by \e sentence.getString().
+     * \post on return, the one-best result could be got by \e sentence.getListSize(), etc.
+     * \attention white-space characters are ignored in the analysis, which include " \t\n\v\f\r", and also space character in specific encoding.
+     */
+    void runOneBest(Sentence& sentence) const;
+
+    /**
+     * Execute the n-best morphological analysis based on a sentence.
+     * \param sentence the instance containing the raw sentence string and also to save the analysis result
+     * \param nbest the n-best value, which is at least 2
+     * \return true for success, false for fail
+     * \pre the raw sentence string could be got by \e sentence.getString().
+     * \post on successful return, the n-best results could be got by \e sentence.getListSize(), etc.
+     * \attention white-space characters are ignored in the analysis, which include " \t\n\v\f\r", and also space character in specific encoding.
+     */
+    bool runNBest(Sentence& sentence, int nbest) const;
+
 private:
     /**
      * Get feature string from list.
@@ -107,12 +130,6 @@ private:
      * \return true for alphabet format such like "NP-S", false for Japanese format such like "名詞,固有名詞,人名,姓"
      */
     bool isPOSFormatAlphabet() const;
-
-    /**
-     * Check whether output POS.
-     * \return true for output POS, false for not to output POS.
-     */
-    bool isOutputPOS() const;
 
     /**
      * Check whether combine into compound words.
@@ -150,9 +167,16 @@ private:
     /**
      * Iterate MeCab nodes from the node next to \e bosNode, and until the node before and excluding the last node.
      * \param bosNode the node as the begin of sentence
-     * \param processor the morpheme processor, in iteration, its method \e process() would be called with parameter \e Moepheme for each node
+     * \param processor the morpheme processor, in iteration, its method \e process(const Morpheme& morp) would be called for each morpheme node
      */
     template<class MorphemeProcessor> void iterateNode(const MeCab::Node* bosNode, MorphemeProcessor& processor) const;
+
+    /**
+     * Iterate sentences in a paragraph string.
+     * \param paragraph paragraph string
+     * \param processor the sentence processor, in iteration, its method \e process(const char* str) would be called for each sentence string
+     */
+    template<class SentenceProcessor> void iterateSentence(const char* paragraph, SentenceProcessor& processor);
 
     /**
      * Check whether to filter out the morpheme.
@@ -161,6 +185,14 @@ private:
      */
     bool isFilter(const Morpheme& morph) const;
 
+    /**
+     * Split string into each string with limit size, please note that white-space characters are removed in the split result.
+     * \param str the string to split
+     * \param limitStrVec the string vector, each string is in limit size without white-space characters
+     * \param limitSize the limit size
+     */
+    void splitLimitSize(const char* str, std::vector<std::string>& limitStrVec, unsigned int limitSize) const;
+
 private:
     /** hold the JMA_Knowledge Object */
     JMA_Knowledge* knowledge_;
@@ -168,6 +200,7 @@ private:
     /** the tagger from Mecab (created by JMA_Knowledge, owned by JMA_Analyzer) */
     MeCab::Tagger* tagger_;
 
+    /** the string buffer used in \e runWithString() */
     std::string strBuf_;
 
     /** POS table for POS string and index code */

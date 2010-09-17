@@ -163,49 +163,14 @@ bool JMA_CType_UTF8::isSpace(const char* p) const
     if(uc[0] < 0x80)
         return isspace(uc[0]); // check by std library
 
-    //full-width space in UTF-8
-    if(getByteCount(p) == 3 && uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80)
+    if(getByteCount(p) == 3)
+    {
+       if((uc[0] == 0xE3 && uc[1] == 0x80 && uc[2] == 0x80) // UTF-8 full-width space
+               || (uc[0] == 0xEF && uc[1] == 0xBB && uc[2] == 0xBF)) // UTF-8 byte-order mark
         return true;
+    }
 
     return false;
-}
-
-string JMA_CType_UTF8::replaceSpaces(const char* str, char replacement)
-{
-	unsigned char replace = (unsigned char)replacement;
-	const unsigned char* uc = (const unsigned char*)str;
-	string ret(str);
-	unsigned char* c2 = (unsigned char*)ret.data();
-
-    const unsigned int length = ret.size();
-    for(unsigned int i=0; i<length;)
-	{
-		if(uc[i] < 0x80)
-		{
-			if(isspace(uc[i]))
-				c2[i] = replace;
-
-			++i;
-		}
-        else
-        {
-            int bytesCount = getByteCount((const char*)uc);
-
-            //full-width space in UTF-8
-            if(bytesCount == 3)
-            {
-                if((uc[i] == 0xE3 && uc[i+1] == 0x80 && uc[i+2] == 0x80) ||
-                        (uc[i] == 0xEF && uc[i+1] == 0xBB && uc[i+2] == 0xBF))
-                {
-                    c2[i] = c2[i+1] = c2[i+2] = replace;
-                }
-            }
-
-            i += bytesCount;
-        }
-	}
-
-	return ret;
 }
 
 } // namespace jma

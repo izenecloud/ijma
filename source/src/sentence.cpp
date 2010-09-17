@@ -111,9 +111,10 @@ int Sentence::getOneBestIndex(void) const
     return std::max_element(scores_.begin(), scores_.end()) - scores_.begin();
 }
 
-void Sentence::addList(const MorphemeList& morphemeList, double score)
+void Sentence::addList(MorphemeList& morphemeList, double score)
 {
-    candidates_.push_back(morphemeList);
+    candidates_.push_back(MorphemeList());
+    candidates_.back().swap(morphemeList);
     scores_.push_back(score);
 }
 
