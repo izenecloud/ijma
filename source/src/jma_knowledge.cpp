@@ -309,7 +309,9 @@ MeCab::Tagger* JMA_Knowledge::createTagger() const
 
     if(hasUserDict())
     {
-        assert(! binUserDic_.empty() && "the binary user dictionary in memory should have been created by JMA_Knowledge::compileUserDict()");
+        // ensure binary user dictionary exists
+        if(binUserDic_.empty())
+            return 0;
 
         // append the name of user dictionary binary file to the parameter of tagger creation
         taggerParam += " -u ";

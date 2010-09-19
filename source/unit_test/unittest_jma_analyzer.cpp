@@ -1,4 +1,4 @@
-/** \file unittest_jma_analyzer.cpp
+﻿/** \file unittest_jma_analyzer.cpp
  * Unit test of class JMA_Analyzer.
  * 
  * \author Jun Jiang
@@ -32,10 +32,10 @@ protected:
 
         knowledge_->setSystemDict(TEST_JMA_DEFAULT_SYSTEM_DICT);
         knowledge_->addUserDict(TEST_JMA_DEFAULT_USER_DICT);
-        EXPECT_EQ(1, knowledge_->loadDict());
+        ASSERT_EQ(1, knowledge_->loadDict());
         EXPECT_EQ(Knowledge::ENCODE_TYPE_UTF8, knowledge_->getEncodeType());
 
-        EXPECT_EQ(1, analyzer_->setKnowledge(knowledge_));
+        ASSERT_EQ(1, analyzer_->setKnowledge(knowledge_));
     }
 
     virtual void TearDown() {

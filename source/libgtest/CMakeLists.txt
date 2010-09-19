@@ -27,7 +27,8 @@ endif()
 # ${gtest_BINARY_DIR}.
 # Language "C" is required for find_package(Threads).
 project(gtest CXX C)
-cmake_minimum_required(VERSION 2.6.4)
+#cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -307,7 +308,8 @@ if (build_all_gtest_tests)
   cxx_executable_with_flags(gtest_dll_test_ "${cxx_use_shared_gtest}"
     gtest_dll test/gtest_all_test.cc)
 
-  if (NOT(MSVC AND (MSVC_VERSION EQUAL 1600)))
+  #if (NOT(MSVC AND (MSVC_VERSION EQUAL 1600)))
+  if (NOT MSVC OR MSVC_VERSION NOT EQUAL 1600)
     # The C++ Standard specifies tuple_element<int, class>.
     # Yet MSVC 10's <utility> declares tuple_element<size_t, class>.
     # That declaration conflicts with our own standard-conforming

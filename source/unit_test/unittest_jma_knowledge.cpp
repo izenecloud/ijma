@@ -1,4 +1,4 @@
-/** \file unittest_jma_knowledge.cpp
+﻿/** \file unittest_jma_knowledge.cpp
  * Unit test of class JMA_Knowledge.
  * 
  * \author Jun Jiang
@@ -22,7 +22,7 @@ using namespace jma;
 using namespace std;
 using namespace MeCab;
 
-class JMA_KnowledgeTest : public ::testing::Test
+class JMA_Knowledge_Test : public ::testing::Test
 {
 protected:
     virtual void SetUp() {
@@ -76,7 +76,7 @@ protected:
     JMA_Knowledge* knowledge_;
 };
 
-TEST_F(JMA_KnowledgeTest, getValueDefault) {
+TEST_F(JMA_Knowledge_Test, getValueDefault) {
     EXPECT_FALSE(knowledge_->isStopWord("aaa"));
     EXPECT_TRUE(knowledge_->isKeywordPOS(0));
     EXPECT_TRUE(knowledge_->createTagger() == NULL);
@@ -103,7 +103,7 @@ TEST_F(JMA_KnowledgeTest, getValueDefault) {
     EXPECT_EQ(0u, decompMap.size());
 }
 
-TEST_F(JMA_KnowledgeTest, loadFail) {
+TEST_F(JMA_Knowledge_Test, loadFail) {
     EXPECT_EQ(0, knowledge_->loadDict());
     EXPECT_EQ(0, knowledge_->loadStopWordDict("aaa"));
 
@@ -115,11 +115,11 @@ TEST_F(JMA_KnowledgeTest, loadFail) {
     EXPECT_EQ(0, knowledge_->encodeSystemDict(TEST_JMA_DEFAULT_SYSTEM_DICT_SOURCE, "eee", Knowledge::ENCODE_TYPE_UTF8));
 }
 
-TEST_F(JMA_KnowledgeTest, loadDict) {
+TEST_F(JMA_Knowledge_Test, loadDict) {
     loadDictTest();
 }
 
-TEST_F(JMA_KnowledgeTest, loadDictMultiTimes) {
+TEST_F(JMA_Knowledge_Test, loadDictMultiTimes) {
     string strSysDict(TEST_JMA_DEFAULT_SYSTEM_DICT);
     strSysDict += "/../bin_eucjp";
     knowledge_->setSystemDict(strSysDict.c_str());
@@ -134,13 +134,13 @@ TEST_F(JMA_KnowledgeTest, loadDictMultiTimes) {
     loadDictTest();
 }
 
-TEST_F(JMA_KnowledgeTest, loadStopWordDict) {
+TEST_F(JMA_Knowledge_Test, loadStopWordDict) {
     EXPECT_EQ(1, knowledge_->loadStopWordDict(TEST_JMA_DEFAULT_STOPWORD_DICT));
     EXPECT_TRUE(knowledge_->isStopWord("が"));
     EXPECT_FALSE(knowledge_->isStopWord("A"));
 }
 
-TEST_F(JMA_KnowledgeTest, setKeywordPOS) {
+TEST_F(JMA_Knowledge_Test, setKeywordPOS) {
     knowledge_->setSystemDict(TEST_JMA_DEFAULT_SYSTEM_DICT);
     EXPECT_EQ(1, knowledge_->loadDict());
 
