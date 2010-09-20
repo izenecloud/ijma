@@ -270,12 +270,6 @@ int main(int argc, char* argv[])
     // decompose user defined compound into nouns
     //analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, 1);
 
-    // convert from Katakana to Hiragana
-    //analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_HIRAGANA, 1);
-
-    // convert from Hiragana to Katakana
-    //analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_KATAKANA, 1);
-
     switch(optionIndex)
     {
     case 0:

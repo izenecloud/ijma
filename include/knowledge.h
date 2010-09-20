@@ -71,6 +71,7 @@ public:
      * The words in this file are ignored in the morphological analysis result.
      * \param fileName the file name
      * \return 0 for fail, 1 for success
+     * \attention The encoding type of this file should be the same to the encoding type of system dictioanry loaded.
      */
     virtual int loadStopWordDict(const char* fileName) = 0;
 
