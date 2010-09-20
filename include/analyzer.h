@@ -33,7 +33,7 @@ class Sentence;
  *
  * // load dictionaries (optional)
  * knowledge->setSystemDict("...");
- * knowledge->addUserDict("...");
+ * knowledge->addUserDict("...", Knowledge::ENCODE_TYPE_***);
  * knowledge->loadDict();
  * knowledge->loadStopWordDict("...");
  *

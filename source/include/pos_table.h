@@ -107,6 +107,7 @@ public:
     /**
      * From POS index code, get POS string in specific format.
      * \param index the POS index code
+     * \param format the POS string format
      * \return POS string, if non POS is available, the empty string is returned.
      */
     const char* getPOS(int index, POSFormat format = POS_FORMAT_DEFAULT) const;

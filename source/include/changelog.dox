@@ -1,0 +1,21 @@
+/**
+ * @page changelog Change Log
+ *
+ * @section log_20100920_jun 2010-10-20 Jun
+ *
+ * - iJMA v2.0 released with below interface update.
+ * - \b Knowledge::setKnowledge() returns \b int for whether is successful.
+ * - \b Knowledge::setKeywordPOS() is added.
+ * - \b Knowledge::setEncodeType() is removed as encoding type is set automatically in \b Knowledge::loadDict().
+ * - \b Knowledge::loadSentenceSeparatorConfig() is removed as it is loaded automatically in \b Knowledge::loadDict().
+ * - \b Knowledge::addUserDict(const char* fileName, EncodeType type) is added a parameter \b type for encoding type of user dictionary file.
+ * - \b Knowledge::encodeSystemDict(const char* txtDirPath, const char* binDirPath, EncodeType binEncodeType) is added a parameter \b binEncodeType for encoding type of binary dictionary.
+ * - \b Analyzer::convertCharacters() is added.
+ * - \b Analyzer::convertToHiragana() and \b Analyzer::convertToKatakana() are removed.
+ * - \b Analyzer::OptionType is updated with more option types.
+ * - \b Sentence::getNormForm() is added.
+ *
+ * @section log_20090930_jun 2009-09-30 Jun
+ *
+ * - iJMA v1.0 released
+ */
