@@ -1,3 +1,5 @@
-<area shape="rect" href="$classjma_1_1JMA__CType__EUCJP.html" title="jma::JMA_CType_EUCJP" alt="" coords="5,80,176,107">
-<area shape="rect" href="$classjma_1_1JMA__CType__SJIS.html" title="jma::JMA_CType_SJIS" alt="" coords="200,80,357,107">
-<area shape="rect" href="$classjma_1_1JMA__CType__UTF8.html" title="JMA_CType_UTF8 gives the character type information in UTF&#45;8 encoding." alt="" coords="381,80,541,107">
+<map id="G" name="G">
+<area shape="rect" href="$classjma_1_1JMA__CType__EUCJP.html" title="jma::JMA_CType_EUCJP" alt="" coords="5,83,176,112"/>
+<area shape="rect" href="$classjma_1_1JMA__CType__SJIS.html" title="jma::JMA_CType_SJIS" alt="" coords="200,83,357,112"/>
+<area shape="rect" href="$classjma_1_1JMA__CType__UTF8.html" title="JMA_CType_UTF8 gives the character type information in UTF&#45;8 encoding." alt="" coords="381,83,541,112"/>
+</map>

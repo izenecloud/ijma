@@ -1,18 +1,11 @@
-<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="392,155,512,181">
-<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="23,229,108,256">
-<area shape="rect" href="$dictionary_8h.html" title="dictionary.h" alt="" coords="965,80,1053,107">
-<area shape="rect" href="$mecab_8h.html" title="mecab.h" alt="" coords="853,155,925,181">
-<area shape="rect" href="$strutil_8h.html" title="strutil.h" alt="" coords="1599,304,1663,331">
-<area shape="rect" href="$param_8h.html" title="param.h" alt="" coords="1000,229,1067,256">
-<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="375,304,468,331">
-<area shape="rect" href="$generic__array_8h.html" title="generic_array.h" alt="" coords="543,304,652,331">
-<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="529,229,620,256">
-<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="367,229,455,256">
-<area shape="rect" href="$kana__table_8h.html" title="Definition of class KanaTable." alt="" coords="183,229,279,256">
-<area shape="rect" href="$darts_8h.html" title="darts.h" alt="" coords="1103,304,1164,331">
-<area shape="rect" href="$char__property_8h.html" title="char_property.h" alt="" coords="949,155,1059,181">
-<area shape="rect" href="$ucs_8h.html" title="ucs.h" alt="" coords="923,229,976,256">
-<area shape="rect" href="$utils_8h.html" title="utils.h" alt="" coords="1199,229,1255,256">
-<area shape="rect" href="$ucstable_8h.html" title="ucstable.h" alt="" coords="676,304,756,331">
-<area shape="rect" href="$common_8h.html" title="common.h" alt="" coords="1289,304,1372,331">
-<area shape="rect" href="$libmecab_2scoped__ptr_8h.html" title="scoped_ptr.h" alt="" coords="831,304,927,331">
+<map id="G" name="G">
+<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="288,83,408,112"/>
+<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="672,160,757,189"/>
+<area shape="rect" href="$jma__dictionary_8h.html" title="Definition of class JMA_Dictionary." alt="" coords="1448,160,1563,189"/>
+<area shape="rect" href="$tokenizer_8h.html" title="Tokenizer tokenizes a raw input string in specific encoding to a sequence of characters..." alt="" coords="83,83,168,112"/>
+<area shape="rect" href="$file__utils_8h.html" title="Definition of utility functions for file operations." alt="" coords="977,83,1057,112"/>
+<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="271,237,364,267"/>
+<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="24,160,115,189"/>
+<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="459,160,547,189"/>
+<area shape="rect" href="$char__table_8h.html" title="Definition of class CharTable." alt="" coords="344,160,435,189"/>
+</map>

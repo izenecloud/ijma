@@ -1,9 +1,18 @@
-<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="5,80,184,107">
-<area shape="rect" href="$test__encode__sysdict_8cpp.html" title="Test for encoding the system dictionary from text type to binary type." alt="" coords="208,80,443,107">
-<area shape="rect" href="$test__jma__convert__kana_8cpp.html" title="Test to convert Japanese Hiragana and Katakana characters." alt="" coords="467,80,717,107">
-<area shape="rect" href="$test__jma__encoding_8cpp.html" title="Test character encoding &quot;EUC&#45;JP&quot;, &quot;SHIFT&#45;JIS&quot; and &quot;UTF&#45;8&quot;..." alt="" coords="741,80,965,107">
-<area shape="rect" href="$test__jma__factory_8cpp.html" title="Test to create an instance of JMA_Factory." alt="" coords="989,80,1200,107">
-<area shape="rect" href="$test__jma__multithread_8cpp.html" title="Test JMA in multithread environment." alt="" coords="1224,80,1459,107">
-<area shape="rect" href="$test__jma__pos__nbest_8cpp.html" title="Test JMA in Japanese word segmentation with POS tagging analysis, and output the..." alt="" coords="1483,80,1715,107">
-<area shape="rect" href="$test__jma__run_8cpp.html" title="Test JMA in Japanese word segmentation and POS tagging analysis." alt="" coords="1739,80,1928,107">
-<area shape="rect" href="$test__jma__split__sentence_8cpp.html" title="Test sentence split in JMA analysis." alt="" coords="1952,80,2208,107">
+<map id="G" name="G">
+<area shape="rect" href="$ijma_8h.html" title="The header to include all iJMA headers exposed to users." alt="" coords="1651,83,1752,112"/>
+<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="1776,83,1955,112"/>
+<area shape="rect" href="$unittest__jma__factory_8cpp.html" title="Unit test of class JMA_Factory." alt="" coords="1979,83,2240,112"/>
+<area shape="rect" href="$test__encode__sysdict_8cpp.html" title="Test for encoding the system dictionary from text type to binary type." alt="" coords="5,160,240,189"/>
+<area shape="rect" href="$test__jma__compound_8cpp.html" title="Test to combine morphemes into compound." alt="" coords="264,160,496,189"/>
+<area shape="rect" href="$test__jma__convert__kana_8cpp.html" title="Test to convert Japanese Hiragana and Katakana characters." alt="" coords="520,160,771,189"/>
+<area shape="rect" href="$test__jma__encoding_8cpp.html" title="Test character encoding &quot;EUC&#45;JP&quot;, &quot;SHIFT&#45;JIS&quot; and &quot;UTF&#45;8&quot;..." alt="" coords="795,160,1019,189"/>
+<area shape="rect" href="$test__jma__factory_8cpp.html" title="Test to create an instance of JMA_Factory." alt="" coords="1043,160,1253,189"/>
+<area shape="rect" href="$test__jma__keyword__extraction_8cpp.html" title="Test to extract keywords by POS tags." alt="" coords="1277,160,1560,189"/>
+<area shape="rect" href="$test__jma__multithread_8cpp.html" title="Test JMA in multithread environment." alt="" coords="1584,160,1819,189"/>
+<area shape="rect" href="$test__jma__norm_8cpp.html" title="Test to get normalization forms of Japanese words." alt="" coords="1843,160,2043,189"/>
+<area shape="rect" href="$test__jma__pos__nbest_8cpp.html" title="Test JMA in Japanese word segmentation with POS tagging analysis, and output the..." alt="" coords="2067,160,2299,189"/>
+<area shape="rect" href="$test__jma__run_8cpp.html" title="Test JMA in Japanese word segmentation and POS tagging analysis." alt="" coords="2323,160,2512,189"/>
+<area shape="rect" href="$test__jma__split__sentence_8cpp.html" title="Test sentence split in JMA analysis." alt="" coords="2536,160,2792,189"/>
+<area shape="rect" href="$test__jma__stopword_8cpp.html" title="Test to filter stop word." alt="" coords="2816,160,3040,189"/>
+<area shape="rect" href="$test__jma__userdic_8cpp.html" title="Test to load user dictionary." alt="" coords="3064,160,3277,189"/>
+</map>

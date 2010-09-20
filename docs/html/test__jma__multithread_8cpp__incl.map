@@ -1,5 +1,9 @@
-<area shape="rect" href="$jma__factory_8h.html" title="Definition of class JMA_Factory." alt="" coords="5,80,104,107">
-<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="237,80,317,107">
-<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="341,80,435,107">
-<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="128,80,213,107">
-<area shape="rect" href="$test__jma__common_8h.html" title="The header file containing those macro definitions commonly used in test source files..." alt="" coords="509,80,648,107">
+<map id="G" name="G">
+<area shape="rect" href="$ijma_8h.html" title="The header to include all iJMA headers exposed to users." alt="" coords="276,83,332,112"/>
+<area shape="rect" href="$test__jma__common_8h.html" title="The header file containing those macro definitions commonly used in test source files..." alt="" coords="528,83,667,112"/>
+<area shape="rect" href="$file__utils_8h.html" title="Definition of utility functions for file operations." alt="" coords="883,83,963,112"/>
+<area shape="rect" href="$jma__factory_8h.html" title="Definition of class JMA_Factory." alt="" coords="141,160,240,189"/>
+<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="368,160,453,189"/>
+<area shape="rect" href="$analyzer_8h.html" title="Definition of class Analyzer." alt="" coords="264,160,344,189"/>
+<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="24,160,117,189"/>
+</map>

@@ -1,5 +1,7 @@
-<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="100,155,193,181">
-<area shape="rect" href="$generic__array_8h.html" title="generic_array.h" alt="" coords="439,155,548,181">
-<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="17,80,108,107">
-<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="353,80,441,107">
-<area shape="rect" href="$kana__table_8h.html" title="Definition of class KanaTable." alt="" coords="183,80,279,107">
+<map id="G" name="G">
+<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="79,160,172,189"/>
+<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="19,83,109,112"/>
+<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="299,83,387,112"/>
+<area shape="rect" href="$char__table_8h.html" title="Definition of class CharTable." alt="" coords="184,83,275,112"/>
+<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="461,83,547,112"/>
+</map>
