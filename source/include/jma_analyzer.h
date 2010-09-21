@@ -189,9 +189,32 @@ private:
      * Split string into each string with limit size, please note that white-space characters are removed in the split result.
      * \param str the string to split
      * \param limitStrVec the string vector, each string is in limit size without white-space characters
-     * \param limitSize the limit size
+     * \param limitSize the limit size, each splitted string size should be less than this size
      */
     void splitLimitSize(const char* str, std::vector<std::string>& limitStrVec, unsigned int limitSize) const;
+
+    /**
+     * Validate the correctness of sentence result.
+     * It combines the morpheme lexicons for each candidate result, and compares it with the original sentence string,
+     * the comparison result should be the same, otherwise some morphemem is lost in the analysis process.
+     * \param sentence the sentence result
+     * \return true for success, false for failure
+     * \attention this validation works only when no stop word is loaded and no keyword POS is set,
+     * as this function would assume stop words and non keywords are lost.
+     */
+    bool validateSentenceResult(const Sentence& sentence) const;
+
+    /**
+     * Validate the correctness of string splitting result with limit size.
+     * It combines the splitted string, and compares it with the original string,
+     * the comparison result should be the same, otherwise some character is lost in the split process.
+     * All the splitted string size should be less than \e limitSize.
+     * \param str the original string
+     * \param limitStrVec the splitted string vector, each string is in limit size without white-space characters
+     * \param limitSize the limit size
+     * \return true for success, false for failure
+     */
+    bool validateSplitLimitResult(const char* str, const std::vector<std::string>& limitStrVec, unsigned int limitSize) const;
 
 private:
     /** hold the JMA_Knowledge Object */

@@ -132,12 +132,17 @@ public:
     const DecompMap& getDecompMap() const;
 
     /**
-     * Whether the specific word is stop word
-     *
+     * Whether the specific word is stop word.
      * \param word the word to be checked
      * \return whether the word is in the stop word list
      */
     bool isStopWord(const std::string& word) const;
+
+    /**
+     * Get the number of stop words loaded.
+     * \return the number of stop words loaded.
+     */
+    unsigned int stopWordCount() const;
 
     /**
      * Check whether is a seperator of sentence.
@@ -153,6 +158,12 @@ public:
      * \return whether is keyword
      */
     bool isKeywordPOS(int pos) const;
+
+    /**
+     * Get the number of keyword POS.
+     * \return the number of keyword POS.
+     */
+    unsigned int keywordPOSCount() const;
 
     /**
      * Get the feature offset of base form indexed from zero.

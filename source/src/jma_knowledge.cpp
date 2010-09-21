@@ -699,6 +699,11 @@ bool JMA_Knowledge::isStopWord(const std::string& word) const
     return stopWords_.find(word) != stopWords_.end();
 }
 
+unsigned int JMA_Knowledge::stopWordCount() const
+{
+    return stopWords_.size();
+}
+
 bool JMA_Knowledge::isSentenceSeparator(const char* p) const
 {
     return sentSeps_.find(p) != sentSeps_.end();
@@ -710,6 +715,11 @@ bool JMA_Knowledge::isKeywordPOS(int pos) const
         return true;
 
     return keywordPOSSet_.find(pos) != keywordPOSSet_.end();
+}
+
+unsigned int JMA_Knowledge::keywordPOSCount() const
+{
+    return keywordPOSSet_.size();
 }
 
 int JMA_Knowledge::getBaseFormOffset() const

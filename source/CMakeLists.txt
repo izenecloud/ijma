@@ -39,7 +39,7 @@ ENDIF (CMAKE_COMPILER_IS_GNUCXX)
 IF (MSVC)
 MESSAGE(STATUS "MSVC: " ${MSVC})
 
-  SET(CMAKE_CXX_FLAGS_RELEASE "/EHsc /O2 /GL /GA /Ob2 /nologo /W3 /MT /Zi" CACHE STRING "Flags used by the compiler during release builds" FORCE)
+  SET(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG /EHsc /O2 /GL /GA /Ob2 /nologo /W3 /MT /Zi" CACHE STRING "Flags used by the compiler during release builds" FORCE)
   SET(CMAKE_CXX_FLAGS_DEBUG "/EHsc /Od /nologo /W3 /MTd /Zi" CACHE STRING "Flags used by the compiler during debug builds" FORCE)
 ENDIF (MSVC)
 
