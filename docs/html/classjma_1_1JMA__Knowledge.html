@@ -82,10 +82,14 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the map to decompose user defined noun.  <a href="#a14c77a865db74ec70efb90e7ce6dbaad"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#a1ba2faf516fd67aa84a2519c74c356ab">isStopWord</a> (const std::string &amp;word) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether the specific word is stop word.  <a href="#a1ba2faf516fd67aa84a2519c74c356ab"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#abc9ac5808753f7527fd2505982d1817b">stopWordCount</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of stop words loaded.  <a href="#abc9ac5808753f7527fd2505982d1817b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#aae4e69056a6a47bb6798ab666827a51f">isSentenceSeparator</a> (const char *p) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check whether is a seperator of sentence.  <a href="#aae4e69056a6a47bb6798ab666827a51f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#a7292fe5d08003e11a78d46d853c9eb8d">isKeywordPOS</a> (int pos) const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Whether the specific part-of-speech tag is keyword.  <a href="#a7292fe5d08003e11a78d46d853c9eb8d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">unsigned int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#a3e4068e7ed29ca16b9623b3281aea90c">keywordPOSCount</a> () const </td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the number of keyword POS.  <a href="#a3e4068e7ed29ca16b9623b3281aea90c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#aae04fb2aba2960d076970789e2b04ce0">getBaseFormOffset</a> () const </td></tr>
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the feature offset of base form indexed from zero.  <a href="#aae04fb2aba2960d076970789e2b04ce0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjma_1_1JMA__Knowledge.html#a02290b84340a0d6cff135b5b05e7afc0">getReadFormOffset</a> () const </td></tr>
@@ -256,7 +260,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of base form "見る" would be 6. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the feature offset </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00715">715</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00725">725</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="unittest__jma__knowledge_8cpp_source.html#l00037">JMA_Knowledge_Test::loadDictTest()</a>.</p>
 
@@ -304,7 +308,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>Get the current <a class="el" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information.">JMA_CType</a>. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the current <a class="el" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information.">JMA_CType</a> </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00735">735</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00745">745</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="jma__analyzer_8cpp_source.html#l00495">jma::JMA_Analyzer::convertCharacters()</a>, <a class="el" href="unittest__jma__knowledge_8cpp_source.html#l00037">JMA_Knowledge_Test::loadDictTest()</a>, <a class="el" href="jma__analyzer_8cpp_source.html#l00280">jma::JMA_Analyzer::runWithSentence()</a>, <a class="el" href="jma__analyzer_8cpp_source.html#l00312">jma::JMA_Analyzer::runWithStream()</a>, <a class="el" href="jma__analyzer_8cpp_source.html#l00300">jma::JMA_Analyzer::runWithString()</a>, <a class="el" href="jma__analyzer_8cpp_source.html#l00248">jma::JMA_Analyzer::setKnowledge()</a>, and <a class="el" href="jma__analyzer_8cpp_source.html#l00339">jma::JMA_Analyzer::splitSentence()</a>.</p>
 
@@ -377,7 +381,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>For example, if an entry in dictionary file contains the features like "名詞,固有名詞,人名,姓,*,*,渡邊,わたなべ,ワタナベ,渡辺", the feature offset of normalized form "渡辺" would be 9. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the feature offset </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00725">725</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00735">735</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="unittest__jma__knowledge_8cpp_source.html#l00037">JMA_Knowledge_Test::loadDictTest()</a>.</p>
 
@@ -426,7 +430,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>For example, if an entry in dictionary file contains the features like "動詞,自立,*,*,一段,未然形,見る,ミ,ミ", the feature offset of reading form "ミ" would be 7. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the feature offset </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00720">720</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00730">730</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="unittest__jma__knowledge_8cpp_source.html#l00037">JMA_Knowledge_Test::loadDictTest()</a>.</p>
 
@@ -450,7 +454,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>Get the part-of-speech index code of user defined noun. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>the POS index code, -1 for not defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00730">730</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00740">740</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="pos__table_8cpp_source.html#l00293">jma::POSTable::getIndexFromAlphaPOS()</a>.</p>
 
@@ -507,7 +511,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>whether is keyword </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00707">707</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00712">712</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div>
@@ -536,7 +540,7 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>true for separator, false for non separator. </dd></dl>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00702">702</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00707">707</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="unittest__jma__knowledge_8cpp_source.html#l00037">JMA_Knowledge_Test::loadDictTest()</a>, and <a class="el" href="test__jma__knowledge_8cpp_source.html#l00028">main()</a>.</p>
 
@@ -570,6 +574,28 @@ Collaboration diagram for jma::JMA_Knowledge:</div>
 <p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00697">697</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="test__jma__knowledge_8cpp_source.html#l00028">main()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a3e4068e7ed29ca16b9623b3281aea90c"></a><!-- doxytag: member="jma::JMA_Knowledge::keywordPOSCount" ref="a3e4068e7ed29ca16b9623b3281aea90c" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int jma::JMA_Knowledge::keywordPOSCount </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Get the number of keyword POS. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the number of keyword POS. </dd></dl>
+
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00720">720</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div>
@@ -667,9 +693,31 @@ if any user dictionary file need to be loaded, the file name should be added by 
 
 <p>Implements <a class="el" href="classjma_1_1Knowledge.html#a16dde01fc4473c331dc30fa50d228b6a">jma::Knowledge</a>.</p>
 
-<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l01038">1038</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l01048">1048</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 <p>References <a class="el" href="pos__table_8cpp_source.html#l00293">jma::POSTable::getIndexFromAlphaPOS()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abc9ac5808753f7527fd2505982d1817b"></a><!-- doxytag: member="jma::JMA_Knowledge::stopWordCount" ref="abc9ac5808753f7527fd2505982d1817b" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int jma::JMA_Knowledge::stopWordCount </td>
+          <td>(</td>
+          <td class="paramname"></td>
+          <td>&nbsp;)&nbsp;</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Get the number of stop words loaded. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the number of stop words loaded. </dd></dl>
+
+<p>Definition at line <a class="el" href="jma__knowledge_8cpp_source.html#l00702">702</a> of file <a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a>.</p>
 
 </div>
 </div>
@@ -678,7 +726,7 @@ if any user dictionary file need to be loaded, the file name should be added by 
 <li>source/src/<a class="el" href="jma__knowledge_8cpp_source.html">jma_knowledge.cpp</a></li>
 </ul>
 </div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on Mon Sep 20 18:11:45 2010 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on Tue Sep 21 18:34:57 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>

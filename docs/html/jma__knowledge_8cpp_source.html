@@ -685,360 +685,370 @@
 <a name="l00699"></a>00699     <span class="keywordflow">return</span> stopWords_.find(word) != stopWords_.end();
 <a name="l00700"></a>00700 }
 <a name="l00701"></a>00701 
-<a name="l00702"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aae4e69056a6a47bb6798ab666827a51f">00702</a> <span class="keywordtype">bool</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aae4e69056a6a47bb6798ab666827a51f" title="Check whether is a seperator of sentence.">JMA_Knowledge::isSentenceSeparator</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* p)<span class="keyword"> const</span>
+<a name="l00702"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#abc9ac5808753f7527fd2505982d1817b">00702</a> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#abc9ac5808753f7527fd2505982d1817b" title="Get the number of stop words loaded.">JMA_Knowledge::stopWordCount</a>()<span class="keyword"> const</span>
 <a name="l00703"></a>00703 <span class="keyword"></span>{
-<a name="l00704"></a>00704     <span class="keywordflow">return</span> sentSeps_.find(p) != sentSeps_.end();
+<a name="l00704"></a>00704     <span class="keywordflow">return</span> stopWords_.size();
 <a name="l00705"></a>00705 }
 <a name="l00706"></a>00706 
-<a name="l00707"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a7292fe5d08003e11a78d46d853c9eb8d">00707</a> <span class="keywordtype">bool</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a7292fe5d08003e11a78d46d853c9eb8d" title="Whether the specific part-of-speech tag is keyword.">JMA_Knowledge::isKeywordPOS</a>(<span class="keywordtype">int</span> pos)<span class="keyword"> const</span>
+<a name="l00707"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aae4e69056a6a47bb6798ab666827a51f">00707</a> <span class="keywordtype">bool</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aae4e69056a6a47bb6798ab666827a51f" title="Check whether is a seperator of sentence.">JMA_Knowledge::isSentenceSeparator</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* p)<span class="keyword"> const</span>
 <a name="l00708"></a>00708 <span class="keyword"></span>{
-<a name="l00709"></a>00709     <span class="keywordflow">if</span>(keywordPOSSet_.empty())
-<a name="l00710"></a>00710         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00709"></a>00709     <span class="keywordflow">return</span> sentSeps_.find(p) != sentSeps_.end();
+<a name="l00710"></a>00710 }
 <a name="l00711"></a>00711 
-<a name="l00712"></a>00712     <span class="keywordflow">return</span> keywordPOSSet_.find(pos) != keywordPOSSet_.end();
-<a name="l00713"></a>00713 }
-<a name="l00714"></a>00714 
-<a name="l00715"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aae04fb2aba2960d076970789e2b04ce0">00715</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aae04fb2aba2960d076970789e2b04ce0" title="Get the feature offset of base form indexed from zero.">JMA_Knowledge::getBaseFormOffset</a>()<span class="keyword"> const</span>
-<a name="l00716"></a>00716 <span class="keyword"></span>{
-<a name="l00717"></a>00717     <span class="keywordflow">return</span> baseFormOffset_;
+<a name="l00712"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a7292fe5d08003e11a78d46d853c9eb8d">00712</a> <span class="keywordtype">bool</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a7292fe5d08003e11a78d46d853c9eb8d" title="Whether the specific part-of-speech tag is keyword.">JMA_Knowledge::isKeywordPOS</a>(<span class="keywordtype">int</span> pos)<span class="keyword"> const</span>
+<a name="l00713"></a>00713 <span class="keyword"></span>{
+<a name="l00714"></a>00714     <span class="keywordflow">if</span>(keywordPOSSet_.empty())
+<a name="l00715"></a>00715         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00716"></a>00716 
+<a name="l00717"></a>00717     <span class="keywordflow">return</span> keywordPOSSet_.find(pos) != keywordPOSSet_.end();
 <a name="l00718"></a>00718 }
 <a name="l00719"></a>00719 
-<a name="l00720"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a02290b84340a0d6cff135b5b05e7afc0">00720</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a02290b84340a0d6cff135b5b05e7afc0" title="Get the feature offset of reading form indexed from zero.">JMA_Knowledge::getReadFormOffset</a>()<span class="keyword"> const</span>
+<a name="l00720"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a3e4068e7ed29ca16b9623b3281aea90c">00720</a> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a3e4068e7ed29ca16b9623b3281aea90c" title="Get the number of keyword POS.">JMA_Knowledge::keywordPOSCount</a>()<span class="keyword"> const</span>
 <a name="l00721"></a>00721 <span class="keyword"></span>{
-<a name="l00722"></a>00722     <span class="keywordflow">return</span> readFormOffset_;
+<a name="l00722"></a>00722     <span class="keywordflow">return</span> keywordPOSSet_.size();
 <a name="l00723"></a>00723 }
 <a name="l00724"></a>00724 
-<a name="l00725"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a0889dc4a8e78ea62028c0c9c5b2480df">00725</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a0889dc4a8e78ea62028c0c9c5b2480df" title="Get the feature offset of normalized form indexed from zero.">JMA_Knowledge::getNormFormOffset</a>()<span class="keyword"> const</span>
+<a name="l00725"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aae04fb2aba2960d076970789e2b04ce0">00725</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aae04fb2aba2960d076970789e2b04ce0" title="Get the feature offset of base form indexed from zero.">JMA_Knowledge::getBaseFormOffset</a>()<span class="keyword"> const</span>
 <a name="l00726"></a>00726 <span class="keyword"></span>{
-<a name="l00727"></a>00727     <span class="keywordflow">return</span> normFormOffset_;
+<a name="l00727"></a>00727     <span class="keywordflow">return</span> baseFormOffset_;
 <a name="l00728"></a>00728 }
 <a name="l00729"></a>00729 
-<a name="l00730"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848">00730</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848" title="Get the part-of-speech index code of user defined noun.">JMA_Knowledge::getUserNounPOSIndex</a>()<span class="keyword"> const</span>
+<a name="l00730"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a02290b84340a0d6cff135b5b05e7afc0">00730</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a02290b84340a0d6cff135b5b05e7afc0" title="Get the feature offset of reading form indexed from zero.">JMA_Knowledge::getReadFormOffset</a>()<span class="keyword"> const</span>
 <a name="l00731"></a>00731 <span class="keyword"></span>{
-<a name="l00732"></a>00732     <span class="keywordflow">return</span> posTable_.<a class="code" href="classjma_1_1POSTable.html#a0172e6de014d5f596a6d7aaf499da4fb" title="Get POS index code from POS string in alphabet format.">getIndexFromAlphaPOS</a>(userNounPOS_);
+<a name="l00732"></a>00732     <span class="keywordflow">return</span> readFormOffset_;
 <a name="l00733"></a>00733 }
 <a name="l00734"></a>00734 
-<a name="l00735"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0">00735</a> <a class="code" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information.">JMA_CType</a>* <a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0" title="Get the current JMA_CType.">JMA_Knowledge::getCType</a>()
-<a name="l00736"></a>00736 {
-<a name="l00737"></a>00737     <span class="keywordflow">return</span> ctype_;
+<a name="l00735"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a0889dc4a8e78ea62028c0c9c5b2480df">00735</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a0889dc4a8e78ea62028c0c9c5b2480df" title="Get the feature offset of normalized form indexed from zero.">JMA_Knowledge::getNormFormOffset</a>()<span class="keyword"> const</span>
+<a name="l00736"></a>00736 <span class="keyword"></span>{
+<a name="l00737"></a>00737     <span class="keywordflow">return</span> normFormOffset_;
 <a name="l00738"></a>00738 }
 <a name="l00739"></a>00739 
-<a name="l00740"></a>00740 <span class="keywordtype">bool</span> JMA_Knowledge::loadSentenceSeparatorConfig(<span class="keyword">const</span> <span class="keywordtype">char</span>* fileName, MeCab::Iconv&amp; iconv)
-<a name="l00741"></a>00741 {
-<a name="l00742"></a>00742     <span class="keyword">const</span> <a class="code" href="structjma_1_1DictUnit.html" title="DictUnit is a dictionary file in archive.">DictUnit</a>* dict = dictionary_-&gt;<a class="code" href="classjma_1_1JMA__Dictionary.html#a783d840231eebaef33c92962d317533d" title="Get a dictionary file.">getDict</a>(fileName);
-<a name="l00743"></a>00743     <span class="keywordflow">if</span>(! dict)
-<a name="l00744"></a>00744     {
-<a name="l00745"></a>00745         cerr &lt;&lt; <span class="stringliteral">&quot;fail to load sentence separator file &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
-<a name="l00746"></a>00746         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00747"></a>00747     }
-<a name="l00748"></a>00748     istrstream ist(dict-&gt;<a class="code" href="structjma_1_1DictUnit.html#a28bd16e96f9e6e7513cb67abd5e92b74" title="start address">text_</a>, dict-&gt;<a class="code" href="structjma_1_1DictUnit.html#a0e375180516752bde32771413b917a95" title="total length">length_</a>);
-<a name="l00749"></a>00749     <span class="keywordflow">if</span>(! ist)
-<a name="l00750"></a>00750     {
-<a name="l00751"></a>00751         cerr &lt;&lt; <span class="stringliteral">&quot;fail to open string stream of sentence separator file &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
-<a name="l00752"></a>00752         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00753"></a>00753     }
-<a name="l00754"></a>00754 
-<a name="l00755"></a>00755     <span class="comment">// remove existing separators</span>
-<a name="l00756"></a>00756     sentSeps_.clear();
-<a name="l00757"></a>00757 
-<a name="l00758"></a>00758     <span class="keywordtype">string</span> line;
-<a name="l00759"></a>00759     <span class="keywordflow">while</span>(getline(ist, line))
+<a name="l00740"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848">00740</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848" title="Get the part-of-speech index code of user defined noun.">JMA_Knowledge::getUserNounPOSIndex</a>()<span class="keyword"> const</span>
+<a name="l00741"></a>00741 <span class="keyword"></span>{
+<a name="l00742"></a>00742     <span class="keywordflow">return</span> posTable_.<a class="code" href="classjma_1_1POSTable.html#a0172e6de014d5f596a6d7aaf499da4fb" title="Get POS index code from POS string in alphabet format.">getIndexFromAlphaPOS</a>(userNounPOS_);
+<a name="l00743"></a>00743 }
+<a name="l00744"></a>00744 
+<a name="l00745"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0">00745</a> <a class="code" href="classjma_1_1JMA__CType.html" title="JMA_CType gives the character type information.">JMA_CType</a>* <a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0" title="Get the current JMA_CType.">JMA_Knowledge::getCType</a>()
+<a name="l00746"></a>00746 {
+<a name="l00747"></a>00747     <span class="keywordflow">return</span> ctype_;
+<a name="l00748"></a>00748 }
+<a name="l00749"></a>00749 
+<a name="l00750"></a>00750 <span class="keywordtype">bool</span> JMA_Knowledge::loadSentenceSeparatorConfig(<span class="keyword">const</span> <span class="keywordtype">char</span>* fileName, MeCab::Iconv&amp; iconv)
+<a name="l00751"></a>00751 {
+<a name="l00752"></a>00752     <span class="keyword">const</span> <a class="code" href="structjma_1_1DictUnit.html" title="DictUnit is a dictionary file in archive.">DictUnit</a>* dict = dictionary_-&gt;<a class="code" href="classjma_1_1JMA__Dictionary.html#a783d840231eebaef33c92962d317533d" title="Get a dictionary file.">getDict</a>(fileName);
+<a name="l00753"></a>00753     <span class="keywordflow">if</span>(! dict)
+<a name="l00754"></a>00754     {
+<a name="l00755"></a>00755         cerr &lt;&lt; <span class="stringliteral">&quot;fail to load sentence separator file &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
+<a name="l00756"></a>00756         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00757"></a>00757     }
+<a name="l00758"></a>00758     istrstream ist(dict-&gt;<a class="code" href="structjma_1_1DictUnit.html#a28bd16e96f9e6e7513cb67abd5e92b74" title="start address">text_</a>, dict-&gt;<a class="code" href="structjma_1_1DictUnit.html#a0e375180516752bde32771413b917a95" title="total length">length_</a>);
+<a name="l00759"></a>00759     <span class="keywordflow">if</span>(! ist)
 <a name="l00760"></a>00760     {
-<a name="l00761"></a>00761         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
-<a name="l00762"></a>00762         <span class="keywordflow">if</span>(line.empty() || line[0] == <span class="charliteral">&apos;#&apos;</span>)
-<a name="l00763"></a>00763             <span class="keywordflow">continue</span>;
+<a name="l00761"></a>00761         cerr &lt;&lt; <span class="stringliteral">&quot;fail to open string stream of sentence separator file &quot;</span> &lt;&lt; fileName &lt;&lt; endl;
+<a name="l00762"></a>00762         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00763"></a>00763     }
 <a name="l00764"></a>00764 
-<a name="l00765"></a>00765         <span class="keywordflow">if</span>(! iconv.convert(&amp;line))
-<a name="l00766"></a>00766         {
-<a name="l00767"></a>00767             cerr &lt;&lt; <span class="stringliteral">&quot;error to convert encoding for line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00768"></a>00768             <span class="keywordflow">continue</span>;
-<a name="l00769"></a>00769         }
-<a name="l00770"></a>00770         sentSeps_.insert(line);
-<a name="l00771"></a>00771     }
-<a name="l00772"></a>00772 
-<a name="l00773"></a>00773 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
-<a name="l00774"></a>00774 <span class="preprocessor"></span>    cout &lt;&lt; <span class="stringliteral">&quot;Sentence separators loaded from &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot;: &quot;</span>;
-<a name="l00775"></a>00775     <span class="keywordflow">for</span>(set&lt;string&gt;::const_iterator it=sentSeps_.begin(); it!=sentSeps_.end(); ++it)
-<a name="l00776"></a>00776         cout &lt;&lt; *it;
-<a name="l00777"></a>00777     cout &lt;&lt; endl;
-<a name="l00778"></a>00778 <span class="preprocessor">#endif</span>
-<a name="l00779"></a>00779 <span class="preprocessor"></span>
-<a name="l00780"></a>00780     <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l00781"></a>00781 }
+<a name="l00765"></a>00765     <span class="comment">// remove existing separators</span>
+<a name="l00766"></a>00766     sentSeps_.clear();
+<a name="l00767"></a>00767 
+<a name="l00768"></a>00768     <span class="keywordtype">string</span> line;
+<a name="l00769"></a>00769     <span class="keywordflow">while</span>(getline(ist, line))
+<a name="l00770"></a>00770     {
+<a name="l00771"></a>00771         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
+<a name="l00772"></a>00772         <span class="keywordflow">if</span>(line.empty() || line[0] == <span class="charliteral">&apos;#&apos;</span>)
+<a name="l00773"></a>00773             <span class="keywordflow">continue</span>;
+<a name="l00774"></a>00774 
+<a name="l00775"></a>00775         <span class="keywordflow">if</span>(! iconv.convert(&amp;line))
+<a name="l00776"></a>00776         {
+<a name="l00777"></a>00777             cerr &lt;&lt; <span class="stringliteral">&quot;error to convert encoding for line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00778"></a>00778             <span class="keywordflow">continue</span>;
+<a name="l00779"></a>00779         }
+<a name="l00780"></a>00780         sentSeps_.insert(line);
+<a name="l00781"></a>00781     }
 <a name="l00782"></a>00782 
-<a name="l00783"></a>00783 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> JMA_Knowledge::convertTxtToCSV(<span class="keyword">const</span> UserDictFileType&amp; userDicFile, std::ostream&amp; ost)
-<a name="l00784"></a>00784 {
-<a name="l00785"></a>00785     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> count = 0;
-<a name="l00786"></a>00786 
-<a name="l00787"></a>00787     <span class="keyword">const</span> <span class="keywordtype">int</span> userNounIndex = <a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848" title="Get the part-of-speech index code of user defined noun.">getUserNounPOSIndex</a>();
-<a name="l00788"></a>00788     <span class="keywordflow">if</span>(userNounIndex == -1)
-<a name="l00789"></a>00789     {
-<a name="l00790"></a>00790         cerr &lt;&lt; <span class="stringliteral">&quot;fail to get POS index of user noun.&quot;</span> &lt;&lt; endl;
-<a name="l00791"></a>00791         <span class="keywordflow">return</span> count;
-<a name="l00792"></a>00792     }
-<a name="l00793"></a>00793 
-<a name="l00794"></a>00794     <span class="keyword">const</span> <span class="keywordtype">char</span>* userNounPOS = posTable_.getPOS(userNounIndex, <a class="code" href="classjma_1_1POSTable.html#ae96b3244f0f3bb07bf257e11fb4b8e8fa5b465b20a13bdfb406e98d9f2508782c" title="Japanese format of furl category such like &amp;quot;名詞,一般,*,*&amp;quot;.">POSTable::POS_FORMAT_FULL_CATEGORY</a>);
-<a name="l00795"></a>00795     <span class="keywordflow">if</span>(! userNounPOS)
-<a name="l00796"></a>00796     {
-<a name="l00797"></a>00797         cerr &lt;&lt; <span class="stringliteral">&quot;fail to get POS string of user noun.&quot;</span> &lt;&lt; endl;
-<a name="l00798"></a>00798         <span class="keywordflow">return</span> count;
-<a name="l00799"></a>00799     }
-<a name="l00800"></a>00800 
-<a name="l00801"></a>00801     vector&lt;string&gt; t;
-<a name="l00802"></a>00802     <span class="keyword">const</span> <span class="keywordtype">int</span> posSize = tokenizeCSV(userNounPOS, t);
-<a name="l00803"></a>00803     assert(posSize &gt; 0 &amp;&amp; <span class="stringliteral">&quot;the user noun POS size must be positive&quot;</span>);
-<a name="l00804"></a>00804 
-<a name="l00805"></a>00805     <span class="comment">// tokenize word into each characters</span>
-<a name="l00806"></a>00806     CTypeTokenizer tokenizer(<a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0" title="Get the current JMA_CType.">getCType</a>());
-<a name="l00807"></a>00807 
-<a name="l00808"></a>00808     <span class="keyword">const</span> <span class="keywordtype">char</span>* srcEnc = <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(userDicFile.second);
-<a name="l00809"></a>00809     <span class="keyword">const</span> <span class="keywordtype">char</span>* destEnc = <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(<a class="code" href="classjma_1_1Knowledge.html#af80f70ab7a0ae1a77d9cd5167062baee" title="Get the character encode type.">getEncodeType</a>());
-<a name="l00810"></a>00810     MeCab::Iconv iconv;
-<a name="l00811"></a>00811     <span class="keywordflow">if</span>(! iconv.open(srcEnc, destEnc))
-<a name="l00812"></a>00812     {
-<a name="l00813"></a>00813         cerr &lt;&lt; <span class="stringliteral">&quot;error to open encoding conversion from &quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destEnc &lt;&lt; endl;
-<a name="l00814"></a>00814         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00815"></a>00815     }
-<a name="l00816"></a>00816 
-<a name="l00817"></a>00817     <span class="keyword">const</span> <span class="keywordtype">char</span>* fileName = userDicFile.first.c_str();
-<a name="l00818"></a>00818     ifstream in(fileName);
-<a name="l00819"></a>00819     <span class="keywordflow">if</span>( !in )
-<a name="l00820"></a>00820     {
-<a name="l00821"></a>00821         cerr &lt;&lt; <span class="stringliteral">&quot;fail to open user dictionary &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot;, ignoring this file.&quot;</span> &lt;&lt; endl;
-<a name="l00822"></a>00822         <span class="keywordflow">return</span> count;
-<a name="l00823"></a>00823     }
-<a name="l00824"></a>00824 
-<a name="l00825"></a>00825 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
-<a name="l00826"></a>00826 <span class="preprocessor"></span>    cout &lt;&lt; <span class="stringliteral">&quot;Converting user dictionary &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; =&gt; &quot;</span> &lt;&lt; destEnc &lt;&lt; <span class="stringliteral">&quot;) ...&quot;</span> &lt;&lt; endl;
-<a name="l00827"></a>00827 <span class="preprocessor">#endif</span>
-<a name="l00828"></a>00828 <span class="preprocessor"></span>
-<a name="l00829"></a>00829     <span class="keywordtype">string</span> line, word, pattern;
-<a name="l00830"></a>00830     istringstream iss;
-<a name="l00831"></a>00831     ostringstream ostrs;
-<a name="l00832"></a>00832     <span class="keywordflow">while</span>(getline(in, line))
-<a name="l00833"></a>00833     {
-<a name="l00834"></a>00834         <span class="comment">// remove carriage return character</span>
-<a name="l00835"></a>00835         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
-<a name="l00836"></a>00836 
-<a name="l00837"></a>00837         <span class="keywordflow">if</span> (line.empty() || line[0] == <span class="charliteral">&apos;;&apos;</span> || line[0] == <span class="charliteral">&apos;#&apos;</span>)
-<a name="l00838"></a>00838             <span class="keywordflow">continue</span>;
-<a name="l00839"></a>00839 
-<a name="l00840"></a>00840         <span class="keywordflow">if</span>(! iconv.convert(&amp;line))
-<a name="l00841"></a>00841         {
-<a name="l00842"></a>00842             cerr &lt;&lt; <span class="stringliteral">&quot;error to convert encoding from &quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destEnc &lt;&lt; <span class="stringliteral">&quot; for line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00843"></a>00843             <span class="keywordflow">continue</span>;
-<a name="l00844"></a>00844         }
-<a name="l00845"></a>00845 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
-<a name="l00846"></a>00846 <span class="preprocessor"></span>        cout &lt;&lt; <span class="stringliteral">&quot;line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00847"></a>00847 <span class="preprocessor">#endif</span>
-<a name="l00848"></a>00848 <span class="preprocessor"></span>
-<a name="l00849"></a>00849         iss.clear();
-<a name="l00850"></a>00850         iss.str(line);
-<a name="l00851"></a>00851         ostrs.str(<span class="stringliteral">&quot;&quot;</span>); <span class="comment">// reset output string stream to empty</span>
-<a name="l00852"></a>00852 
-<a name="l00853"></a>00853         <span class="keywordflow">if</span>(iss &gt;&gt; word)
-<a name="l00854"></a>00854             ostrs &lt;&lt; word &lt;&lt; <span class="stringliteral">&quot;,-1,-1,&quot;</span> &lt;&lt; USER_NOUN_COST;
-<a name="l00855"></a>00855         <span class="keywordflow">else</span>
-<a name="l00856"></a>00856         {
-<a name="l00857"></a>00857             cerr &lt;&lt; <span class="stringliteral">&quot;no word is defined in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00858"></a>00858             <span class="keywordflow">continue</span>;
-<a name="l00859"></a>00859         }
-<a name="l00860"></a>00860 
-<a name="l00861"></a>00861         ostrs &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; userNounPOS;
-<a name="l00862"></a>00862         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=posSize; i&lt;readFormOffset_; ++i)
-<a name="l00863"></a>00863         {
-<a name="l00864"></a>00864             ostrs &lt;&lt; <span class="stringliteral">&quot;,*&quot;</span>;
-<a name="l00865"></a>00865         }
-<a name="l00866"></a>00866 
-<a name="l00867"></a>00867         <span class="keywordtype">bool</span> hasRead = <span class="keyword">false</span>;
-<a name="l00868"></a>00868         vector&lt;string&gt; compVec;
-<a name="l00869"></a>00869         <span class="keywordflow">if</span>(iss &gt;&gt; pattern)
-<a name="l00870"></a>00870         {
-<a name="l00871"></a>00871             <span class="keywordflow">if</span>(tokenizeCSV(pattern, compVec) == 0)
-<a name="l00872"></a>00872             {
-<a name="l00873"></a>00873                 cerr &lt;&lt; <span class="stringliteral">&quot;fail to tokenize from pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
-<a name="l00874"></a>00874                 <span class="keywordflow">continue</span>;
-<a name="l00875"></a>00875             }
+<a name="l00783"></a>00783 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
+<a name="l00784"></a>00784 <span class="preprocessor"></span>    cout &lt;&lt; <span class="stringliteral">&quot;Sentence separators loaded from &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot;: &quot;</span>;
+<a name="l00785"></a>00785     <span class="keywordflow">for</span>(set&lt;string&gt;::const_iterator it=sentSeps_.begin(); it!=sentSeps_.end(); ++it)
+<a name="l00786"></a>00786         cout &lt;&lt; *it;
+<a name="l00787"></a>00787     cout &lt;&lt; endl;
+<a name="l00788"></a>00788 <span class="preprocessor">#endif</span>
+<a name="l00789"></a>00789 <span class="preprocessor"></span>
+<a name="l00790"></a>00790     <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00791"></a>00791 }
+<a name="l00792"></a>00792 
+<a name="l00793"></a>00793 <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> JMA_Knowledge::convertTxtToCSV(<span class="keyword">const</span> UserDictFileType&amp; userDicFile, std::ostream&amp; ost)
+<a name="l00794"></a>00794 {
+<a name="l00795"></a>00795     <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> count = 0;
+<a name="l00796"></a>00796 
+<a name="l00797"></a>00797     <span class="keyword">const</span> <span class="keywordtype">int</span> userNounIndex = <a class="code" href="classjma_1_1JMA__Knowledge.html#a1e8f0e7b1497de36611f7633ef009848" title="Get the part-of-speech index code of user defined noun.">getUserNounPOSIndex</a>();
+<a name="l00798"></a>00798     <span class="keywordflow">if</span>(userNounIndex == -1)
+<a name="l00799"></a>00799     {
+<a name="l00800"></a>00800         cerr &lt;&lt; <span class="stringliteral">&quot;fail to get POS index of user noun.&quot;</span> &lt;&lt; endl;
+<a name="l00801"></a>00801         <span class="keywordflow">return</span> count;
+<a name="l00802"></a>00802     }
+<a name="l00803"></a>00803 
+<a name="l00804"></a>00804     <span class="keyword">const</span> <span class="keywordtype">char</span>* userNounPOS = posTable_.getPOS(userNounIndex, <a class="code" href="classjma_1_1POSTable.html#ae96b3244f0f3bb07bf257e11fb4b8e8fa5b465b20a13bdfb406e98d9f2508782c" title="Japanese format of furl category such like &amp;quot;名詞,一般,*,*&amp;quot;.">POSTable::POS_FORMAT_FULL_CATEGORY</a>);
+<a name="l00805"></a>00805     <span class="keywordflow">if</span>(! userNounPOS)
+<a name="l00806"></a>00806     {
+<a name="l00807"></a>00807         cerr &lt;&lt; <span class="stringliteral">&quot;fail to get POS string of user noun.&quot;</span> &lt;&lt; endl;
+<a name="l00808"></a>00808         <span class="keywordflow">return</span> count;
+<a name="l00809"></a>00809     }
+<a name="l00810"></a>00810 
+<a name="l00811"></a>00811     vector&lt;string&gt; t;
+<a name="l00812"></a>00812     <span class="keyword">const</span> <span class="keywordtype">int</span> posSize = tokenizeCSV(userNounPOS, t);
+<a name="l00813"></a>00813     assert(posSize &gt; 0 &amp;&amp; <span class="stringliteral">&quot;the user noun POS size must be positive&quot;</span>);
+<a name="l00814"></a>00814 
+<a name="l00815"></a>00815     <span class="comment">// tokenize word into each characters</span>
+<a name="l00816"></a>00816     CTypeTokenizer tokenizer(<a class="code" href="classjma_1_1JMA__Knowledge.html#afe5ad93d97d2c30a0b3416e6a7c73fd0" title="Get the current JMA_CType.">getCType</a>());
+<a name="l00817"></a>00817 
+<a name="l00818"></a>00818     <span class="keyword">const</span> <span class="keywordtype">char</span>* srcEnc = <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(userDicFile.second);
+<a name="l00819"></a>00819     <span class="keyword">const</span> <span class="keywordtype">char</span>* destEnc = <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(<a class="code" href="classjma_1_1Knowledge.html#af80f70ab7a0ae1a77d9cd5167062baee" title="Get the character encode type.">getEncodeType</a>());
+<a name="l00820"></a>00820     MeCab::Iconv iconv;
+<a name="l00821"></a>00821     <span class="keywordflow">if</span>(! iconv.open(srcEnc, destEnc))
+<a name="l00822"></a>00822     {
+<a name="l00823"></a>00823         cerr &lt;&lt; <span class="stringliteral">&quot;error to open encoding conversion from &quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destEnc &lt;&lt; endl;
+<a name="l00824"></a>00824         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00825"></a>00825     }
+<a name="l00826"></a>00826 
+<a name="l00827"></a>00827     <span class="keyword">const</span> <span class="keywordtype">char</span>* fileName = userDicFile.first.c_str();
+<a name="l00828"></a>00828     ifstream in(fileName);
+<a name="l00829"></a>00829     <span class="keywordflow">if</span>( !in )
+<a name="l00830"></a>00830     {
+<a name="l00831"></a>00831         cerr &lt;&lt; <span class="stringliteral">&quot;fail to open user dictionary &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot;, ignoring this file.&quot;</span> &lt;&lt; endl;
+<a name="l00832"></a>00832         <span class="keywordflow">return</span> count;
+<a name="l00833"></a>00833     }
+<a name="l00834"></a>00834 
+<a name="l00835"></a>00835 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
+<a name="l00836"></a>00836 <span class="preprocessor"></span>    cout &lt;&lt; <span class="stringliteral">&quot;Converting user dictionary &quot;</span> &lt;&lt; fileName &lt;&lt; <span class="stringliteral">&quot; (&quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; =&gt; &quot;</span> &lt;&lt; destEnc &lt;&lt; <span class="stringliteral">&quot;) ...&quot;</span> &lt;&lt; endl;
+<a name="l00837"></a>00837 <span class="preprocessor">#endif</span>
+<a name="l00838"></a>00838 <span class="preprocessor"></span>
+<a name="l00839"></a>00839     <span class="keywordtype">string</span> line, word, pattern;
+<a name="l00840"></a>00840     istringstream iss;
+<a name="l00841"></a>00841     ostringstream ostrs;
+<a name="l00842"></a>00842     <span class="keywordflow">while</span>(getline(in, line))
+<a name="l00843"></a>00843     {
+<a name="l00844"></a>00844         <span class="comment">// remove carriage return character</span>
+<a name="l00845"></a>00845         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
+<a name="l00846"></a>00846 
+<a name="l00847"></a>00847         <span class="keywordflow">if</span> (line.empty() || line[0] == <span class="charliteral">&apos;;&apos;</span> || line[0] == <span class="charliteral">&apos;#&apos;</span>)
+<a name="l00848"></a>00848             <span class="keywordflow">continue</span>;
+<a name="l00849"></a>00849 
+<a name="l00850"></a>00850         <span class="keywordflow">if</span>(! iconv.convert(&amp;line))
+<a name="l00851"></a>00851         {
+<a name="l00852"></a>00852             cerr &lt;&lt; <span class="stringliteral">&quot;error to convert encoding from &quot;</span> &lt;&lt; srcEnc &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destEnc &lt;&lt; <span class="stringliteral">&quot; for line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00853"></a>00853             <span class="keywordflow">continue</span>;
+<a name="l00854"></a>00854         }
+<a name="l00855"></a>00855 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
+<a name="l00856"></a>00856 <span class="preprocessor"></span>        cout &lt;&lt; <span class="stringliteral">&quot;line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00857"></a>00857 <span class="preprocessor">#endif</span>
+<a name="l00858"></a>00858 <span class="preprocessor"></span>
+<a name="l00859"></a>00859         iss.clear();
+<a name="l00860"></a>00860         iss.str(line);
+<a name="l00861"></a>00861         ostrs.str(<span class="stringliteral">&quot;&quot;</span>); <span class="comment">// reset output string stream to empty</span>
+<a name="l00862"></a>00862 
+<a name="l00863"></a>00863         <span class="keywordflow">if</span>(iss &gt;&gt; word)
+<a name="l00864"></a>00864             ostrs &lt;&lt; word &lt;&lt; <span class="stringliteral">&quot;,-1,-1,&quot;</span> &lt;&lt; USER_NOUN_COST;
+<a name="l00865"></a>00865         <span class="keywordflow">else</span>
+<a name="l00866"></a>00866         {
+<a name="l00867"></a>00867             cerr &lt;&lt; <span class="stringliteral">&quot;no word is defined in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00868"></a>00868             <span class="keywordflow">continue</span>;
+<a name="l00869"></a>00869         }
+<a name="l00870"></a>00870 
+<a name="l00871"></a>00871         ostrs &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; userNounPOS;
+<a name="l00872"></a>00872         <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i=posSize; i&lt;readFormOffset_; ++i)
+<a name="l00873"></a>00873         {
+<a name="l00874"></a>00874             ostrs &lt;&lt; <span class="stringliteral">&quot;,*&quot;</span>;
+<a name="l00875"></a>00875         }
 <a name="l00876"></a>00876 
-<a name="l00877"></a>00877             <span class="keywordflow">if</span>(isNumber(compVec[0].c_str()))
-<a name="l00878"></a>00878             {
-<a name="l00879"></a>00879                 <a class="code" href="namespacejma.html#aff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a> decompList;
-<a name="l00880"></a>00880                 <span class="keywordtype">bool</span> isAllNumber = <span class="keyword">true</span>;
-<a name="l00881"></a>00881                 <span class="keywordtype">bool</span> isValidCharCount = <span class="keyword">true</span>;
-<a name="l00882"></a>00882                 tokenizer.assign(word.c_str());
-<a name="l00883"></a>00883                 <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
-<a name="l00884"></a>00884                 {
-<a name="l00885"></a>00885                     <span class="keywordflow">if</span>(! isNumber(compVec[i].c_str()))
-<a name="l00886"></a>00886                     {
-<a name="l00887"></a>00887                         isAllNumber = <span class="keyword">false</span>;
-<a name="l00888"></a>00888                         <span class="keywordflow">break</span>;
-<a name="l00889"></a>00889                     }
-<a name="l00890"></a>00890 
-<a name="l00891"></a>00891                     Morpheme morp;
-<a name="l00892"></a>00892                     <span class="keywordtype">int</span> charCount = convertFromStr&lt;int&gt;(compVec[i]);
-<a name="l00893"></a>00893                     <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j=0; j&lt;charCount; ++j)
-<a name="l00894"></a>00894                     {
-<a name="l00895"></a>00895                         <span class="keywordflow">if</span>(<span class="keyword">const</span> <span class="keywordtype">char</span>* p = tokenizer.next())
-<a name="l00896"></a>00896                             morp.lexicon_ += p;
-<a name="l00897"></a>00897                         <span class="keywordflow">else</span>
-<a name="l00898"></a>00898                         {
-<a name="l00899"></a>00899                             isValidCharCount = <span class="keyword">false</span>;
-<a name="l00900"></a>00900                             <span class="keywordflow">break</span>;
-<a name="l00901"></a>00901                         }
-<a name="l00902"></a>00902                     }
-<a name="l00903"></a>00903 
-<a name="l00904"></a>00904                     <span class="keywordflow">if</span>(! isValidCharCount)
-<a name="l00905"></a>00905                         <span class="keywordflow">break</span>;
-<a name="l00906"></a>00906 
-<a name="l00907"></a>00907                     decompList.push_back(morp);
-<a name="l00908"></a>00908                 }
-<a name="l00909"></a>00909 
-<a name="l00910"></a>00910                 <span class="keywordflow">if</span>(! isAllNumber)
-<a name="l00911"></a>00911                 {
-<a name="l00912"></a>00912                     cerr &lt;&lt; <span class="stringliteral">&quot;invalid format, only digit is allowed in decomposition pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
-<a name="l00913"></a>00913                     <span class="keywordflow">continue</span>;
-<a name="l00914"></a>00914                 }
-<a name="l00915"></a>00915 
-<a name="l00916"></a>00916                 <span class="comment">// should reach the word end</span>
-<a name="l00917"></a>00917                 <span class="keywordflow">if</span>(! isValidCharCount || tokenizer.next())
-<a name="l00918"></a>00918                 {
-<a name="l00919"></a>00919                     cerr &lt;&lt; <span class="stringliteral">&quot;unmatched character numbers in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00920"></a>00920                     <span class="keywordflow">continue</span>;
-<a name="l00921"></a>00921                 }
-<a name="l00922"></a>00922 
-<a name="l00923"></a>00923                 <span class="keywordflow">if</span>(iss &gt;&gt; pattern)
-<a name="l00924"></a>00924                 {
-<a name="l00925"></a>00925                     <span class="keywordflow">if</span>(tokenizeCSV(pattern, compVec) == 0)
-<a name="l00926"></a>00926                     {
-<a name="l00927"></a>00927                         cerr &lt;&lt; <span class="stringliteral">&quot;fail to tokenize from pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
-<a name="l00928"></a>00928                         <span class="keywordflow">continue</span>;
-<a name="l00929"></a>00929                     }
-<a name="l00930"></a>00930 
-<a name="l00931"></a>00931                     <span class="keywordflow">if</span>(compVec.size() != decompList.size())
-<a name="l00932"></a>00932                     {
-<a name="l00933"></a>00933                         cerr &lt;&lt; <span class="stringliteral">&quot;invalid format, the pronunciation pattern size is not equal to decomposition pattern size in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
-<a name="l00934"></a>00934                         <span class="keywordflow">continue</span>;
-<a name="l00935"></a>00935                     }
-<a name="l00936"></a>00936 
-<a name="l00937"></a>00937                     <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
-<a name="l00938"></a>00938                     {
-<a name="l00939"></a>00939                         decompList[i].readForm_ = compVec[i];
-<a name="l00940"></a>00940                     }
-<a name="l00941"></a>00941 
-<a name="l00942"></a>00942                     hasRead = <span class="keyword">true</span>;
-<a name="l00943"></a>00943                 }
-<a name="l00944"></a>00944 
-<a name="l00945"></a>00945                 decompMap_[word] = decompList;
-<a name="l00946"></a>00946 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
-<a name="l00947"></a>00947 <span class="preprocessor"></span>                cout &lt;&lt; <span class="stringliteral">&quot;word &quot;</span> &lt;&lt; word &lt;&lt; <span class="stringliteral">&quot; is decomposed into: &quot;</span>;
-<a name="l00948"></a>00948                 <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;decompList.size(); ++i)
-<a name="l00949"></a>00949                 {
-<a name="l00950"></a>00950                     cout &lt;&lt; decompList[i].lexicon_;
-<a name="l00951"></a>00951                     <span class="keywordflow">if</span>(! decompList[i].readForm_.empty())
-<a name="l00952"></a>00952                         cout &lt;&lt; <span class="stringliteral">&quot;/&quot;</span> &lt;&lt; decompList[i].readForm_;
-<a name="l00953"></a>00953                     cout &lt;&lt; <span class="stringliteral">&quot;, &quot;</span>;
-<a name="l00954"></a>00954                 }
-<a name="l00955"></a>00955                 cout &lt;&lt; endl;
-<a name="l00956"></a>00956 <span class="preprocessor">#endif</span>
-<a name="l00957"></a>00957 <span class="preprocessor"></span>            }
-<a name="l00958"></a>00958             <span class="keywordflow">else</span>
-<a name="l00959"></a>00959                 hasRead = <span class="keyword">true</span>;
-<a name="l00960"></a>00960         }
-<a name="l00961"></a>00961 
-<a name="l00962"></a>00962         <span class="keywordflow">if</span>(hasRead)
-<a name="l00963"></a>00963         {
-<a name="l00964"></a>00964             assert(compVec.size() &amp;&amp; <span class="stringliteral">&quot;the read form should not be empty.&quot;</span>);
-<a name="l00965"></a>00965 
-<a name="l00966"></a>00966             <span class="comment">// combine compVec into whole read form</span>
-<a name="l00967"></a>00967             <span class="keywordtype">string</span> wholeRead;
-<a name="l00968"></a>00968             <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
-<a name="l00969"></a>00969             {
-<a name="l00970"></a>00970                 wholeRead += compVec[i];
-<a name="l00971"></a>00971             }
-<a name="l00972"></a>00972             ostrs &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; wholeRead;
-<a name="l00973"></a>00973         }
-<a name="l00974"></a>00974         <span class="keywordflow">else</span>
-<a name="l00975"></a>00975             ostrs &lt;&lt; <span class="stringliteral">&quot;,*&quot;</span>;
-<a name="l00976"></a>00976 
-<a name="l00977"></a>00977         ost &lt;&lt; ostrs.str() &lt;&lt; endl;
-<a name="l00978"></a>00978         ++count;
-<a name="l00979"></a>00979     }
-<a name="l00980"></a>00980 
-<a name="l00981"></a>00981     <span class="keywordflow">return</span> count;
-<a name="l00982"></a>00982 }
-<a name="l00983"></a>00983 
-<a name="l00984"></a>00984 <span class="keywordtype">bool</span> JMA_Knowledge::fillBinaryEncodeType(<span class="keyword">const</span> <span class="keywordtype">char</span>* src, <span class="keyword">const</span> <span class="keywordtype">char</span>* dest, EncodeType binEncodeType)<span class="keyword"> const</span>
-<a name="l00985"></a>00985 <span class="keyword"></span>{
-<a name="l00986"></a>00986     ifstream ist(src);
-<a name="l00987"></a>00987     <span class="keywordflow">if</span>(! ist)
-<a name="l00988"></a>00988     {
-<a name="l00989"></a>00989         cerr &lt;&lt; <span class="stringliteral">&quot;cannot read configuration file: &quot;</span> &lt;&lt; src &lt;&lt; endl;
-<a name="l00990"></a>00990         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00991"></a>00991     }
-<a name="l00992"></a>00992 
-<a name="l00993"></a>00993     ofstream ost(dest);
-<a name="l00994"></a>00994     <span class="keywordflow">if</span>(! ost)
-<a name="l00995"></a>00995     {
-<a name="l00996"></a>00996         cerr &lt;&lt; <span class="stringliteral">&quot;cannot write configuration file: &quot;</span> &lt;&lt; dest &lt;&lt; endl;
-<a name="l00997"></a>00997         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l00998"></a>00998     }
-<a name="l00999"></a>00999 
-<a name="l01000"></a>01000     <span class="keywordtype">string</span> line, left, middle;
-<a name="l01001"></a>01001     istringstream iss;
-<a name="l01002"></a>01002     <span class="keywordtype">bool</span> fill = <span class="keyword">false</span>;
-<a name="l01003"></a>01003     <span class="keywordflow">while</span>(getline(ist, line))
-<a name="l01004"></a>01004     {
-<a name="l01005"></a>01005         <span class="comment">// remove carriage return character</span>
-<a name="l01006"></a>01006         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
-<a name="l01007"></a>01007 
-<a name="l01008"></a>01008         <span class="keywordflow">if</span>(line.empty() || line[0] == <span class="charliteral">&apos;;&apos;</span> || line[0] == <span class="charliteral">&apos;#&apos;</span>)
-<a name="l01009"></a>01009             ost &lt;&lt; line &lt;&lt; endl;
-<a name="l01010"></a>01010         <span class="keywordflow">else</span>
-<a name="l01011"></a>01011         {
-<a name="l01012"></a>01012             iss.clear();
-<a name="l01013"></a>01013             iss.str(line);
-<a name="l01014"></a>01014             <span class="keywordflow">if</span>(iss &gt;&gt; left &gt;&gt; middle &amp;&amp; left == <span class="stringliteral">&quot;binary-charset&quot;</span> &amp;&amp; middle == <span class="stringliteral">&quot;=&quot;</span>)
-<a name="l01015"></a>01015             {
-<a name="l01016"></a>01016                 ost &lt;&lt; left &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; middle &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(binEncodeType) &lt;&lt; endl;
-<a name="l01017"></a>01017                 fill = <span class="keyword">true</span>;
-<a name="l01018"></a>01018 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
-<a name="l01019"></a>01019 <span class="preprocessor"></span>                cout &lt;&lt; <span class="stringliteral">&quot;JMA_Knowledge::fillBinaryEncodeType(), src: &quot;</span> &lt;&lt; src &lt;&lt; <span class="stringliteral">&quot;, dest: &quot;</span> &lt;&lt; dest &lt;&lt; endl;
-<a name="l01020"></a>01020                 cout &lt;&lt; left &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; middle &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(binEncodeType) &lt;&lt; endl;
-<a name="l01021"></a>01021                 cout &lt;&lt; endl;
-<a name="l01022"></a>01022 <span class="preprocessor">#endif</span>
-<a name="l01023"></a>01023 <span class="preprocessor"></span>            }
-<a name="l01024"></a>01024             <span class="keywordflow">else</span>
-<a name="l01025"></a>01025                 ost &lt;&lt; line &lt;&lt; endl;
-<a name="l01026"></a>01026         }
-<a name="l01027"></a>01027     }
-<a name="l01028"></a>01028 
-<a name="l01029"></a>01029     <span class="keywordflow">if</span>(fill)
-<a name="l01030"></a>01030         <span class="keywordflow">return</span> <span class="keyword">true</span>;
-<a name="l01031"></a>01031     <span class="keywordflow">else</span>
-<a name="l01032"></a>01032     {
-<a name="l01033"></a>01033         cerr &lt;&lt; <span class="stringliteral">&quot;the field binary-charset is not found in configuration file: &quot;</span> &lt;&lt; src &lt;&lt; endl;
-<a name="l01034"></a>01034         <span class="keywordflow">return</span> <span class="keyword">false</span>;
-<a name="l01035"></a>01035     }
-<a name="l01036"></a>01036 }
-<a name="l01037"></a>01037 
-<a name="l01038"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aaf87253d8a5ac1939a72d17cbbdd38e3">01038</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aaf87253d8a5ac1939a72d17cbbdd38e3" title="Set the part-of-speech tags as keywords.">JMA_Knowledge::setKeywordPOS</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; posVec)
-<a name="l01039"></a>01039 {
-<a name="l01040"></a>01040     keywordPOSSet_.clear();
-<a name="l01041"></a>01041 
-<a name="l01042"></a>01042     <span class="keywordtype">int</span> posIndex;
-<a name="l01043"></a>01043     <span class="keywordflow">for</span>(vector&lt;string&gt;::const_iterator it=posVec.begin(); it!=posVec.end(); ++it)
-<a name="l01044"></a>01044     {
-<a name="l01045"></a>01045         posIndex = posTable_.<a class="code" href="classjma_1_1POSTable.html#a0172e6de014d5f596a6d7aaf499da4fb" title="Get POS index code from POS string in alphabet format.">getIndexFromAlphaPOS</a>(*it);
-<a name="l01046"></a>01046         <span class="keywordflow">if</span>(posIndex != -1)
-<a name="l01047"></a>01047             keywordPOSSet_.insert(posIndex);
-<a name="l01048"></a>01048     }
-<a name="l01049"></a>01049 
-<a name="l01050"></a>01050     <span class="keywordflow">return</span> keywordPOSSet_.size();
-<a name="l01051"></a>01051 }
-<a name="l01052"></a>01052 
-<a name="l01053"></a>01053 } <span class="comment">// namespace jma</span>
+<a name="l00877"></a>00877         <span class="keywordtype">bool</span> hasRead = <span class="keyword">false</span>;
+<a name="l00878"></a>00878         vector&lt;string&gt; compVec;
+<a name="l00879"></a>00879         <span class="keywordflow">if</span>(iss &gt;&gt; pattern)
+<a name="l00880"></a>00880         {
+<a name="l00881"></a>00881             <span class="keywordflow">if</span>(tokenizeCSV(pattern, compVec) == 0)
+<a name="l00882"></a>00882             {
+<a name="l00883"></a>00883                 cerr &lt;&lt; <span class="stringliteral">&quot;fail to tokenize from pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
+<a name="l00884"></a>00884                 <span class="keywordflow">continue</span>;
+<a name="l00885"></a>00885             }
+<a name="l00886"></a>00886 
+<a name="l00887"></a>00887             <span class="keywordflow">if</span>(isNumber(compVec[0].c_str()))
+<a name="l00888"></a>00888             {
+<a name="l00889"></a>00889                 <a class="code" href="namespacejma.html#aff7f5fa8fd6141ceff592dd054a6ec54" title="A list of morphemes.">MorphemeList</a> decompList;
+<a name="l00890"></a>00890                 <span class="keywordtype">bool</span> isAllNumber = <span class="keyword">true</span>;
+<a name="l00891"></a>00891                 <span class="keywordtype">bool</span> isValidCharCount = <span class="keyword">true</span>;
+<a name="l00892"></a>00892                 tokenizer.assign(word.c_str());
+<a name="l00893"></a>00893                 <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
+<a name="l00894"></a>00894                 {
+<a name="l00895"></a>00895                     <span class="keywordflow">if</span>(! isNumber(compVec[i].c_str()))
+<a name="l00896"></a>00896                     {
+<a name="l00897"></a>00897                         isAllNumber = <span class="keyword">false</span>;
+<a name="l00898"></a>00898                         <span class="keywordflow">break</span>;
+<a name="l00899"></a>00899                     }
+<a name="l00900"></a>00900 
+<a name="l00901"></a>00901                     Morpheme morp;
+<a name="l00902"></a>00902                     <span class="keywordtype">int</span> charCount = convertFromStr&lt;int&gt;(compVec[i]);
+<a name="l00903"></a>00903                     <span class="keywordflow">for</span>(<span class="keywordtype">int</span> j=0; j&lt;charCount; ++j)
+<a name="l00904"></a>00904                     {
+<a name="l00905"></a>00905                         <span class="keywordflow">if</span>(<span class="keyword">const</span> <span class="keywordtype">char</span>* p = tokenizer.next())
+<a name="l00906"></a>00906                             morp.lexicon_ += p;
+<a name="l00907"></a>00907                         <span class="keywordflow">else</span>
+<a name="l00908"></a>00908                         {
+<a name="l00909"></a>00909                             isValidCharCount = <span class="keyword">false</span>;
+<a name="l00910"></a>00910                             <span class="keywordflow">break</span>;
+<a name="l00911"></a>00911                         }
+<a name="l00912"></a>00912                     }
+<a name="l00913"></a>00913 
+<a name="l00914"></a>00914                     <span class="keywordflow">if</span>(! isValidCharCount)
+<a name="l00915"></a>00915                         <span class="keywordflow">break</span>;
+<a name="l00916"></a>00916 
+<a name="l00917"></a>00917                     decompList.push_back(morp);
+<a name="l00918"></a>00918                 }
+<a name="l00919"></a>00919 
+<a name="l00920"></a>00920                 <span class="keywordflow">if</span>(! isAllNumber)
+<a name="l00921"></a>00921                 {
+<a name="l00922"></a>00922                     cerr &lt;&lt; <span class="stringliteral">&quot;invalid format, only digit is allowed in decomposition pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
+<a name="l00923"></a>00923                     <span class="keywordflow">continue</span>;
+<a name="l00924"></a>00924                 }
+<a name="l00925"></a>00925 
+<a name="l00926"></a>00926                 <span class="comment">// should reach the word end</span>
+<a name="l00927"></a>00927                 <span class="keywordflow">if</span>(! isValidCharCount || tokenizer.next())
+<a name="l00928"></a>00928                 {
+<a name="l00929"></a>00929                     cerr &lt;&lt; <span class="stringliteral">&quot;unmatched character numbers in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00930"></a>00930                     <span class="keywordflow">continue</span>;
+<a name="l00931"></a>00931                 }
+<a name="l00932"></a>00932 
+<a name="l00933"></a>00933                 <span class="keywordflow">if</span>(iss &gt;&gt; pattern)
+<a name="l00934"></a>00934                 {
+<a name="l00935"></a>00935                     <span class="keywordflow">if</span>(tokenizeCSV(pattern, compVec) == 0)
+<a name="l00936"></a>00936                     {
+<a name="l00937"></a>00937                         cerr &lt;&lt; <span class="stringliteral">&quot;fail to tokenize from pattern: &quot;</span> &lt;&lt; pattern &lt;&lt; endl;
+<a name="l00938"></a>00938                         <span class="keywordflow">continue</span>;
+<a name="l00939"></a>00939                     }
+<a name="l00940"></a>00940 
+<a name="l00941"></a>00941                     <span class="keywordflow">if</span>(compVec.size() != decompList.size())
+<a name="l00942"></a>00942                     {
+<a name="l00943"></a>00943                         cerr &lt;&lt; <span class="stringliteral">&quot;invalid format, the pronunciation pattern size is not equal to decomposition pattern size in line: &quot;</span> &lt;&lt; line &lt;&lt; endl;
+<a name="l00944"></a>00944                         <span class="keywordflow">continue</span>;
+<a name="l00945"></a>00945                     }
+<a name="l00946"></a>00946 
+<a name="l00947"></a>00947                     <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
+<a name="l00948"></a>00948                     {
+<a name="l00949"></a>00949                         decompList[i].readForm_ = compVec[i];
+<a name="l00950"></a>00950                     }
+<a name="l00951"></a>00951 
+<a name="l00952"></a>00952                     hasRead = <span class="keyword">true</span>;
+<a name="l00953"></a>00953                 }
+<a name="l00954"></a>00954 
+<a name="l00955"></a>00955                 decompMap_[word] = decompList;
+<a name="l00956"></a>00956 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
+<a name="l00957"></a>00957 <span class="preprocessor"></span>                cout &lt;&lt; <span class="stringliteral">&quot;word &quot;</span> &lt;&lt; word &lt;&lt; <span class="stringliteral">&quot; is decomposed into: &quot;</span>;
+<a name="l00958"></a>00958                 <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;decompList.size(); ++i)
+<a name="l00959"></a>00959                 {
+<a name="l00960"></a>00960                     cout &lt;&lt; decompList[i].lexicon_;
+<a name="l00961"></a>00961                     <span class="keywordflow">if</span>(! decompList[i].readForm_.empty())
+<a name="l00962"></a>00962                         cout &lt;&lt; <span class="stringliteral">&quot;/&quot;</span> &lt;&lt; decompList[i].readForm_;
+<a name="l00963"></a>00963                     cout &lt;&lt; <span class="stringliteral">&quot;, &quot;</span>;
+<a name="l00964"></a>00964                 }
+<a name="l00965"></a>00965                 cout &lt;&lt; endl;
+<a name="l00966"></a>00966 <span class="preprocessor">#endif</span>
+<a name="l00967"></a>00967 <span class="preprocessor"></span>            }
+<a name="l00968"></a>00968             <span class="keywordflow">else</span>
+<a name="l00969"></a>00969                 hasRead = <span class="keyword">true</span>;
+<a name="l00970"></a>00970         }
+<a name="l00971"></a>00971 
+<a name="l00972"></a>00972         <span class="keywordflow">if</span>(hasRead)
+<a name="l00973"></a>00973         {
+<a name="l00974"></a>00974             assert(compVec.size() &amp;&amp; <span class="stringliteral">&quot;the read form should not be empty.&quot;</span>);
+<a name="l00975"></a>00975 
+<a name="l00976"></a>00976             <span class="comment">// combine compVec into whole read form</span>
+<a name="l00977"></a>00977             <span class="keywordtype">string</span> wholeRead;
+<a name="l00978"></a>00978             <span class="keywordflow">for</span>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i=0; i&lt;compVec.size(); ++i)
+<a name="l00979"></a>00979             {
+<a name="l00980"></a>00980                 wholeRead += compVec[i];
+<a name="l00981"></a>00981             }
+<a name="l00982"></a>00982             ostrs &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; wholeRead;
+<a name="l00983"></a>00983         }
+<a name="l00984"></a>00984         <span class="keywordflow">else</span>
+<a name="l00985"></a>00985             ostrs &lt;&lt; <span class="stringliteral">&quot;,*&quot;</span>;
+<a name="l00986"></a>00986 
+<a name="l00987"></a>00987         ost &lt;&lt; ostrs.str() &lt;&lt; endl;
+<a name="l00988"></a>00988         ++count;
+<a name="l00989"></a>00989     }
+<a name="l00990"></a>00990 
+<a name="l00991"></a>00991     <span class="keywordflow">return</span> count;
+<a name="l00992"></a>00992 }
+<a name="l00993"></a>00993 
+<a name="l00994"></a>00994 <span class="keywordtype">bool</span> JMA_Knowledge::fillBinaryEncodeType(<span class="keyword">const</span> <span class="keywordtype">char</span>* src, <span class="keyword">const</span> <span class="keywordtype">char</span>* dest, EncodeType binEncodeType)<span class="keyword"> const</span>
+<a name="l00995"></a>00995 <span class="keyword"></span>{
+<a name="l00996"></a>00996     ifstream ist(src);
+<a name="l00997"></a>00997     <span class="keywordflow">if</span>(! ist)
+<a name="l00998"></a>00998     {
+<a name="l00999"></a>00999         cerr &lt;&lt; <span class="stringliteral">&quot;cannot read configuration file: &quot;</span> &lt;&lt; src &lt;&lt; endl;
+<a name="l01000"></a>01000         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l01001"></a>01001     }
+<a name="l01002"></a>01002 
+<a name="l01003"></a>01003     ofstream ost(dest);
+<a name="l01004"></a>01004     <span class="keywordflow">if</span>(! ost)
+<a name="l01005"></a>01005     {
+<a name="l01006"></a>01006         cerr &lt;&lt; <span class="stringliteral">&quot;cannot write configuration file: &quot;</span> &lt;&lt; dest &lt;&lt; endl;
+<a name="l01007"></a>01007         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l01008"></a>01008     }
+<a name="l01009"></a>01009 
+<a name="l01010"></a>01010     <span class="keywordtype">string</span> line, left, middle;
+<a name="l01011"></a>01011     istringstream iss;
+<a name="l01012"></a>01012     <span class="keywordtype">bool</span> fill = <span class="keyword">false</span>;
+<a name="l01013"></a>01013     <span class="keywordflow">while</span>(getline(ist, line))
+<a name="l01014"></a>01014     {
+<a name="l01015"></a>01015         <span class="comment">// remove carriage return character</span>
+<a name="l01016"></a>01016         line = line.substr(0, line.find(<span class="charliteral">&apos;\r&apos;</span>));
+<a name="l01017"></a>01017 
+<a name="l01018"></a>01018         <span class="keywordflow">if</span>(line.empty() || line[0] == <span class="charliteral">&apos;;&apos;</span> || line[0] == <span class="charliteral">&apos;#&apos;</span>)
+<a name="l01019"></a>01019             ost &lt;&lt; line &lt;&lt; endl;
+<a name="l01020"></a>01020         <span class="keywordflow">else</span>
+<a name="l01021"></a>01021         {
+<a name="l01022"></a>01022             iss.clear();
+<a name="l01023"></a>01023             iss.str(line);
+<a name="l01024"></a>01024             <span class="keywordflow">if</span>(iss &gt;&gt; left &gt;&gt; middle &amp;&amp; left == <span class="stringliteral">&quot;binary-charset&quot;</span> &amp;&amp; middle == <span class="stringliteral">&quot;=&quot;</span>)
+<a name="l01025"></a>01025             {
+<a name="l01026"></a>01026                 ost &lt;&lt; left &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; middle &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(binEncodeType) &lt;&lt; endl;
+<a name="l01027"></a>01027                 fill = <span class="keyword">true</span>;
+<a name="l01028"></a>01028 <span class="preprocessor">#if JMA_DEBUG_PRINT</span>
+<a name="l01029"></a>01029 <span class="preprocessor"></span>                cout &lt;&lt; <span class="stringliteral">&quot;JMA_Knowledge::fillBinaryEncodeType(), src: &quot;</span> &lt;&lt; src &lt;&lt; <span class="stringliteral">&quot;, dest: &quot;</span> &lt;&lt; dest &lt;&lt; endl;
+<a name="l01030"></a>01030                 cout &lt;&lt; left &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; middle &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; <a class="code" href="classjma_1_1Knowledge.html#a2e82ba374100ddd35516f21a4cd09c67" title="Get the encode type string from the encode type.">Knowledge::encodeStr</a>(binEncodeType) &lt;&lt; endl;
+<a name="l01031"></a>01031                 cout &lt;&lt; endl;
+<a name="l01032"></a>01032 <span class="preprocessor">#endif</span>
+<a name="l01033"></a>01033 <span class="preprocessor"></span>            }
+<a name="l01034"></a>01034             <span class="keywordflow">else</span>
+<a name="l01035"></a>01035                 ost &lt;&lt; line &lt;&lt; endl;
+<a name="l01036"></a>01036         }
+<a name="l01037"></a>01037     }
+<a name="l01038"></a>01038 
+<a name="l01039"></a>01039     <span class="keywordflow">if</span>(fill)
+<a name="l01040"></a>01040         <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l01041"></a>01041     <span class="keywordflow">else</span>
+<a name="l01042"></a>01042     {
+<a name="l01043"></a>01043         cerr &lt;&lt; <span class="stringliteral">&quot;the field binary-charset is not found in configuration file: &quot;</span> &lt;&lt; src &lt;&lt; endl;
+<a name="l01044"></a>01044         <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l01045"></a>01045     }
+<a name="l01046"></a>01046 }
+<a name="l01047"></a>01047 
+<a name="l01048"></a><a class="code" href="classjma_1_1JMA__Knowledge.html#aaf87253d8a5ac1939a72d17cbbdd38e3">01048</a> <span class="keywordtype">int</span> <a class="code" href="classjma_1_1JMA__Knowledge.html#aaf87253d8a5ac1939a72d17cbbdd38e3" title="Set the part-of-speech tags as keywords.">JMA_Knowledge::setKeywordPOS</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; posVec)
+<a name="l01049"></a>01049 {
+<a name="l01050"></a>01050     keywordPOSSet_.clear();
+<a name="l01051"></a>01051 
+<a name="l01052"></a>01052     <span class="keywordtype">int</span> posIndex;
+<a name="l01053"></a>01053     <span class="keywordflow">for</span>(vector&lt;string&gt;::const_iterator it=posVec.begin(); it!=posVec.end(); ++it)
+<a name="l01054"></a>01054     {
+<a name="l01055"></a>01055         posIndex = posTable_.<a class="code" href="classjma_1_1POSTable.html#a0172e6de014d5f596a6d7aaf499da4fb" title="Get POS index code from POS string in alphabet format.">getIndexFromAlphaPOS</a>(*it);
+<a name="l01056"></a>01056         <span class="keywordflow">if</span>(posIndex != -1)
+<a name="l01057"></a>01057             keywordPOSSet_.insert(posIndex);
+<a name="l01058"></a>01058     }
+<a name="l01059"></a>01059 
+<a name="l01060"></a>01060     <span class="keywordflow">return</span> keywordPOSSet_.size();
+<a name="l01061"></a>01061 }
+<a name="l01062"></a>01062 
+<a name="l01063"></a>01063 } <span class="comment">// namespace jma</span>
 </pre></div></div>
-<hr size="1"/><address style="text-align: right;"><small>Generated on Mon Sep 20 18:11:36 2010 for Japanese Morphological Analyzer by&nbsp;
+<hr size="1"/><address style="text-align: right;"><small>Generated on Tue Sep 21 18:34:45 2010 for Japanese Morphological Analyzer by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
 </body>
