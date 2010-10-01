@@ -92,6 +92,6 @@ add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 add_subdirectory(src)
-add_subdirectory(test)
+add_subdirectory(test_src)
 add_subdirectory(libgtest)
 add_subdirectory(unit_test)

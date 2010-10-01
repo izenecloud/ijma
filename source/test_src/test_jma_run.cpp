@@ -120,7 +120,8 @@ void testWithString(Analyzer* analyzer)
     string line;
     while(getline(cin, line))
     {
-        line += "\nbbb";
+        line += "\n";
+		line = analyzer->convertCharacters(line.c_str());
         cout << endl << "result:" << endl << analyzer->runWithString(line.c_str()) << endl;
         cout << endl << "please input string ended with newline:" << endl;
     }
@@ -237,8 +238,8 @@ int main(int argc, char* argv[])
     knowledge->setSystemDict(sysdict);
     cout << "system dictionary: " << sysdict << endl;
 
-    //const char* userdict = TEST_JMA_DEFAULT_USER_DICT;
-    //knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_UTF8);
+    const char* userdict = "./db/ipadic/usernoun.txt";
+    knowledge->addUserDict(userdict, Knowledge::ENCODE_TYPE_UTF8);
     //cout << "user dictionary: " << userdict << endl;
 
     if(knowledge->loadDict() == 0)
@@ -259,7 +260,7 @@ int main(int argc, char* argv[])
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_TAGGING, 0);
 
     // output POS in alphabet format
-    //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
+    analyzer->setOption(Analyzer::OPTION_TYPE_POS_FORMAT_ALPHABET, 1);
 
     // output POS in Japanese format of full category
     //analyzer->setOption(Analyzer::OPTION_TYPE_POS_FULL_CATEGORY, 1);
@@ -269,6 +270,10 @@ int main(int argc, char* argv[])
 
     // decompose user defined compound into nouns
     //analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, 1);
+	
+	//alyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_FULL_WIDTH, 1);
+	analyzer->setOption(Analyzer::OPTION_TYPE_DECOMPOSE_USER_NOUN, 1);
+	analyzer->setOption(Analyzer::OPTION_TYPE_CONVERT_TO_LOWER_CASE, 1);
 
     switch(optionIndex)
     {
