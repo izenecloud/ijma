@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <analyzer.h>
+#include <ijma/analyzer.h>
 #include <jma_analyzer.h>
 
 using namespace jma;

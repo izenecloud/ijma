@@ -9,8 +9,8 @@
 #ifndef JMA_CRF_ANALYZER_H
 #define JMA_CRF_ANALYZER_H
 
-#include "analyzer.h"
-#include "sentence.h"
+#include "ijma/analyzer.h"
+#include "ijma/sentence.h"
 #include "jma_knowledge.h"
 #include "pos_table.h"
 #include "mecab.h" // MeCab::Node, Tagger

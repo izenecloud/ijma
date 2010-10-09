@@ -8,7 +8,7 @@
 
 #include "pos_table.h"
 #include "jma_dictionary.h"
-#include "knowledge.h" // Knowledge::encodeStr()
+#include "ijma/knowledge.h" // Knowledge::encodeStr()
 #include "iconv_utils.h" // MeCab::Iconv
 
 #include <cassert>

@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <knowledge.h>
+#include <ijma/knowledge.h>
 #include <jma_knowledge.h>
 
 using namespace jma;

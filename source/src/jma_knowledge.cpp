@@ -7,7 +7,7 @@
  */
 
 #include "jma_knowledge.h"
-#include "sentence.h"
+#include "ijma/sentence.h"
 #include "jma_dictionary.h"
 #include "tokenizer.h"
 #include "file_utils.h"

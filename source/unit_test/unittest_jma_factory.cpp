@@ -7,9 +7,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <jma_factory.h>
-#include <analyzer.h>
-#include <knowledge.h>
+#include <ijma/jma_factory.h>
+#include <ijma/analyzer.h>
+#include <ijma/knowledge.h>
 
 using namespace jma;
 

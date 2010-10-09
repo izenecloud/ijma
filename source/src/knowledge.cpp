@@ -6,7 +6,7 @@
  * \date Jun 12, 2009
  */
 
-#include "knowledge.h"
+#include "ijma/knowledge.h"
 
 #include <string>
 #include <cassert>

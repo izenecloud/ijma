@@ -6,7 +6,7 @@
  * \date Jun 12, 2009
  */
 
-#include "sentence.h"
+#include "ijma/sentence.h"
 
 #include <algorithm>
 #include <cassert>

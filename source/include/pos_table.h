@@ -9,7 +9,7 @@
 #ifndef JMA_POS_TABLE_H
 #define JMA_POS_TABLE_H
 
-#include "knowledge.h" // Knowledge::EncodeType
+#include "ijma/knowledge.h" // Knowledge::EncodeType
 #include "mecab.h" // MeCab::Node
 
 #include <string>

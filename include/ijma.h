@@ -9,9 +9,9 @@
 #ifndef IJMA_H
 #define IJMA_H
 
-#include "jma_factory.h"
-#include "sentence.h"
-#include "analyzer.h"
-#include "knowledge.h"
+#include "ijma/jma_factory.h"
+#include "ijma/sentence.h"
+#include "ijma/analyzer.h"
+#include "ijma/knowledge.h"
 
 #endif // IJMA_H

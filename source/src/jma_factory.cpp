@@ -6,7 +6,7 @@
  * \date Jun 12, 2009
  */
 
-#include "jma_factory.h"
+#include "ijma/jma_factory.h"
 #include "jma_analyzer.h"
 #include "jma_knowledge.h"
 

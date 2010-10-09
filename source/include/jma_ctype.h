@@ -8,7 +8,7 @@
 #ifndef JMA_CTYPE_H
 #define JMA_CTYPE_H
 
-#include "knowledge.h" // Knowledge::EncodeType
+#include "ijma/knowledge.h" // Knowledge::EncodeType
 
 #include <string>
 using std::string;

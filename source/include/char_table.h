@@ -9,7 +9,7 @@
 #ifndef JMA_CHAR_TABLE_H
 #define JMA_CHAR_TABLE_H
 
-#include "knowledge.h" // Knowledge::EncodeType
+#include "ijma/knowledge.h" // Knowledge::EncodeType
 
 #include <string>
 #include <map>

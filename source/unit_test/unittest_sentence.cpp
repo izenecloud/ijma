@@ -7,7 +7,7 @@
  */
 
 #include <gtest/gtest.h>
-#include <sentence.h>
+#include <ijma/sentence.h>
 #include <algorithm>
 
 using namespace jma;

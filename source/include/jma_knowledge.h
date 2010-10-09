@@ -9,11 +9,11 @@
 #ifndef JMA_KNOWLEDGE_IMPL_H
 #define JMA_KNOWLEDGE_IMPL_H
 
-#include "knowledge.h"
+#include "ijma/knowledge.h"
 #include "jma_ctype.h"
 #include "pos_table.h"
 #include "char_table.h"
-#include "sentence.h"
+#include "ijma/sentence.h"
 
 #include <string>
 #include <set>

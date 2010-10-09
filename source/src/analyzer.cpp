@@ -6,7 +6,7 @@
  * \date Jun 12, 2009
  */
 
-#include "analyzer.h"
+#include "ijma/analyzer.h"
 
 #include <cassert>
 
