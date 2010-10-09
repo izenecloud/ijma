@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 #include <jma_knowledge.h>
 #include <mecab.h> // MeCab::Tagger
-#include "../../test/test_jma_common.h"
+#include "../../test_src/test_jma_common.h"
 #include <jma_dictionary.h>
 #include <mempool.h>
 #include <mmap.h>

@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 #include <jma_analyzer.h>
 #include <jma_knowledge.h>
-#include "../../test/test_jma_common.h"
+#include "../../test_src/test_jma_common.h"
 #include "../../include/file_utils.h"
 
 #include <vector>
