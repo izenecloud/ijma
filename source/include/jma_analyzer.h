@@ -182,6 +182,7 @@ private:
      * Check whether to filter out the morpheme.
      * \param morph the morpheme
      * \return true to filter out, false to reserve
+     * \note white-space morphemes are also filtered out.
      */
     bool isFilter(const Morpheme& morph) const;
 

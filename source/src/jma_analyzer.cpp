@@ -543,7 +543,9 @@ std::string JMA_Analyzer::convertCharacters(const char* str) const
 
 bool JMA_Analyzer::isFilter(const Morpheme& morph) const
 {
-    if(knowledge_->isStopWord(morph.lexicon_) || ! knowledge_->isKeywordPOS(morph.posCode_))
+    if(knowledge_->getCType()->isSpace(morph.lexicon_.c_str())
+            || knowledge_->isStopWord(morph.lexicon_)
+            || ! knowledge_->isKeywordPOS(morph.posCode_))
         return true;
 
     return false;
@@ -720,8 +722,11 @@ bool JMA_Analyzer::runNBest(Sentence& sentence, int nbest) const
             limitNBestVec.back().swap(list);
             limitScoreVec.push_back(dScore);
         }
-        assert(limitNBestVec.size() && "the nbest limit results should not be empty");
         assert(limitNBestVec.size() == limitScoreVec.size() && "the size of nbest and score limit results should be equal");
+
+        // ignore empty nbest limit results
+        if(limitNBestVec.empty())
+            continue;
 
         // concatenate buffer result to whole result
         if(totalNBestVec.empty())
