@@ -584,12 +584,7 @@ void JMA_Analyzer::splitLimitSize(const char* str, std::vector<std::string>& lim
     tokenizer.assign(str);
     for(const char* p=tokenizer.next(); p; p=tokenizer.next())
     {
-        // white-space characters are removed
-        if(knowledge_->getCType()->isSpace(p))
-        {
-            continue;
-        }
-        else if(limitStr.length() + strlen(p) >= limitSize)
+        if(limitStr.length() + strlen(p) >= limitSize)
         {
             limitStrVec.push_back(limitStr);
             limitStr.clear();
@@ -610,21 +605,6 @@ void JMA_Analyzer::splitLimitSize(const char* str, std::vector<std::string>& lim
 
 bool JMA_Analyzer::validateSplitLimitResult(const char* str, const std::vector<std::string>& limitStrVec, unsigned int limitSize) const
 {
-    // remove white-space characters in original string
-    string originStr;
-    CTypeTokenizer tokenizer(knowledge_->getCType());
-    tokenizer.assign(str);
-    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
-    {
-        // white-space characters are removed
-        if(knowledge_->getCType()->isSpace(p))
-        {
-            continue;
-        }
-
-        originStr += p;
-    }
-
     string combineStr;
     for(unsigned int i=0; i<limitStrVec.size(); ++i)
     {
@@ -641,10 +621,10 @@ bool JMA_Analyzer::validateSplitLimitResult(const char* str, const std::vector<s
         }
     }
 
-    if(combineStr != originStr)
+    if(combineStr != str)
     {
         cerr << "failed in JMA_Analyzer::validateSplitLimitResult()" << endl;
-        cerr << "original string (no white-space): " << originStr << endl;
+        cerr << "original string: " << str << endl;
         cerr << "combination result: " << combineStr << endl;
         return false;
     }
@@ -669,8 +649,6 @@ void JMA_Analyzer::runOneBest(Sentence& sentence) const
     // ignore empty result
     if(! list.empty())
         sentence.addList(list, 1.0);
-
-    assert(validateSentenceResult(sentence));
 }
 
 bool JMA_Analyzer::runNBest(Sentence& sentence, int nbest) const
@@ -790,51 +768,6 @@ bool JMA_Analyzer::runNBest(Sentence& sentence, int nbest) const
 
     for(unsigned int i=0; i<totalNBestVec.size(); ++i)
         sentence.addList(totalNBestVec[i], totalScoreVec[i]/totalScore);
-
-    assert(validateSentenceResult(sentence));
-
-    return true;
-}
-
-bool JMA_Analyzer::validateSentenceResult(const Sentence& sentence) const
-{
-    // when stop word is loaded or keyword POS is set,
-    // this validation does not work, it simply does no check
-    if(knowledge_->stopWordCount() || knowledge_->keywordPOSCount())
-        return true;
-
-    // remove white-space characters in original sentence
-    string sentStr;
-    CTypeTokenizer tokenizer(knowledge_->getCType());
-    tokenizer.assign(sentence.getString());
-    for(const char* p=tokenizer.next(); p; p=tokenizer.next())
-    {
-        // white-space characters are removed
-        if(knowledge_->getCType()->isSpace(p))
-        {
-            continue;
-        }
-
-        sentStr += p;
-    }
-
-    // each candidate
-    for(int i=0; i<sentence.getListSize(); ++i)
-    {
-        string combineStr;
-        for(int j=0; j<sentence.getCount(i); ++j)
-        {
-            combineStr += sentence.getLexicon(i, j);
-        }
-
-        if(combineStr != sentStr)
-        {
-            cerr << "failed in JMA_Analyzer::validateSentenceResult()" << endl;
-            cerr << "sentence (no white-space): " << sentStr << endl;
-            cerr << "combination result: " << combineStr << endl;
-            return false;
-        }
-    }
 
     return true;
 }

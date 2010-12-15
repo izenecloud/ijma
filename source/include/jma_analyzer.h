@@ -186,23 +186,12 @@ private:
     bool isFilter(const Morpheme& morph) const;
 
     /**
-     * Split string into each string with limit size, please note that white-space characters are removed in the split result.
+     * Split string into each string with limit size.
      * \param str the string to split
-     * \param limitStrVec the string vector, each string is in limit size without white-space characters
+     * \param limitStrVec the string vector, each string is in limit size
      * \param limitSize the limit size, each splitted string size should be less than this size
      */
     void splitLimitSize(const char* str, std::vector<std::string>& limitStrVec, unsigned int limitSize) const;
-
-    /**
-     * Validate the correctness of sentence result.
-     * It combines the morpheme lexicons for each candidate result, and compares it with the original sentence string,
-     * the comparison result should be the same, otherwise some morphemem is lost in the analysis process.
-     * \param sentence the sentence result
-     * \return true for success, false for failure
-     * \attention this validation works only when no stop word is loaded and no keyword POS is set,
-     * as this function would assume stop words and non keywords are lost.
-     */
-    bool validateSentenceResult(const Sentence& sentence) const;
 
     /**
      * Validate the correctness of string splitting result with limit size.
