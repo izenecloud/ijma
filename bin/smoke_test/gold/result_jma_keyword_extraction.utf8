@@ -99,7 +99,7 @@ encoding type of system dictionary: UTF-8
 
 
 
-日本/NP-C  日本航空/NP-O  交通省/NP-O  
+全日本空輸/NP-O  日本/NP-C  日本航空/NP-O  交通省/NP-O  
 全日空/NP-O  山本/NP-S  精/NP-GN  東京/NP-P  
 日本/NP-C  井村屋製菓/NP-O  米/NP-C  カリフォルニア州/NP-P  米国/NP-C  帝国データバンク/NP-O  福岡/NP-P  九州/NP-P  沖縄/NP-P  九州/NP-P  福岡市/NP-P  筑豊/NP-P  福岡県/NP-P  香春町/NP-P  ジャスダック/NP-O  
 一/NP-GN  
@@ -185,7 +185,7 @@ encoding type of system dictionary: UTF-8
 野澤/NP-S  智行/NP-GN  
 奈良県/NP-P  司/NP-GN  
 ニッポン/NP-C  赤田/NP-S  康/NP-GN  七番/NP-P  徳島県/NP-P  鳴門市/NP-P  羽生/NP-S  善治/NP-GN  深浦/NP-S  康/NP-GN  和歌山県/NP-P  白浜町/NP-P  ベルリン/NP-P  高橋/NP-S  昌宏/NP-GN  ベルリン/NP-P  日本/NP-C  トム/NP-GN  日本/NP-C  陳/NP-S  コー/NP-GN  梅/NP-S  蘭/NP-GN  芳/NP-P  安藤/NP-S  政信/NP-GN  園子/NP-GN  温/NP-P  橋口/NP-S  亮輔/NP-GN  日本/NP-C  五番/NP-P  金沢市/NP-P  久保/NP-S  利明/NP-GN  佐藤/NP-S  康光/NP-GN  新潟市/NP-P  日本/NP-C  東京/NP-P  講談社/NP-O  柳/NP-S  広司/NP-GN  角川書店/NP-O  曽根/NP-S  圭介/NP-GN  田中/NP-S  啓文/NP-GN  司/NP-S  昭/NP-GN  光文社/NP-O  栗原/NP-S  裕一郎/NP-GN  新曜社/NP-G  東京/NP-P  第一ホテル/NP-O  東京/NP-P  ＮＨＫ/NP-O  鬼太郎/NP-GN  水木/NP-S  しげる/NP-GN  武/NP-S  良/NP-GN  昭和/NP-G  東京都/NP-P  調布市/NP-P  武/NP-S  良/NP-GN  御宿/NP-S  ＮＨＫ/NP-O  山本/NP-S  むつみ/NP-GN  
-武/NP-S  良/NP-GN  キンチョール/NP-G  豊川/NP-S  悦司/NP-GN  
+武/NP-S  良/NP-GN  ＫＩＮＣＨＯ/NP-O  キンチョール/NP-G  豊川/NP-S  悦司/NP-GN  
 豊川/NP-S  キン/NP-G  
 小林/NP-S  裕一/NP-GN  ペルヴィスダンス/NP-G  ｋｙｏ/NP-O  ｋｙｏ/NP-O  
 ｋｙｏ/NP-O  ｋｙｏ/NP-O  
@@ -363,7 +363,7 @@ http/NP-O  info/NP-O  h/NP-O  kyouinhaken/NP-O  東京都/NP-P  立川市/NP-P  
 
 
 
-コ山/NP-P  
+
 
 
 
@@ -389,7 +389,7 @@ http/NP-O  info/NP-O  h/NP-O  kyouinhaken/NP-O  東京都/NP-P  立川市/NP-P  
 本郷/NP-S  
 
 
-
+Ａ/NP-O  Ｂ/NP-O  Ｃ/NP-O  
 ア/NP-G  Ａ/NP-O  パー/NP-G  Ｂ/NP-O  Ａ/NP-O  Ｃ/NP-O  イ/NP-G  パー/NP-G  
 
 日本国/NP-C  日本/NP-C  正義/NP-GN  四谷/NP-P  大塚/NP-P  
