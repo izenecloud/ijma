@@ -1,4 +1,4 @@
-﻿/** \file unittest_jma_knowledge.cpp
+/** \file unittest_jma_knowledge.cpp
  * Unit test of class JMA_Knowledge.
  * 
  * \author Jun Jiang

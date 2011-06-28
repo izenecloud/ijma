@@ -1,4 +1,4 @@
-﻿/** \file unittest_jma_analyzer.cpp
+/** \file unittest_jma_analyzer.cpp
  * Unit test of class JMA_Analyzer.
  * 
  * \author Jun Jiang
