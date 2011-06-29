@@ -634,6 +634,11 @@ bool JMA_Analyzer::validateSplitLimitResult(const char* str, const std::vector<s
     return true;
 }
 
+int JMA_Analyzer::getCodeFromStr(const std::string& posStr) const
+{
+    return posTable_->getIndexFromAlphaPOS(posStr);
+}
+
 void JMA_Analyzer::runOneBest(Sentence& sentence) const
 {
     vector<string> limitStrVec;

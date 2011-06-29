@@ -131,6 +131,7 @@ public:
      */
     virtual std::string convertCharacters(const char* str) const = 0;
 
+    virtual int getCodeFromStr(const std::string& posStr) const = 0;
     /**
      * Option type for analysis.
      */

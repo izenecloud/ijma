@@ -206,6 +206,11 @@ private:
      */
     bool validateSplitLimitResult(const char* str, const std::vector<std::string>& limitStrVec, unsigned int limitSize) const;
 
+    /**
+      * Get POS index code from POS string in alphabet format
+      */
+    int getCodeFromStr(const std::string& posStr) const;
+
 private:
     /** hold the JMA_Knowledge Object */
     JMA_Knowledge* knowledge_;
