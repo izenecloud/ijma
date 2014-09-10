@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$char__table_8cpp.html" title="Implementation of class CharTable." alt="" coords="5,83,176,112"/>
-<area shape="rect" href="$jma__dictionary_8cpp.html" title="Implementation of class JMA_Dictionary." alt="" coords="200,83,395,112"/>
-<area shape="rect" href="$jma__knowledge_8cpp.html" title="Implementation of class JMA_Knowledge." alt="" coords="419,83,619,112"/>
-<area shape="rect" href="$pos__table_8cpp.html" title="Implementation of class POSTable." alt="" coords="643,83,811,112"/>
-<area shape="rect" href="$unittest__jma__knowledge_8cpp.html" title="Unit test of class JMA_Knowledge." alt="" coords="835,83,1117,112"/>
-</map>
