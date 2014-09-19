@@ -1,7 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$jma__analyzer_8cpp.html" title="Implementation of class JMA_Analyzer." alt="" coords="5,83,192,112"/>
-<area shape="rect" href="$jma__factory_8cpp.html" title="Implementation of class JMA_Factory." alt="" coords="216,83,395,112"/>
-<area shape="rect" href="$test__jma__analyzer_8cpp.html" title="Test to create an instance of JMA_Analyzer." alt="" coords="419,83,637,112"/>
-<area shape="rect" href="$unittest__analyzer_8cpp.html" title="Unit test of class Analyzer." alt="" coords="661,83,901,112"/>
-<area shape="rect" href="$unittest__jma__analyzer_8cpp.html" title="Unit test of class JMA_Analyzer." alt="" coords="925,83,1195,112"/>
-</map>

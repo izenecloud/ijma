@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" href="$jma__knowledge_8h.html" title="Definition of class JMA_Knowledge." alt="" coords="503,83,623,112"/>
-<area shape="rect" href="$jma__dictionary_8h.html" title="Definition of class JMA_Dictionary." alt="" coords="981,160,1096,189"/>
-<area shape="rect" href="$knowledge_8h.html" title="Definition of class Knowledge." alt="" coords="368,237,461,267"/>
-<area shape="rect" href="$jma__ctype_8h.html" title="JMA_CType gives the character type information." alt="" coords="224,160,315,189"/>
-<area shape="rect" href="$pos__table_8h.html" title="Definition of class POSTable." alt="" coords="659,160,747,189"/>
-<area shape="rect" href="$char__table_8h.html" title="Definition of class CharTable." alt="" coords="389,160,480,189"/>
-<area shape="rect" href="$sentence_8h.html" title="Definition of class Sentence." alt="" coords="872,160,957,189"/>
-</map>
