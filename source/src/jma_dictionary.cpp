@@ -16,7 +16,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <strstream> // ostringstream
 #include <utility> // make_pair
 #include <cstring>
 #include <cassert>

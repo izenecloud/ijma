@@ -19,7 +19,6 @@
 #include <iostream>
 #include <fstream> // ifstream, ofstream
 #include <sstream>
-#include <strstream> // istrstream
 #include <cassert>
 
 using namespace std;
@@ -360,8 +359,8 @@ void JMA_Knowledge::loadDictConfig()
     const DictUnit* dict = dictionary_->getDict(configFile.c_str());
     if(dict)
     {
-        istrstream ist(dict->text_, dict->length_);
-        if(ist)
+        istringstream ist(string(dict->text_, dict->length_));
+        if(ist.good())
         {
             isLoadConfig = true;
             string line, left, middle, right;
@@ -755,8 +754,8 @@ bool JMA_Knowledge::loadSentenceSeparatorConfig(const char* fileName, MeCab::Ico
         cerr << "fail to load sentence separator file " << fileName << endl;
         return false;
     }
-    istrstream ist(dict->text_, dict->length_);
-    if(! ist)
+    istringstream ist(string(dict->text_, dict->length_));
+    if(! ist.good())
     {
         cerr << "fail to open string stream of sentence separator file " << fileName << endl;
         return false;

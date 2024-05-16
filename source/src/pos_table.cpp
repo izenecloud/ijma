@@ -15,7 +15,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <strstream>
 
 #define JMA_DEBUG_PRINT_COMBINE 0
 
@@ -50,8 +49,8 @@ bool POSTable::loadConfig(const char* fileName, MeCab::Iconv& iconv)
         return false;
     }
 
-    istrstream from(dict->text_, dict->length_);
-    if(! from)
+    istringstream from(string(dict->text_, dict->length_));
+    if(! from.good())
     {
         cerr << "cannot read configuration file: " << fileName << endl;
         return false;

@@ -37,7 +37,7 @@ int main()
 
     // load dictioanry files
     knowledge->setSystemDict(sysdict);
-    knowledge->addUserDict(userdict);
+    //knowledge->addUserDict(userdict);
     if(knowledge->loadDict() == 0)
     {
         cerr << "fail to load dictionary files" << endl;

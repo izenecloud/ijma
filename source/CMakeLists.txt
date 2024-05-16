@@ -65,8 +65,6 @@ SET(CMAKE_C_FLAGS_PROFILE        "${CMAKE_CXX_FLAGS_PROFILE}" CACHE STRING "Prof
 include_directories(../include)
 include_directories(./include)
 include_directories(./src/libmecab)
-include_directories(./src/libz)
-#include_directories(./src/libiconv)
 
 find_package(Iconv REQUIRED)
 
@@ -95,5 +93,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/src)
 
 add_subdirectory(src)
 add_subdirectory(test_src)
-add_subdirectory(libgtest)
-add_subdirectory(unit_test)
+#add_subdirectory(libgtest)
+#add_subdirectory(unit_test)

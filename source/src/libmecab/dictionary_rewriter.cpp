@@ -17,7 +17,7 @@
 
 #include "jma_dictionary.h" // JMA_Dictionary
 #include "scoped_ptr.h"
-#include <strstream>
+#include <sstream>
 
 namespace {
 
@@ -140,7 +140,7 @@ bool DictionaryRewriter::open(const char *filename,
 
   const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
   if(dict)
-    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+    p_ist.reset(new std::istringstream(std::string(dict->text_, dict->length_)));
   else
     p_ist.reset(new std::ifstream(filename));
 
@@ -216,7 +216,7 @@ bool POSIDGenerator::open(const char *filename,
 
   const jma::DictUnit* dict = jma::JMA_Dictionary::instance()->getDict(filename);
   if(dict)
-    p_ist.reset(new std::istrstream(dict->text_, dict->length_));
+    p_ist.reset(new std::istringstream(std::string(dict->text_, dict->length_)));
   else
     p_ist.reset(new std::ifstream(filename));
 
