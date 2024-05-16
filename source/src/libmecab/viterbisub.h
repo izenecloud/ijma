@@ -17,16 +17,16 @@ bool Viterbi::connectWithAllPath(size_t pos, Node *rNode) {
   bool Viterbi::connectNormal(size_t pos, Node *rNode) {
 #endif
     for (;rNode; rNode = rNode->bnext) {
-      register long bestCost = 2147483647;
+       long bestCost = 2147483647;
 
       Node* bestNode = 0;
 
       for (Node *lNode = end_node_list_[pos]; lNode; lNode = lNode->enext) {
 #ifdef _VITERBI_WITH_ALL_PATH
-        register int  lcost = connector_->cost(lNode, rNode);  // local cost
-        register long cost  = lNode->cost + lcost;
+         int  lcost = connector_->cost(lNode, rNode);  // local cost
+         long cost  = lNode->cost + lcost;
 #else
-        register long cost  = lNode->cost + connector_->cost(lNode, rNode);
+         long cost  = lNode->cost + connector_->cost(lNode, rNode);
 #endif
 
         if (cost < bestCost) {

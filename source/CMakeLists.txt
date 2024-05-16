@@ -66,7 +66,9 @@ include_directories(../include)
 include_directories(./include)
 include_directories(./src/libmecab)
 include_directories(./src/libz)
-include_directories(./src/libiconv)
+#include_directories(./src/libiconv)
+
+find_package(Iconv REQUIRED)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../lib)

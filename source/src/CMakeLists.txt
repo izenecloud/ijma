@@ -1,4 +1,4 @@
-FILE(GLOB_RECURSE jma_SRC "*.cpp" "*.c")
+FILE(GLOB_RECURSE jma_SRC "*.cpp")
 
 # include modules
 # usage: CHECK_INCLUDE_FILES (<header> <RESULT_VARIABLE> )
@@ -11,3 +11,6 @@ INCLUDE(libmecab/ConfigureChecks.cmake)
 add_definitions(-DLIBDIR="/usr/local/lib")
 
 add_library(jma STATIC ${jma_SRC})
+target_link_libraries(jma
+    z
+)
